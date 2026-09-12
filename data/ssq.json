@@ -1,0 +1,3767 @@
+[
+  {
+    "period": "25005",
+    "date": "2025-01-12",
+    "red": [
+      "10",
+      "16",
+      "19",
+      "27",
+      "28",
+      "30"
+    ],
+    "blue": "09",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25006",
+    "date": "2025-01-14",
+    "red": [
+      "01",
+      "07",
+      "08",
+      "17",
+      "20",
+      "22"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25007",
+    "date": "2025-01-16",
+    "red": [
+      "07",
+      "08",
+      "14",
+      "18",
+      "21",
+      "27"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25008",
+    "date": "2025-01-19",
+    "red": [
+      "09",
+      "14",
+      "16",
+      "17",
+      "25",
+      "33"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25009",
+    "date": "2025-01-21",
+    "red": [
+      "02",
+      "04",
+      "11",
+      "12",
+      "23",
+      "25"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25010",
+    "date": "2025-01-23",
+    "red": [
+      "04",
+      "06",
+      "07",
+      "16",
+      "17",
+      "21"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25011",
+    "date": "2025-01-26",
+    "red": [
+      "06",
+      "13",
+      "17",
+      "22",
+      "24",
+      "29"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25012",
+    "date": "2025-02-06",
+    "red": [
+      "07",
+      "11",
+      "13",
+      "18",
+      "27",
+      "31"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25013",
+    "date": "2025-02-09",
+    "red": [
+      "04",
+      "14",
+      "16",
+      "23",
+      "24",
+      "30"
+    ],
+    "blue": "14",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25014",
+    "date": "2025-02-11",
+    "red": [
+      "06",
+      "07",
+      "09",
+      "13",
+      "21",
+      "27"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25015",
+    "date": "2025-02-13",
+    "red": [
+      "04",
+      "11",
+      "15",
+      "24",
+      "25",
+      "33"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25016",
+    "date": "2025-02-16",
+    "red": [
+      "02",
+      "03",
+      "12",
+      "16",
+      "20",
+      "29"
+    ],
+    "blue": "14",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25017",
+    "date": "2025-02-18",
+    "red": [
+      "04",
+      "12",
+      "15",
+      "18",
+      "28",
+      "29"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25018",
+    "date": "2025-02-20",
+    "red": [
+      "03",
+      "09",
+      "18",
+      "21",
+      "28",
+      "29"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25019",
+    "date": "2025-02-23",
+    "red": [
+      "05",
+      "13",
+      "17",
+      "18",
+      "22",
+      "23"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25020",
+    "date": "2025-02-25",
+    "red": [
+      "04",
+      "11",
+      "13",
+      "16",
+      "26",
+      "30"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25021",
+    "date": "2025-02-27",
+    "red": [
+      "07",
+      "08",
+      "16",
+      "18",
+      "25",
+      "32"
+    ],
+    "blue": "14",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25022",
+    "date": "2025-03-02",
+    "red": [
+      "11",
+      "17",
+      "18",
+      "20",
+      "28",
+      "30"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25023",
+    "date": "2025-03-04",
+    "red": [
+      "09",
+      "12",
+      "13",
+      "24",
+      "25",
+      "33"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25024",
+    "date": "2025-03-06",
+    "red": [
+      "10",
+      "11",
+      "22",
+      "27",
+      "30",
+      "32"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25025",
+    "date": "2025-03-09",
+    "red": [
+      "12",
+      "15",
+      "21",
+      "23",
+      "25",
+      "30"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25026",
+    "date": "2025-03-11",
+    "red": [
+      "09",
+      "10",
+      "12",
+      "14",
+      "19",
+      "32"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25027",
+    "date": "2025-03-13",
+    "red": [
+      "05",
+      "07",
+      "08",
+      "15",
+      "16",
+      "23"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25028",
+    "date": "2025-03-16",
+    "red": [
+      "04",
+      "09",
+      "14",
+      "15",
+      "18",
+      "25"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25029",
+    "date": "2025-03-18",
+    "red": [
+      "05",
+      "15",
+      "16",
+      "25",
+      "30",
+      "33"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25030",
+    "date": "2025-03-20",
+    "red": [
+      "04",
+      "06",
+      "07",
+      "30",
+      "31",
+      "33"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25031",
+    "date": "2025-03-23",
+    "red": [
+      "01",
+      "05",
+      "06",
+      "08",
+      "23",
+      "28"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25032",
+    "date": "2025-03-25",
+    "red": [
+      "03",
+      "08",
+      "10",
+      "14",
+      "16",
+      "21"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25033",
+    "date": "2025-03-27",
+    "red": [
+      "03",
+      "05",
+      "18",
+      "25",
+      "26",
+      "33"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25034",
+    "date": "2025-03-30",
+    "red": [
+      "05",
+      "08",
+      "13",
+      "14",
+      "24",
+      "26"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25035",
+    "date": "2025-04-01",
+    "red": [
+      "01",
+      "08",
+      "16",
+      "18",
+      "25",
+      "31"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25036",
+    "date": "2025-04-03",
+    "red": [
+      "05",
+      "11",
+      "13",
+      "16",
+      "19",
+      "32"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25037",
+    "date": "2025-04-06",
+    "red": [
+      "03",
+      "06",
+      "11",
+      "20",
+      "21",
+      "31"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25038",
+    "date": "2025-04-08",
+    "red": [
+      "06",
+      "19",
+      "20",
+      "23",
+      "26",
+      "33"
+    ],
+    "blue": "09",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25039",
+    "date": "2025-04-10",
+    "red": [
+      "08",
+      "10",
+      "12",
+      "15",
+      "17",
+      "23"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25040",
+    "date": "2025-04-13",
+    "red": [
+      "02",
+      "06",
+      "08",
+      "09",
+      "10",
+      "24"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25041",
+    "date": "2025-04-15",
+    "red": [
+      "06",
+      "10",
+      "17",
+      "19",
+      "25",
+      "31"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25042",
+    "date": "2025-04-17",
+    "red": [
+      "07",
+      "13",
+      "19",
+      "23",
+      "27",
+      "33"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25043",
+    "date": "2025-04-20",
+    "red": [
+      "03",
+      "12",
+      "16",
+      "19",
+      "20",
+      "32"
+    ],
+    "blue": "13",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25044",
+    "date": "2025-04-22",
+    "red": [
+      "02",
+      "03",
+      "07",
+      "08",
+      "14",
+      "28"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25045",
+    "date": "2025-04-24",
+    "red": [
+      "02",
+      "14",
+      "19",
+      "24",
+      "29",
+      "33"
+    ],
+    "blue": "13",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25046",
+    "date": "2025-04-27",
+    "red": [
+      "02",
+      "03",
+      "10",
+      "16",
+      "29",
+      "33"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25047",
+    "date": "2025-04-29",
+    "red": [
+      "01",
+      "14",
+      "21",
+      "22",
+      "23",
+      "31"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25048",
+    "date": "2025-05-01",
+    "red": [
+      "16",
+      "21",
+      "22",
+      "23",
+      "27",
+      "31"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25049",
+    "date": "2025-05-04",
+    "red": [
+      "03",
+      "06",
+      "19",
+      "27",
+      "29",
+      "33"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25050",
+    "date": "2025-05-06",
+    "red": [
+      "09",
+      "12",
+      "15",
+      "18",
+      "22",
+      "33"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25051",
+    "date": "2025-05-08",
+    "red": [
+      "01",
+      "02",
+      "03",
+      "04",
+      "17",
+      "22"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25052",
+    "date": "2025-05-11",
+    "red": [
+      "06",
+      "07",
+      "10",
+      "17",
+      "20",
+      "26"
+    ],
+    "blue": "09",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25053",
+    "date": "2025-05-13",
+    "red": [
+      "06",
+      "09",
+      "10",
+      "13",
+      "30",
+      "33"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25054",
+    "date": "2025-05-15",
+    "red": [
+      "05",
+      "07",
+      "10",
+      "21",
+      "24",
+      "27"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25055",
+    "date": "2025-05-18",
+    "red": [
+      "02",
+      "05",
+      "22",
+      "27",
+      "29",
+      "33"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25056",
+    "date": "2025-05-20",
+    "red": [
+      "01",
+      "02",
+      "10",
+      "14",
+      "28",
+      "31"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25057",
+    "date": "2025-05-22",
+    "red": [
+      "04",
+      "09",
+      "15",
+      "16",
+      "25",
+      "30"
+    ],
+    "blue": "14",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25058",
+    "date": "2025-05-25",
+    "red": [
+      "02",
+      "06",
+      "07",
+      "09",
+      "10",
+      "20"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25059",
+    "date": "2025-05-27",
+    "red": [
+      "04",
+      "10",
+      "11",
+      "12",
+      "13",
+      "24"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25060",
+    "date": "2025-05-29",
+    "red": [
+      "06",
+      "14",
+      "18",
+      "25",
+      "28",
+      "30"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25061",
+    "date": "2025-06-01",
+    "red": [
+      "06",
+      "07",
+      "09",
+      "10",
+      "11",
+      "32"
+    ],
+    "blue": "09",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25062",
+    "date": "2025-06-03",
+    "red": [
+      "06",
+      "08",
+      "09",
+      "13",
+      "25",
+      "31"
+    ],
+    "blue": "14",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25063",
+    "date": "2025-06-05",
+    "red": [
+      "02",
+      "19",
+      "21",
+      "22",
+      "28",
+      "30"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25064",
+    "date": "2025-06-08",
+    "red": [
+      "02",
+      "10",
+      "13",
+      "22",
+      "29",
+      "33"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25065",
+    "date": "2025-06-10",
+    "red": [
+      "06",
+      "10",
+      "13",
+      "14",
+      "15",
+      "20"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25066",
+    "date": "2025-06-12",
+    "red": [
+      "06",
+      "22",
+      "24",
+      "27",
+      "28",
+      "30"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25067",
+    "date": "2025-06-15",
+    "red": [
+      "01",
+      "05",
+      "10",
+      "17",
+      "20",
+      "22"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25068",
+    "date": "2025-06-17",
+    "red": [
+      "05",
+      "07",
+      "08",
+      "19",
+      "20",
+      "31"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25069",
+    "date": "2025-06-19",
+    "red": [
+      "02",
+      "04",
+      "19",
+      "23",
+      "27",
+      "30"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25070",
+    "date": "2025-06-22",
+    "red": [
+      "02",
+      "03",
+      "15",
+      "21",
+      "22",
+      "33"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25071",
+    "date": "2025-06-24",
+    "red": [
+      "01",
+      "12",
+      "18",
+      "23",
+      "25",
+      "28"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25072",
+    "date": "2025-06-26",
+    "red": [
+      "02",
+      "14",
+      "17",
+      "25",
+      "27",
+      "29"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25073",
+    "date": "2025-06-29",
+    "red": [
+      "02",
+      "07",
+      "10",
+      "27",
+      "30",
+      "33"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25074",
+    "date": "2025-07-01",
+    "red": [
+      "03",
+      "04",
+      "12",
+      "20",
+      "32",
+      "33"
+    ],
+    "blue": "13",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25075",
+    "date": "2025-07-03",
+    "red": [
+      "10",
+      "12",
+      "14",
+      "19",
+      "20",
+      "21"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25076",
+    "date": "2025-07-06",
+    "red": [
+      "02",
+      "06",
+      "09",
+      "12",
+      "14",
+      "30"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25077",
+    "date": "2025-07-08",
+    "red": [
+      "04",
+      "07",
+      "08",
+      "15",
+      "20",
+      "21"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25078",
+    "date": "2025-07-10",
+    "red": [
+      "06",
+      "15",
+      "17",
+      "30",
+      "32",
+      "33"
+    ],
+    "blue": "14",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25079",
+    "date": "2025-07-13",
+    "red": [
+      "08",
+      "11",
+      "14",
+      "15",
+      "30",
+      "32"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25080",
+    "date": "2025-07-15",
+    "red": [
+      "03",
+      "07",
+      "08",
+      "10",
+      "16",
+      "19"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25081",
+    "date": "2025-07-17",
+    "red": [
+      "03",
+      "06",
+      "18",
+      "20",
+      "23",
+      "28"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25082",
+    "date": "2025-07-20",
+    "red": [
+      "04",
+      "06",
+      "09",
+      "14",
+      "32",
+      "33"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25083",
+    "date": "2025-07-22",
+    "red": [
+      "10",
+      "15",
+      "16",
+      "17",
+      "27",
+      "29"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25084",
+    "date": "2025-07-24",
+    "red": [
+      "06",
+      "08",
+      "10",
+      "14",
+      "24",
+      "33"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25085",
+    "date": "2025-07-27",
+    "red": [
+      "11",
+      "14",
+      "15",
+      "18",
+      "21",
+      "24"
+    ],
+    "blue": "13",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25086",
+    "date": "2025-07-29",
+    "red": [
+      "02",
+      "06",
+      "08",
+      "10",
+      "17",
+      "24"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25087",
+    "date": "2025-07-31",
+    "red": [
+      "02",
+      "06",
+      "14",
+      "15",
+      "24",
+      "26"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25088",
+    "date": "2025-08-03",
+    "red": [
+      "01",
+      "03",
+      "13",
+      "18",
+      "21",
+      "25"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25089",
+    "date": "2025-08-05",
+    "red": [
+      "04",
+      "06",
+      "08",
+      "18",
+      "31",
+      "33"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25090",
+    "date": "2025-08-07",
+    "red": [
+      "06",
+      "11",
+      "12",
+      "21",
+      "27",
+      "28"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25091",
+    "date": "2025-08-10",
+    "red": [
+      "03",
+      "04",
+      "17",
+      "19",
+      "25",
+      "27"
+    ],
+    "blue": "14",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25092",
+    "date": "2025-08-12",
+    "red": [
+      "02",
+      "11",
+      "14",
+      "17",
+      "23",
+      "24"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25093",
+    "date": "2025-08-14",
+    "red": [
+      "09",
+      "11",
+      "12",
+      "24",
+      "25",
+      "26"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25094",
+    "date": "2025-08-17",
+    "red": [
+      "11",
+      "13",
+      "17",
+      "19",
+      "23",
+      "29"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25095",
+    "date": "2025-08-19",
+    "red": [
+      "15",
+      "16",
+      "22",
+      "23",
+      "26",
+      "32"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25096",
+    "date": "2025-08-21",
+    "red": [
+      "07",
+      "09",
+      "11",
+      "12",
+      "16",
+      "29"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25097",
+    "date": "2025-08-24",
+    "red": [
+      "03",
+      "05",
+      "16",
+      "23",
+      "26",
+      "31"
+    ],
+    "blue": "14",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25098",
+    "date": "2025-08-26",
+    "red": [
+      "05",
+      "08",
+      "13",
+      "17",
+      "18",
+      "29"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25099",
+    "date": "2025-08-28",
+    "red": [
+      "09",
+      "11",
+      "15",
+      "17",
+      "22",
+      "26"
+    ],
+    "blue": "14",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25100",
+    "date": "2025-08-31",
+    "red": [
+      "12",
+      "16",
+      "17",
+      "25",
+      "30",
+      "31"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25101",
+    "date": "2025-09-02",
+    "red": [
+      "05",
+      "08",
+      "09",
+      "10",
+      "16",
+      "21"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25102",
+    "date": "2025-09-04",
+    "red": [
+      "04",
+      "09",
+      "16",
+      "17",
+      "18",
+      "31"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25103",
+    "date": "2025-09-07",
+    "red": [
+      "13",
+      "16",
+      "21",
+      "25",
+      "28",
+      "31"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25104",
+    "date": "2025-09-09",
+    "red": [
+      "02",
+      "05",
+      "15",
+      "16",
+      "24",
+      "32"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25105",
+    "date": "2025-09-11",
+    "red": [
+      "04",
+      "07",
+      "18",
+      "24",
+      "26",
+      "28"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25106",
+    "date": "2025-09-14",
+    "red": [
+      "04",
+      "05",
+      "17",
+      "22",
+      "26",
+      "30"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25107",
+    "date": "2025-09-16",
+    "red": [
+      "02",
+      "03",
+      "10",
+      "15",
+      "25",
+      "33"
+    ],
+    "blue": "13",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25108",
+    "date": "2025-09-18",
+    "red": [
+      "01",
+      "09",
+      "14",
+      "17",
+      "22",
+      "33"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25109",
+    "date": "2025-09-21",
+    "red": [
+      "05",
+      "06",
+      "09",
+      "17",
+      "18",
+      "31"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25110",
+    "date": "2025-09-23",
+    "red": [
+      "01",
+      "05",
+      "11",
+      "14",
+      "16",
+      "19"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25111",
+    "date": "2025-09-25",
+    "red": [
+      "09",
+      "14",
+      "18",
+      "28",
+      "31",
+      "33"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25112",
+    "date": "2025-09-28",
+    "red": [
+      "03",
+      "09",
+      "11",
+      "13",
+      "20",
+      "32"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25113",
+    "date": "2025-09-30",
+    "red": [
+      "08",
+      "10",
+      "13",
+      "15",
+      "24",
+      "31"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25114",
+    "date": "2025-10-05",
+    "red": [
+      "01",
+      "20",
+      "21",
+      "25",
+      "26",
+      "27"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25115",
+    "date": "2025-10-07",
+    "red": [
+      "02",
+      "03",
+      "08",
+      "19",
+      "24",
+      "30"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25116",
+    "date": "2025-10-09",
+    "red": [
+      "02",
+      "04",
+      "08",
+      "24",
+      "28",
+      "31"
+    ],
+    "blue": "09",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25117",
+    "date": "2025-10-12",
+    "red": [
+      "06",
+      "08",
+      "17",
+      "20",
+      "25",
+      "33"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25118",
+    "date": "2025-10-14",
+    "red": [
+      "01",
+      "10",
+      "11",
+      "16",
+      "24",
+      "26"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25119",
+    "date": "2025-10-16",
+    "red": [
+      "06",
+      "09",
+      "23",
+      "26",
+      "28",
+      "32"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25120",
+    "date": "2025-10-19",
+    "red": [
+      "01",
+      "02",
+      "04",
+      "07",
+      "13",
+      "32"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25121",
+    "date": "2025-10-21",
+    "red": [
+      "06",
+      "08",
+      "10",
+      "25",
+      "29",
+      "30"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25122",
+    "date": "2025-10-23",
+    "red": [
+      "16",
+      "18",
+      "19",
+      "20",
+      "25",
+      "31"
+    ],
+    "blue": "13",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25123",
+    "date": "2025-10-26",
+    "red": [
+      "07",
+      "09",
+      "23",
+      "24",
+      "25",
+      "26"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25124",
+    "date": "2025-10-28",
+    "red": [
+      "01",
+      "02",
+      "18",
+      "19",
+      "21",
+      "33"
+    ],
+    "blue": "13",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25125",
+    "date": "2025-10-30",
+    "red": [
+      "03",
+      "09",
+      "12",
+      "13",
+      "26",
+      "32"
+    ],
+    "blue": "09",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25126",
+    "date": "2025-11-02",
+    "red": [
+      "02",
+      "12",
+      "13",
+      "16",
+      "19",
+      "25"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25127",
+    "date": "2025-11-04",
+    "red": [
+      "03",
+      "09",
+      "15",
+      "17",
+      "19",
+      "28"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25128",
+    "date": "2025-11-06",
+    "red": [
+      "02",
+      "10",
+      "18",
+      "19",
+      "24",
+      "27"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25129",
+    "date": "2025-11-09",
+    "red": [
+      "03",
+      "04",
+      "07",
+      "13",
+      "20",
+      "30"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25130",
+    "date": "2025-11-11",
+    "red": [
+      "01",
+      "05",
+      "08",
+      "14",
+      "19",
+      "23"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.146Z"
+  },
+  {
+    "period": "25131",
+    "date": "2025-11-13",
+    "red": [
+      "03",
+      "13",
+      "14",
+      "18",
+      "24",
+      "31"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25132",
+    "date": "2025-11-16",
+    "red": [
+      "04",
+      "08",
+      "10",
+      "21",
+      "23",
+      "32"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25133",
+    "date": "2025-11-18",
+    "red": [
+      "05",
+      "14",
+      "17",
+      "19",
+      "20",
+      "33"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25134",
+    "date": "2025-11-20",
+    "red": [
+      "03",
+      "05",
+      "09",
+      "13",
+      "26",
+      "29"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25135",
+    "date": "2025-11-23",
+    "red": [
+      "01",
+      "02",
+      "05",
+      "09",
+      "25",
+      "32"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25136",
+    "date": "2025-11-25",
+    "red": [
+      "08",
+      "10",
+      "14",
+      "23",
+      "28",
+      "32"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25137",
+    "date": "2025-11-27",
+    "red": [
+      "02",
+      "08",
+      "11",
+      "23",
+      "27",
+      "29"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25138",
+    "date": "2025-11-30",
+    "red": [
+      "10",
+      "13",
+      "14",
+      "23",
+      "24",
+      "27"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25139",
+    "date": "2025-12-02",
+    "red": [
+      "02",
+      "05",
+      "17",
+      "22",
+      "30",
+      "33"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25140",
+    "date": "2025-12-04",
+    "red": [
+      "01",
+      "03",
+      "04",
+      "12",
+      "18",
+      "24"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25141",
+    "date": "2025-12-07",
+    "red": [
+      "02",
+      "04",
+      "05",
+      "10",
+      "12",
+      "13"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25142",
+    "date": "2025-12-09",
+    "red": [
+      "02",
+      "13",
+      "15",
+      "23",
+      "27",
+      "31"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25143",
+    "date": "2025-12-11",
+    "red": [
+      "02",
+      "09",
+      "12",
+      "13",
+      "15",
+      "24"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25144",
+    "date": "2025-12-14",
+    "red": [
+      "01",
+      "08",
+      "15",
+      "20",
+      "26",
+      "33"
+    ],
+    "blue": "13",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25145",
+    "date": "2025-12-16",
+    "red": [
+      "11",
+      "12",
+      "15",
+      "18",
+      "25",
+      "32"
+    ],
+    "blue": "14",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25146",
+    "date": "2025-12-18",
+    "red": [
+      "05",
+      "07",
+      "12",
+      "24",
+      "26",
+      "28"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25147",
+    "date": "2025-12-21",
+    "red": [
+      "01",
+      "03",
+      "05",
+      "08",
+      "22",
+      "33"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25148",
+    "date": "2025-12-23",
+    "red": [
+      "03",
+      "04",
+      "09",
+      "10",
+      "15",
+      "22"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25149",
+    "date": "2025-12-25",
+    "red": [
+      "01",
+      "02",
+      "04",
+      "06",
+      "22",
+      "30"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25150",
+    "date": "2025-12-28",
+    "red": [
+      "06",
+      "13",
+      "17",
+      "19",
+      "24",
+      "31"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "25151",
+    "date": "2025-12-30",
+    "red": [
+      "08",
+      "09",
+      "14",
+      "22",
+      "28",
+      "30"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26001",
+    "date": "2026-01-01",
+    "red": [
+      "02",
+      "06",
+      "11",
+      "12",
+      "13",
+      "33"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26002",
+    "date": "2026-01-04",
+    "red": [
+      "01",
+      "05",
+      "07",
+      "18",
+      "30",
+      "32"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26003",
+    "date": "2026-01-06",
+    "red": [
+      "05",
+      "06",
+      "09",
+      "21",
+      "28",
+      "30"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26004",
+    "date": "2026-01-08",
+    "red": [
+      "03",
+      "07",
+      "08",
+      "09",
+      "18",
+      "32"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26005",
+    "date": "2026-01-11",
+    "red": [
+      "01",
+      "20",
+      "22",
+      "27",
+      "30",
+      "33"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26006",
+    "date": "2026-01-13",
+    "red": [
+      "02",
+      "06",
+      "22",
+      "23",
+      "24",
+      "28"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26007",
+    "date": "2026-01-15",
+    "red": [
+      "09",
+      "13",
+      "19",
+      "27",
+      "29",
+      "30"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26008",
+    "date": "2026-01-18",
+    "red": [
+      "06",
+      "09",
+      "16",
+      "27",
+      "31",
+      "33"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26009",
+    "date": "2026-01-20",
+    "red": [
+      "03",
+      "06",
+      "13",
+      "19",
+      "23",
+      "25"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26010",
+    "date": "2026-01-22",
+    "red": [
+      "04",
+      "09",
+      "10",
+      "15",
+      "19",
+      "26"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26011",
+    "date": "2026-01-25",
+    "red": [
+      "02",
+      "03",
+      "04",
+      "20",
+      "31",
+      "32"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26012",
+    "date": "2026-01-27",
+    "red": [
+      "03",
+      "05",
+      "07",
+      "16",
+      "20",
+      "24"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26013",
+    "date": "2026-01-29",
+    "red": [
+      "04",
+      "09",
+      "12",
+      "13",
+      "16",
+      "20"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26014",
+    "date": "2026-02-01",
+    "red": [
+      "07",
+      "13",
+      "19",
+      "22",
+      "26",
+      "32"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26015",
+    "date": "2026-02-03",
+    "red": [
+      "07",
+      "10",
+      "13",
+      "22",
+      "27",
+      "31"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26016",
+    "date": "2026-02-05",
+    "red": [
+      "04",
+      "05",
+      "09",
+      "10",
+      "27",
+      "30"
+    ],
+    "blue": "13",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26017",
+    "date": "2026-02-08",
+    "red": [
+      "01",
+      "03",
+      "05",
+      "18",
+      "29",
+      "32"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26018",
+    "date": "2026-02-10",
+    "red": [
+      "11",
+      "15",
+      "17",
+      "22",
+      "25",
+      "30"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26019",
+    "date": "2026-02-12",
+    "red": [
+      "07",
+      "08",
+      "16",
+      "17",
+      "18",
+      "30"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26020",
+    "date": "2026-02-24",
+    "red": [
+      "01",
+      "13",
+      "14",
+      "21",
+      "24",
+      "30"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26021",
+    "date": "2026-02-26",
+    "red": [
+      "03",
+      "13",
+      "25",
+      "26",
+      "30",
+      "31"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26022",
+    "date": "2026-03-01",
+    "red": [
+      "15",
+      "18",
+      "23",
+      "25",
+      "28",
+      "32"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26023",
+    "date": "2026-03-03",
+    "red": [
+      "01",
+      "03",
+      "08",
+      "10",
+      "23",
+      "29"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26024",
+    "date": "2026-03-05",
+    "red": [
+      "01",
+      "02",
+      "13",
+      "21",
+      "23",
+      "29"
+    ],
+    "blue": "14",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26025",
+    "date": "2026-03-08",
+    "red": [
+      "02",
+      "03",
+      "15",
+      "20",
+      "23",
+      "24"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26026",
+    "date": "2026-03-10",
+    "red": [
+      "02",
+      "09",
+      "16",
+      "22",
+      "25",
+      "29"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26027",
+    "date": "2026-03-12",
+    "red": [
+      "02",
+      "13",
+      "17",
+      "18",
+      "25",
+      "26"
+    ],
+    "blue": "13",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26028",
+    "date": "2026-03-15",
+    "red": [
+      "02",
+      "06",
+      "09",
+      "17",
+      "25",
+      "28"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26029",
+    "date": "2026-03-17",
+    "red": [
+      "06",
+      "19",
+      "22",
+      "23",
+      "28",
+      "31"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26030",
+    "date": "2026-03-19",
+    "red": [
+      "10",
+      "11",
+      "14",
+      "19",
+      "22",
+      "24"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26031",
+    "date": "2026-03-22",
+    "red": [
+      "03",
+      "10",
+      "12",
+      "13",
+      "18",
+      "33"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26032",
+    "date": "2026-03-24",
+    "red": [
+      "01",
+      "03",
+      "11",
+      "18",
+      "31",
+      "33"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26033",
+    "date": "2026-03-26",
+    "red": [
+      "03",
+      "06",
+      "13",
+      "21",
+      "28",
+      "29"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26034",
+    "date": "2026-03-29",
+    "red": [
+      "01",
+      "03",
+      "07",
+      "13",
+      "22",
+      "23"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26035",
+    "date": "2026-03-31",
+    "red": [
+      "02",
+      "06",
+      "12",
+      "24",
+      "25",
+      "32"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26036",
+    "date": "2026-04-02",
+    "red": [
+      "06",
+      "10",
+      "12",
+      "15",
+      "22",
+      "28"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26037",
+    "date": "2026-04-05",
+    "red": [
+      "11",
+      "22",
+      "27",
+      "29",
+      "31",
+      "33"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26038",
+    "date": "2026-04-07",
+    "red": [
+      "01",
+      "02",
+      "13",
+      "23",
+      "25",
+      "27"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26039",
+    "date": "2026-04-09",
+    "red": [
+      "08",
+      "17",
+      "18",
+      "21",
+      "25",
+      "30"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26040",
+    "date": "2026-04-12",
+    "red": [
+      "03",
+      "04",
+      "14",
+      "22",
+      "23",
+      "33"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26041",
+    "date": "2026-04-14",
+    "red": [
+      "02",
+      "08",
+      "10",
+      "17",
+      "19",
+      "24"
+    ],
+    "blue": "13",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26042",
+    "date": "2026-04-16",
+    "red": [
+      "02",
+      "07",
+      "12",
+      "19",
+      "24",
+      "31"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26043",
+    "date": "2026-04-19",
+    "red": [
+      "06",
+      "09",
+      "14",
+      "16",
+      "25",
+      "32"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26044",
+    "date": "2026-04-21",
+    "red": [
+      "02",
+      "14",
+      "17",
+      "18",
+      "22",
+      "30"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26045",
+    "date": "2026-04-23",
+    "red": [
+      "04",
+      "11",
+      "15",
+      "17",
+      "24",
+      "30"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26046",
+    "date": "2026-04-26",
+    "red": [
+      "02",
+      "09",
+      "10",
+      "24",
+      "31",
+      "33"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26047",
+    "date": "2026-04-28",
+    "red": [
+      "07",
+      "16",
+      "21",
+      "24",
+      "27",
+      "30"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26048",
+    "date": "2026-04-30",
+    "red": [
+      "09",
+      "15",
+      "18",
+      "24",
+      "28",
+      "33"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26049",
+    "date": "2026-05-03",
+    "red": [
+      "03",
+      "04",
+      "14",
+      "15",
+      "18",
+      "20"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26050",
+    "date": "2026-05-05",
+    "red": [
+      "06",
+      "09",
+      "25",
+      "27",
+      "28",
+      "30"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26051",
+    "date": "2026-05-07",
+    "red": [
+      "09",
+      "14",
+      "15",
+      "16",
+      "29",
+      "30"
+    ],
+    "blue": "10",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26052",
+    "date": "2026-05-10",
+    "red": [
+      "01",
+      "03",
+      "11",
+      "22",
+      "26",
+      "31"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26053",
+    "date": "2026-05-12",
+    "red": [
+      "01",
+      "02",
+      "03",
+      "08",
+      "13",
+      "14"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26054",
+    "date": "2026-05-14",
+    "red": [
+      "13",
+      "20",
+      "25",
+      "29",
+      "30",
+      "33"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26055",
+    "date": "2026-05-17",
+    "red": [
+      "04",
+      "11",
+      "24",
+      "25",
+      "32",
+      "33"
+    ],
+    "blue": "13",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26056",
+    "date": "2026-05-19",
+    "red": [
+      "10",
+      "19",
+      "21",
+      "22",
+      "31",
+      "33"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26057",
+    "date": "2026-05-21",
+    "red": [
+      "01",
+      "10",
+      "22",
+      "24",
+      "28",
+      "30"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26058",
+    "date": "2026-05-24",
+    "red": [
+      "01",
+      "04",
+      "07",
+      "21",
+      "29",
+      "30"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26059",
+    "date": "2026-05-26",
+    "red": [
+      "08",
+      "16",
+      "26",
+      "28",
+      "29",
+      "30"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26060",
+    "date": "2026-05-28",
+    "red": [
+      "07",
+      "09",
+      "10",
+      "16",
+      "22",
+      "27"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26061",
+    "date": "2026-05-31",
+    "red": [
+      "01",
+      "04",
+      "05",
+      "15",
+      "23",
+      "28"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26062",
+    "date": "2026-06-02",
+    "red": [
+      "02",
+      "04",
+      "07",
+      "14",
+      "28",
+      "29"
+    ],
+    "blue": "09",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26063",
+    "date": "2026-06-04",
+    "red": [
+      "02",
+      "08",
+      "25",
+      "28",
+      "30",
+      "31"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26064",
+    "date": "2026-06-07",
+    "red": [
+      "01",
+      "09",
+      "15",
+      "18",
+      "29",
+      "33"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26065",
+    "date": "2026-06-09",
+    "red": [
+      "07",
+      "08",
+      "16",
+      "24",
+      "30",
+      "32"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26066",
+    "date": "2026-06-11",
+    "red": [
+      "05",
+      "11",
+      "21",
+      "23",
+      "24",
+      "29"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26067",
+    "date": "2026-06-14",
+    "red": [
+      "04",
+      "19",
+      "27",
+      "29",
+      "30",
+      "32"
+    ],
+    "blue": "13",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26068",
+    "date": "2026-06-16",
+    "red": [
+      "03",
+      "05",
+      "16",
+      "18",
+      "29",
+      "32"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26069",
+    "date": "2026-06-18",
+    "red": [
+      "12",
+      "14",
+      "16",
+      "17",
+      "18",
+      "32"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26070",
+    "date": "2026-06-21",
+    "red": [
+      "03",
+      "06",
+      "08",
+      "14",
+      "26",
+      "27"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26071",
+    "date": "2026-06-23",
+    "red": [
+      "03",
+      "08",
+      "19",
+      "25",
+      "31",
+      "33"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26072",
+    "date": "2026-06-25",
+    "red": [
+      "07",
+      "08",
+      "12",
+      "15",
+      "17",
+      "21"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26073",
+    "date": "2026-06-28",
+    "red": [
+      "09",
+      "10",
+      "13",
+      "16",
+      "19",
+      "21"
+    ],
+    "blue": "08",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26074",
+    "date": "2026-06-30",
+    "red": [
+      "02",
+      "23",
+      "24",
+      "26",
+      "28",
+      "32"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26075",
+    "date": "2026-07-02",
+    "red": [
+      "08",
+      "12",
+      "18",
+      "21",
+      "24",
+      "30"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26076",
+    "date": "2026-07-05",
+    "red": [
+      "01",
+      "03",
+      "19",
+      "20",
+      "24",
+      "25"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26077",
+    "date": "2026-07-07",
+    "red": [
+      "01",
+      "04",
+      "05",
+      "14",
+      "18",
+      "25"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26078",
+    "date": "2026-07-09",
+    "red": [
+      "07",
+      "11",
+      "14",
+      "16",
+      "27",
+      "28"
+    ],
+    "blue": "06",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26079",
+    "date": "2026-07-12",
+    "red": [
+      "01",
+      "11",
+      "17",
+      "22",
+      "24",
+      "29"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26080",
+    "date": "2026-07-14",
+    "red": [
+      "04",
+      "05",
+      "11",
+      "19",
+      "27",
+      "32"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26081",
+    "date": "2026-07-16",
+    "red": [
+      "06",
+      "10",
+      "12",
+      "15",
+      "24",
+      "27"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26082",
+    "date": "2026-07-19",
+    "red": [
+      "05",
+      "07",
+      "10",
+      "14",
+      "21",
+      "28"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26083",
+    "date": "2026-07-21",
+    "red": [
+      "07",
+      "14",
+      "15",
+      "23",
+      "28",
+      "33"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26084",
+    "date": "2026-07-23",
+    "red": [
+      "01",
+      "05",
+      "06",
+      "10",
+      "12",
+      "16"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26085",
+    "date": "2026-07-26",
+    "red": [
+      "06",
+      "09",
+      "13",
+      "17",
+      "24",
+      "28"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26086",
+    "date": "2026-07-28",
+    "red": [
+      "02",
+      "05",
+      "14",
+      "25",
+      "30",
+      "32"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26087",
+    "date": "2026-07-30",
+    "red": [
+      "04",
+      "06",
+      "10",
+      "18",
+      "23",
+      "31"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26088",
+    "date": "2026-08-02",
+    "red": [
+      "06",
+      "07",
+      "11",
+      "18",
+      "22",
+      "33"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26089",
+    "date": "2026-08-04",
+    "red": [
+      "05",
+      "18",
+      "23",
+      "24",
+      "27",
+      "33"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26090",
+    "date": "2026-08-06",
+    "red": [
+      "02",
+      "04",
+      "15",
+      "23",
+      "25",
+      "27"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26091",
+    "date": "2026-08-09",
+    "red": [
+      "02",
+      "13",
+      "14",
+      "16",
+      "20",
+      "24"
+    ],
+    "blue": "05",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26092",
+    "date": "2026-08-11",
+    "red": [
+      "09",
+      "11",
+      "12",
+      "25",
+      "30",
+      "33"
+    ],
+    "blue": "11",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26093",
+    "date": "2026-08-13",
+    "red": [
+      "05",
+      "08",
+      "15",
+      "20",
+      "21",
+      "24"
+    ],
+    "blue": "09",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26094",
+    "date": "2026-08-16",
+    "red": [
+      "06",
+      "13",
+      "15",
+      "17",
+      "24",
+      "25"
+    ],
+    "blue": "01",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26095",
+    "date": "2026-08-18",
+    "red": [
+      "04",
+      "06",
+      "14",
+      "21",
+      "22",
+      "33"
+    ],
+    "blue": "16",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26096",
+    "date": "2026-08-20",
+    "red": [
+      "01",
+      "04",
+      "16",
+      "22",
+      "26",
+      "31"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26097",
+    "date": "2026-08-23",
+    "red": [
+      "05",
+      "16",
+      "24",
+      "26",
+      "29",
+      "30"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26098",
+    "date": "2026-08-25",
+    "red": [
+      "08",
+      "16",
+      "18",
+      "22",
+      "25",
+      "26"
+    ],
+    "blue": "07",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26099",
+    "date": "2026-08-27",
+    "red": [
+      "01",
+      "12",
+      "14",
+      "18",
+      "30",
+      "31"
+    ],
+    "blue": "02",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26100",
+    "date": "2026-08-30",
+    "red": [
+      "03",
+      "04",
+      "09",
+      "13",
+      "22",
+      "31"
+    ],
+    "blue": "04",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26101",
+    "date": "2026-09-01",
+    "red": [
+      "05",
+      "06",
+      "08",
+      "09",
+      "24",
+      "25"
+    ],
+    "blue": "12",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26102",
+    "date": "2026-09-03",
+    "red": [
+      "03",
+      "04",
+      "10",
+      "13",
+      "16",
+      "25"
+    ],
+    "blue": "09",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26103",
+    "date": "2026-09-06",
+    "red": [
+      "04",
+      "11",
+      "20",
+      "27",
+      "28",
+      "30"
+    ],
+    "blue": "15",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  },
+  {
+    "period": "26104",
+    "date": "2026-09-08",
+    "red": [
+      "11",
+      "12",
+      "13",
+      "19",
+      "20",
+      "31"
+    ],
+    "blue": "03",
+    "source": "gudaoxuri/lottery_history",
+    "fetched_at": "2026-09-12T08:50:23.145Z"
+  }
+]

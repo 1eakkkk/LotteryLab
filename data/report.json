@@ -1,0 +1,4912 @@
+{
+  "generated_at": "2026-09-12T08:50:25.401Z",
+  "dataset_snapshot": "2026-09-12",
+  "data_source": "gudaoxuri/lottery_history (GitHub)",
+  "data_range": {
+    "from": "25005",
+    "to": "26104",
+    "count": 251
+  },
+  "min_train_size": 100,
+  "theoretical_expectation": 1.0909090909090908,
+  "blue_theoretical": 0.0625,
+  "monte_carlo_runs": 5000,
+  "split_boundaries": {
+    "validation_start_period": "26045",
+    "blind_test_start_period": "26075",
+    "note": "起点期号写死，不随数据变长重新计算；未来新增数据只会让盲测集变长，不会移动起点。",
+    "dev_period_range": {
+      "from": "25105",
+      "to": "26074"
+    },
+    "blind_period_range": {
+      "from": "26075",
+      "to": "26104"
+    },
+    "blind_periods_count": 30
+  },
+  "leaderboard": [
+    {
+      "strategy": "随机基准",
+      "strategy_key": "random",
+      "strategy_version": "v1.0",
+      "dataset_snapshot": "2026-09-12",
+      "periods_tested": 151,
+      "mean_hit": 1.0596,
+      "theoretical_expectation": 1.0909,
+      "ci_95": [
+        0.933,
+        1.1862
+      ],
+      "blue_hit_rate": 0.0397,
+      "blue_theoretical": 0.0625,
+      "distribution": [
+        37,
+        74,
+        34,
+        6,
+        0,
+        0,
+        0
+      ],
+      "extreme_events": {
+        "ge4": 0,
+        "ge5": 0,
+        "all6": 0,
+        "prizeCount": 6
+      },
+      "vs_random_percentile": 34.1,
+      "paired_diff_vs_random": 0,
+      "is_significant": false,
+      "recent": {
+        "last10": 1,
+        "last30": 0.9667,
+        "last100": 1.09
+      },
+      "segments": {
+        "dev": {
+          "periods_tested": 121,
+          "period_range": {
+            "from": "25105",
+            "to": "26074"
+          },
+          "mean_hit": 1.0826,
+          "ci_95": [
+            0.9361,
+            1.2292
+          ],
+          "blue_hit_rate": 0.0331,
+          "vs_random_percentile": 47.7,
+          "paired_diff_vs_random": 0,
+          "is_significant": false
+        },
+        "blind": {
+          "periods_tested": 30,
+          "period_range": {
+            "from": "26075",
+            "to": "26104"
+          },
+          "mean_hit": 0.9667,
+          "ci_95": [
+            0.7274,
+            1.2059
+          ],
+          "blue_hit_rate": 0.0667,
+          "vs_random_percentile": 25.1,
+          "paired_diff_vs_random": 0,
+          "is_significant": false
+        }
+      }
+    },
+    {
+      "strategy": "热号",
+      "strategy_key": "hot",
+      "strategy_version": "v1.0 (窗口=50期)",
+      "dataset_snapshot": "2026-09-12",
+      "periods_tested": 151,
+      "mean_hit": 1.1987,
+      "theoretical_expectation": 1.0909,
+      "ci_95": [
+        1.0621,
+        1.3353
+      ],
+      "blue_hit_rate": 0.0464,
+      "blue_theoretical": 0.0625,
+      "distribution": [
+        33,
+        64,
+        46,
+        7,
+        1,
+        0,
+        0
+      ],
+      "extreme_events": {
+        "ge4": 1,
+        "ge5": 0,
+        "all6": 0,
+        "prizeCount": 8
+      },
+      "vs_random_percentile": 93.9,
+      "paired_diff_vs_random": 0.1391,
+      "is_significant": false,
+      "recent": {
+        "last10": 1.3,
+        "last30": 1.2667,
+        "last100": 1.24
+      },
+      "segments": {
+        "dev": {
+          "periods_tested": 121,
+          "period_range": {
+            "from": "25105",
+            "to": "26074"
+          },
+          "mean_hit": 1.1818,
+          "ci_95": [
+            1.0258,
+            1.3378
+          ],
+          "blue_hit_rate": 0.0413,
+          "vs_random_percentile": 89.4,
+          "paired_diff_vs_random": 0.0992,
+          "is_significant": false
+        },
+        "blind": {
+          "periods_tested": 30,
+          "period_range": {
+            "from": "26075",
+            "to": "26104"
+          },
+          "mean_hit": 1.2667,
+          "ci_95": [
+            0.9858,
+            1.5475
+          ],
+          "blue_hit_rate": 0.0667,
+          "vs_random_percentile": 88.1,
+          "paired_diff_vs_random": 0.3,
+          "is_significant": false
+        }
+      }
+    },
+    {
+      "strategy": "冷号",
+      "strategy_key": "cold",
+      "strategy_version": "v1.0 (遗漏优先)",
+      "dataset_snapshot": "2026-09-12",
+      "periods_tested": 151,
+      "mean_hit": 0.9735,
+      "theoretical_expectation": 1.0909,
+      "ci_95": [
+        0.8408,
+        1.1063
+      ],
+      "blue_hit_rate": 0.053,
+      "blue_theoretical": 0.0625,
+      "distribution": [
+        48,
+        64,
+        35,
+        3,
+        1,
+        0,
+        0
+      ],
+      "extreme_events": {
+        "ge4": 1,
+        "ge5": 0,
+        "all6": 0,
+        "prizeCount": 9
+      },
+      "vs_random_percentile": 4.6,
+      "paired_diff_vs_random": -0.0861,
+      "is_significant": false,
+      "recent": {
+        "last10": 0.8,
+        "last30": 1.1,
+        "last100": 1
+      },
+      "segments": {
+        "dev": {
+          "periods_tested": 121,
+          "period_range": {
+            "from": "25105",
+            "to": "26074"
+          },
+          "mean_hit": 0.9421,
+          "ci_95": [
+            0.7979,
+            1.0864
+          ],
+          "blue_hit_rate": 0.0661,
+          "vs_random_percentile": 3.1,
+          "paired_diff_vs_random": -0.1405,
+          "is_significant": false
+        },
+        "blind": {
+          "periods_tested": 30,
+          "period_range": {
+            "from": "26075",
+            "to": "26104"
+          },
+          "mean_hit": 1.1,
+          "ci_95": [
+            0.7697,
+            1.4303
+          ],
+          "blue_hit_rate": 0,
+          "vs_random_percentile": 55.7,
+          "paired_diff_vs_random": 0.1333,
+          "is_significant": false
+        }
+      }
+    }
+  ],
+  "convergence": {
+    "random": [
+      {
+        "period": "25105",
+        "date": "2025-09-11",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25106",
+        "date": "2025-09-14",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25107",
+        "date": "2025-09-16",
+        "cumulativeMean": 1.3333333333333333
+      },
+      {
+        "period": "25108",
+        "date": "2025-09-18",
+        "cumulativeMean": 1.25
+      },
+      {
+        "period": "25109",
+        "date": "2025-09-21",
+        "cumulativeMean": 1.2
+      },
+      {
+        "period": "25110",
+        "date": "2025-09-23",
+        "cumulativeMean": 1.1666666666666667
+      },
+      {
+        "period": "25111",
+        "date": "2025-09-25",
+        "cumulativeMean": 1.1428571428571428
+      },
+      {
+        "period": "25112",
+        "date": "2025-09-28",
+        "cumulativeMean": 1.125
+      },
+      {
+        "period": "25113",
+        "date": "2025-09-30",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25114",
+        "date": "2025-10-05",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25115",
+        "date": "2025-10-07",
+        "cumulativeMean": 1.0909090909090908
+      },
+      {
+        "period": "25116",
+        "date": "2025-10-09",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25117",
+        "date": "2025-10-12",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25118",
+        "date": "2025-10-14",
+        "cumulativeMean": 1.0714285714285714
+      },
+      {
+        "period": "25119",
+        "date": "2025-10-16",
+        "cumulativeMean": 1.0666666666666667
+      },
+      {
+        "period": "25120",
+        "date": "2025-10-19",
+        "cumulativeMean": 1.0625
+      },
+      {
+        "period": "25121",
+        "date": "2025-10-21",
+        "cumulativeMean": 1.0588235294117647
+      },
+      {
+        "period": "25122",
+        "date": "2025-10-23",
+        "cumulativeMean": 1.0555555555555556
+      },
+      {
+        "period": "25123",
+        "date": "2025-10-26",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25124",
+        "date": "2025-10-28",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25125",
+        "date": "2025-10-30",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25126",
+        "date": "2025-11-02",
+        "cumulativeMean": 1.0454545454545454
+      },
+      {
+        "period": "25127",
+        "date": "2025-11-04",
+        "cumulativeMean": 1.0434782608695652
+      },
+      {
+        "period": "25128",
+        "date": "2025-11-06",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25129",
+        "date": "2025-11-09",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25130",
+        "date": "2025-11-11",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25131",
+        "date": "2025-11-13",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25132",
+        "date": "2025-11-16",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25133",
+        "date": "2025-11-18",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25134",
+        "date": "2025-11-20",
+        "cumulativeMean": 0.9666666666666667
+      },
+      {
+        "period": "25135",
+        "date": "2025-11-23",
+        "cumulativeMean": 1.032258064516129
+      },
+      {
+        "period": "25136",
+        "date": "2025-11-25",
+        "cumulativeMean": 1.0625
+      },
+      {
+        "period": "25137",
+        "date": "2025-11-27",
+        "cumulativeMean": 1.0303030303030303
+      },
+      {
+        "period": "25138",
+        "date": "2025-11-30",
+        "cumulativeMean": 1.0294117647058822
+      },
+      {
+        "period": "25139",
+        "date": "2025-12-02",
+        "cumulativeMean": 1.0571428571428572
+      },
+      {
+        "period": "25140",
+        "date": "2025-12-04",
+        "cumulativeMean": 1.0277777777777777
+      },
+      {
+        "period": "25141",
+        "date": "2025-12-07",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25142",
+        "date": "2025-12-09",
+        "cumulativeMean": 0.9736842105263158
+      },
+      {
+        "period": "25143",
+        "date": "2025-12-11",
+        "cumulativeMean": 0.9743589743589743
+      },
+      {
+        "period": "25144",
+        "date": "2025-12-14",
+        "cumulativeMean": 0.95
+      },
+      {
+        "period": "25145",
+        "date": "2025-12-16",
+        "cumulativeMean": 0.926829268292683
+      },
+      {
+        "period": "25146",
+        "date": "2025-12-18",
+        "cumulativeMean": 0.9285714285714286
+      },
+      {
+        "period": "25147",
+        "date": "2025-12-21",
+        "cumulativeMean": 0.9302325581395349
+      },
+      {
+        "period": "25148",
+        "date": "2025-12-23",
+        "cumulativeMean": 0.9545454545454546
+      },
+      {
+        "period": "25149",
+        "date": "2025-12-25",
+        "cumulativeMean": 0.9333333333333333
+      },
+      {
+        "period": "25150",
+        "date": "2025-12-28",
+        "cumulativeMean": 0.9565217391304348
+      },
+      {
+        "period": "25151",
+        "date": "2025-12-30",
+        "cumulativeMean": 0.9574468085106383
+      },
+      {
+        "period": "26001",
+        "date": "2026-01-01",
+        "cumulativeMean": 0.9791666666666666
+      },
+      {
+        "period": "26002",
+        "date": "2026-01-04",
+        "cumulativeMean": 0.9591836734693877
+      },
+      {
+        "period": "26003",
+        "date": "2026-01-06",
+        "cumulativeMean": 0.98
+      },
+      {
+        "period": "26004",
+        "date": "2026-01-08",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "26005",
+        "date": "2026-01-11",
+        "cumulativeMean": 1.0192307692307692
+      },
+      {
+        "period": "26006",
+        "date": "2026-01-13",
+        "cumulativeMean": 1.0566037735849056
+      },
+      {
+        "period": "26007",
+        "date": "2026-01-15",
+        "cumulativeMean": 1.0740740740740742
+      },
+      {
+        "period": "26008",
+        "date": "2026-01-18",
+        "cumulativeMean": 1.0727272727272728
+      },
+      {
+        "period": "26009",
+        "date": "2026-01-20",
+        "cumulativeMean": 1.0535714285714286
+      },
+      {
+        "period": "26010",
+        "date": "2026-01-22",
+        "cumulativeMean": 1.0526315789473684
+      },
+      {
+        "period": "26011",
+        "date": "2026-01-25",
+        "cumulativeMean": 1.0517241379310345
+      },
+      {
+        "period": "26012",
+        "date": "2026-01-27",
+        "cumulativeMean": 1.0508474576271187
+      },
+      {
+        "period": "26013",
+        "date": "2026-01-29",
+        "cumulativeMean": 1.0333333333333334
+      },
+      {
+        "period": "26014",
+        "date": "2026-02-01",
+        "cumulativeMean": 1.0491803278688525
+      },
+      {
+        "period": "26015",
+        "date": "2026-02-03",
+        "cumulativeMean": 1.032258064516129
+      },
+      {
+        "period": "26016",
+        "date": "2026-02-05",
+        "cumulativeMean": 1.0476190476190477
+      },
+      {
+        "period": "26017",
+        "date": "2026-02-08",
+        "cumulativeMean": 1.046875
+      },
+      {
+        "period": "26018",
+        "date": "2026-02-10",
+        "cumulativeMean": 1.0461538461538462
+      },
+      {
+        "period": "26019",
+        "date": "2026-02-12",
+        "cumulativeMean": 1.0303030303030303
+      },
+      {
+        "period": "26020",
+        "date": "2026-02-24",
+        "cumulativeMean": 1.0597014925373134
+      },
+      {
+        "period": "26021",
+        "date": "2026-02-26",
+        "cumulativeMean": 1.0588235294117647
+      },
+      {
+        "period": "26022",
+        "date": "2026-03-01",
+        "cumulativeMean": 1.0579710144927537
+      },
+      {
+        "period": "26023",
+        "date": "2026-03-03",
+        "cumulativeMean": 1.042857142857143
+      },
+      {
+        "period": "26024",
+        "date": "2026-03-05",
+        "cumulativeMean": 1.0422535211267605
+      },
+      {
+        "period": "26025",
+        "date": "2026-03-08",
+        "cumulativeMean": 1.0694444444444444
+      },
+      {
+        "period": "26026",
+        "date": "2026-03-10",
+        "cumulativeMean": 1.082191780821918
+      },
+      {
+        "period": "26027",
+        "date": "2026-03-12",
+        "cumulativeMean": 1.0675675675675675
+      },
+      {
+        "period": "26028",
+        "date": "2026-03-15",
+        "cumulativeMean": 1.0666666666666667
+      },
+      {
+        "period": "26029",
+        "date": "2026-03-17",
+        "cumulativeMean": 1.0526315789473684
+      },
+      {
+        "period": "26030",
+        "date": "2026-03-19",
+        "cumulativeMean": 1.0649350649350648
+      },
+      {
+        "period": "26031",
+        "date": "2026-03-22",
+        "cumulativeMean": 1.0769230769230769
+      },
+      {
+        "period": "26032",
+        "date": "2026-03-24",
+        "cumulativeMean": 1.0886075949367089
+      },
+      {
+        "period": "26033",
+        "date": "2026-03-26",
+        "cumulativeMean": 1.0875
+      },
+      {
+        "period": "26034",
+        "date": "2026-03-29",
+        "cumulativeMean": 1.0987654320987654
+      },
+      {
+        "period": "26035",
+        "date": "2026-03-31",
+        "cumulativeMean": 1.0975609756097562
+      },
+      {
+        "period": "26036",
+        "date": "2026-04-02",
+        "cumulativeMean": 1.0963855421686748
+      },
+      {
+        "period": "26037",
+        "date": "2026-04-05",
+        "cumulativeMean": 1.0833333333333333
+      },
+      {
+        "period": "26038",
+        "date": "2026-04-07",
+        "cumulativeMean": 1.0941176470588236
+      },
+      {
+        "period": "26039",
+        "date": "2026-04-09",
+        "cumulativeMean": 1.1162790697674418
+      },
+      {
+        "period": "26040",
+        "date": "2026-04-12",
+        "cumulativeMean": 1.1264367816091954
+      },
+      {
+        "period": "26041",
+        "date": "2026-04-14",
+        "cumulativeMean": 1.125
+      },
+      {
+        "period": "26042",
+        "date": "2026-04-16",
+        "cumulativeMean": 1.1235955056179776
+      },
+      {
+        "period": "26043",
+        "date": "2026-04-19",
+        "cumulativeMean": 1.1222222222222222
+      },
+      {
+        "period": "26044",
+        "date": "2026-04-21",
+        "cumulativeMean": 1.1318681318681318
+      },
+      {
+        "period": "26045",
+        "date": "2026-04-23",
+        "cumulativeMean": 1.1304347826086956
+      },
+      {
+        "period": "26046",
+        "date": "2026-04-26",
+        "cumulativeMean": 1.1290322580645162
+      },
+      {
+        "period": "26047",
+        "date": "2026-04-28",
+        "cumulativeMean": 1.1170212765957446
+      },
+      {
+        "period": "26048",
+        "date": "2026-04-30",
+        "cumulativeMean": 1.1157894736842104
+      },
+      {
+        "period": "26049",
+        "date": "2026-05-03",
+        "cumulativeMean": 1.1145833333333333
+      },
+      {
+        "period": "26050",
+        "date": "2026-05-05",
+        "cumulativeMean": 1.1134020618556701
+      },
+      {
+        "period": "26051",
+        "date": "2026-05-07",
+        "cumulativeMean": 1.1020408163265305
+      },
+      {
+        "period": "26052",
+        "date": "2026-05-10",
+        "cumulativeMean": 1.1111111111111112
+      },
+      {
+        "period": "26053",
+        "date": "2026-05-12",
+        "cumulativeMean": 1.1
+      },
+      {
+        "period": "26054",
+        "date": "2026-05-14",
+        "cumulativeMean": 1.099009900990099
+      },
+      {
+        "period": "26055",
+        "date": "2026-05-17",
+        "cumulativeMean": 1.088235294117647
+      },
+      {
+        "period": "26056",
+        "date": "2026-05-19",
+        "cumulativeMean": 1.087378640776699
+      },
+      {
+        "period": "26057",
+        "date": "2026-05-21",
+        "cumulativeMean": 1.0961538461538463
+      },
+      {
+        "period": "26058",
+        "date": "2026-05-24",
+        "cumulativeMean": 1.1047619047619048
+      },
+      {
+        "period": "26059",
+        "date": "2026-05-26",
+        "cumulativeMean": 1.1037735849056605
+      },
+      {
+        "period": "26060",
+        "date": "2026-05-28",
+        "cumulativeMean": 1.102803738317757
+      },
+      {
+        "period": "26061",
+        "date": "2026-05-31",
+        "cumulativeMean": 1.1018518518518519
+      },
+      {
+        "period": "26062",
+        "date": "2026-06-02",
+        "cumulativeMean": 1.110091743119266
+      },
+      {
+        "period": "26063",
+        "date": "2026-06-04",
+        "cumulativeMean": 1.1272727272727272
+      },
+      {
+        "period": "26064",
+        "date": "2026-06-07",
+        "cumulativeMean": 1.1261261261261262
+      },
+      {
+        "period": "26065",
+        "date": "2026-06-09",
+        "cumulativeMean": 1.1160714285714286
+      },
+      {
+        "period": "26066",
+        "date": "2026-06-11",
+        "cumulativeMean": 1.1061946902654867
+      },
+      {
+        "period": "26067",
+        "date": "2026-06-14",
+        "cumulativeMean": 1.105263157894737
+      },
+      {
+        "period": "26068",
+        "date": "2026-06-16",
+        "cumulativeMean": 1.0956521739130434
+      },
+      {
+        "period": "26069",
+        "date": "2026-06-18",
+        "cumulativeMean": 1.103448275862069
+      },
+      {
+        "period": "26070",
+        "date": "2026-06-21",
+        "cumulativeMean": 1.1025641025641026
+      },
+      {
+        "period": "26071",
+        "date": "2026-06-23",
+        "cumulativeMean": 1.1016949152542372
+      },
+      {
+        "period": "26072",
+        "date": "2026-06-25",
+        "cumulativeMean": 1.0924369747899159
+      },
+      {
+        "period": "26073",
+        "date": "2026-06-28",
+        "cumulativeMean": 1.0916666666666666
+      },
+      {
+        "period": "26074",
+        "date": "2026-06-30",
+        "cumulativeMean": 1.0826446280991735
+      },
+      {
+        "period": "26075",
+        "date": "2026-07-02",
+        "cumulativeMean": 1.0819672131147542
+      },
+      {
+        "period": "26076",
+        "date": "2026-07-05",
+        "cumulativeMean": 1.08130081300813
+      },
+      {
+        "period": "26077",
+        "date": "2026-07-07",
+        "cumulativeMean": 1.0725806451612903
+      },
+      {
+        "period": "26078",
+        "date": "2026-07-09",
+        "cumulativeMean": 1.064
+      },
+      {
+        "period": "26079",
+        "date": "2026-07-12",
+        "cumulativeMean": 1.0634920634920635
+      },
+      {
+        "period": "26080",
+        "date": "2026-07-14",
+        "cumulativeMean": 1.062992125984252
+      },
+      {
+        "period": "26081",
+        "date": "2026-07-16",
+        "cumulativeMean": 1.0625
+      },
+      {
+        "period": "26082",
+        "date": "2026-07-19",
+        "cumulativeMean": 1.054263565891473
+      },
+      {
+        "period": "26083",
+        "date": "2026-07-21",
+        "cumulativeMean": 1.0615384615384615
+      },
+      {
+        "period": "26084",
+        "date": "2026-07-23",
+        "cumulativeMean": 1.0610687022900764
+      },
+      {
+        "period": "26085",
+        "date": "2026-07-26",
+        "cumulativeMean": 1.053030303030303
+      },
+      {
+        "period": "26086",
+        "date": "2026-07-28",
+        "cumulativeMean": 1.0526315789473684
+      },
+      {
+        "period": "26087",
+        "date": "2026-07-30",
+        "cumulativeMean": 1.0597014925373134
+      },
+      {
+        "period": "26088",
+        "date": "2026-08-02",
+        "cumulativeMean": 1.0592592592592593
+      },
+      {
+        "period": "26089",
+        "date": "2026-08-04",
+        "cumulativeMean": 1.0661764705882353
+      },
+      {
+        "period": "26090",
+        "date": "2026-08-06",
+        "cumulativeMean": 1.0656934306569343
+      },
+      {
+        "period": "26091",
+        "date": "2026-08-09",
+        "cumulativeMean": 1.065217391304348
+      },
+      {
+        "period": "26092",
+        "date": "2026-08-11",
+        "cumulativeMean": 1.064748201438849
+      },
+      {
+        "period": "26093",
+        "date": "2026-08-13",
+        "cumulativeMean": 1.0642857142857143
+      },
+      {
+        "period": "26094",
+        "date": "2026-08-16",
+        "cumulativeMean": 1.0638297872340425
+      },
+      {
+        "period": "26095",
+        "date": "2026-08-18",
+        "cumulativeMean": 1.0633802816901408
+      },
+      {
+        "period": "26096",
+        "date": "2026-08-20",
+        "cumulativeMean": 1.062937062937063
+      },
+      {
+        "period": "26097",
+        "date": "2026-08-23",
+        "cumulativeMean": 1.0694444444444444
+      },
+      {
+        "period": "26098",
+        "date": "2026-08-25",
+        "cumulativeMean": 1.0689655172413792
+      },
+      {
+        "period": "26099",
+        "date": "2026-08-27",
+        "cumulativeMean": 1.0616438356164384
+      },
+      {
+        "period": "26100",
+        "date": "2026-08-30",
+        "cumulativeMean": 1.0680272108843538
+      },
+      {
+        "period": "26101",
+        "date": "2026-09-01",
+        "cumulativeMean": 1.0675675675675675
+      },
+      {
+        "period": "26102",
+        "date": "2026-09-03",
+        "cumulativeMean": 1.0604026845637584
+      },
+      {
+        "period": "26103",
+        "date": "2026-09-06",
+        "cumulativeMean": 1.0533333333333332
+      },
+      {
+        "period": "26104",
+        "date": "2026-09-08",
+        "cumulativeMean": 1.0596026490066226
+      }
+    ],
+    "hot": [
+      {
+        "period": "25105",
+        "date": "2025-09-11",
+        "cumulativeMean": 0
+      },
+      {
+        "period": "25106",
+        "date": "2025-09-14",
+        "cumulativeMean": 0.5
+      },
+      {
+        "period": "25107",
+        "date": "2025-09-16",
+        "cumulativeMean": 1.3333333333333333
+      },
+      {
+        "period": "25108",
+        "date": "2025-09-18",
+        "cumulativeMean": 1.5
+      },
+      {
+        "period": "25109",
+        "date": "2025-09-21",
+        "cumulativeMean": 1.6
+      },
+      {
+        "period": "25110",
+        "date": "2025-09-23",
+        "cumulativeMean": 1.5
+      },
+      {
+        "period": "25111",
+        "date": "2025-09-25",
+        "cumulativeMean": 1.4285714285714286
+      },
+      {
+        "period": "25112",
+        "date": "2025-09-28",
+        "cumulativeMean": 1.375
+      },
+      {
+        "period": "25113",
+        "date": "2025-09-30",
+        "cumulativeMean": 1.3333333333333333
+      },
+      {
+        "period": "25114",
+        "date": "2025-10-05",
+        "cumulativeMean": 1.2
+      },
+      {
+        "period": "25115",
+        "date": "2025-10-07",
+        "cumulativeMean": 1.0909090909090908
+      },
+      {
+        "period": "25116",
+        "date": "2025-10-09",
+        "cumulativeMean": 1.1666666666666667
+      },
+      {
+        "period": "25117",
+        "date": "2025-10-12",
+        "cumulativeMean": 1.2307692307692308
+      },
+      {
+        "period": "25118",
+        "date": "2025-10-14",
+        "cumulativeMean": 1.1428571428571428
+      },
+      {
+        "period": "25119",
+        "date": "2025-10-16",
+        "cumulativeMean": 1.0666666666666667
+      },
+      {
+        "period": "25120",
+        "date": "2025-10-19",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25121",
+        "date": "2025-10-21",
+        "cumulativeMean": 1.0588235294117647
+      },
+      {
+        "period": "25122",
+        "date": "2025-10-23",
+        "cumulativeMean": 1.0555555555555556
+      },
+      {
+        "period": "25123",
+        "date": "2025-10-26",
+        "cumulativeMean": 1.105263157894737
+      },
+      {
+        "period": "25124",
+        "date": "2025-10-28",
+        "cumulativeMean": 1.05
+      },
+      {
+        "period": "25125",
+        "date": "2025-10-30",
+        "cumulativeMean": 1.0476190476190477
+      },
+      {
+        "period": "25126",
+        "date": "2025-11-02",
+        "cumulativeMean": 1.0454545454545454
+      },
+      {
+        "period": "25127",
+        "date": "2025-11-04",
+        "cumulativeMean": 1.0869565217391304
+      },
+      {
+        "period": "25128",
+        "date": "2025-11-06",
+        "cumulativeMean": 1.0833333333333333
+      },
+      {
+        "period": "25129",
+        "date": "2025-11-09",
+        "cumulativeMean": 1.04
+      },
+      {
+        "period": "25130",
+        "date": "2025-11-11",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25131",
+        "date": "2025-11-13",
+        "cumulativeMean": 1.037037037037037
+      },
+      {
+        "period": "25132",
+        "date": "2025-11-16",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25133",
+        "date": "2025-11-18",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25134",
+        "date": "2025-11-20",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25135",
+        "date": "2025-11-23",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25136",
+        "date": "2025-11-25",
+        "cumulativeMean": 0.96875
+      },
+      {
+        "period": "25137",
+        "date": "2025-11-27",
+        "cumulativeMean": 0.9393939393939394
+      },
+      {
+        "period": "25138",
+        "date": "2025-11-30",
+        "cumulativeMean": 0.9411764705882353
+      },
+      {
+        "period": "25139",
+        "date": "2025-12-02",
+        "cumulativeMean": 0.9428571428571428
+      },
+      {
+        "period": "25140",
+        "date": "2025-12-04",
+        "cumulativeMean": 0.9166666666666666
+      },
+      {
+        "period": "25141",
+        "date": "2025-12-07",
+        "cumulativeMean": 0.972972972972973
+      },
+      {
+        "period": "25142",
+        "date": "2025-12-09",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25143",
+        "date": "2025-12-11",
+        "cumulativeMean": 1.0512820512820513
+      },
+      {
+        "period": "25144",
+        "date": "2025-12-14",
+        "cumulativeMean": 1.025
+      },
+      {
+        "period": "25145",
+        "date": "2025-12-16",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25146",
+        "date": "2025-12-18",
+        "cumulativeMean": 1.0238095238095237
+      },
+      {
+        "period": "25147",
+        "date": "2025-12-21",
+        "cumulativeMean": 1.0465116279069768
+      },
+      {
+        "period": "25148",
+        "date": "2025-12-23",
+        "cumulativeMean": 1.0454545454545454
+      },
+      {
+        "period": "25149",
+        "date": "2025-12-25",
+        "cumulativeMean": 1.0444444444444445
+      },
+      {
+        "period": "25150",
+        "date": "2025-12-28",
+        "cumulativeMean": 1.065217391304348
+      },
+      {
+        "period": "25151",
+        "date": "2025-12-30",
+        "cumulativeMean": 1.0638297872340425
+      },
+      {
+        "period": "26001",
+        "date": "2026-01-01",
+        "cumulativeMean": 1.0833333333333333
+      },
+      {
+        "period": "26002",
+        "date": "2026-01-04",
+        "cumulativeMean": 1.1020408163265305
+      },
+      {
+        "period": "26003",
+        "date": "2026-01-06",
+        "cumulativeMean": 1.12
+      },
+      {
+        "period": "26004",
+        "date": "2026-01-08",
+        "cumulativeMean": 1.1176470588235294
+      },
+      {
+        "period": "26005",
+        "date": "2026-01-11",
+        "cumulativeMean": 1.1153846153846154
+      },
+      {
+        "period": "26006",
+        "date": "2026-01-13",
+        "cumulativeMean": 1.1132075471698113
+      },
+      {
+        "period": "26007",
+        "date": "2026-01-15",
+        "cumulativeMean": 1.1296296296296295
+      },
+      {
+        "period": "26008",
+        "date": "2026-01-18",
+        "cumulativeMean": 1.1272727272727272
+      },
+      {
+        "period": "26009",
+        "date": "2026-01-20",
+        "cumulativeMean": 1.125
+      },
+      {
+        "period": "26010",
+        "date": "2026-01-22",
+        "cumulativeMean": 1.1228070175438596
+      },
+      {
+        "period": "26011",
+        "date": "2026-01-25",
+        "cumulativeMean": 1.1206896551724137
+      },
+      {
+        "period": "26012",
+        "date": "2026-01-27",
+        "cumulativeMean": 1.11864406779661
+      },
+      {
+        "period": "26013",
+        "date": "2026-01-29",
+        "cumulativeMean": 1.1333333333333333
+      },
+      {
+        "period": "26014",
+        "date": "2026-02-01",
+        "cumulativeMean": 1.1311475409836065
+      },
+      {
+        "period": "26015",
+        "date": "2026-02-03",
+        "cumulativeMean": 1.1290322580645162
+      },
+      {
+        "period": "26016",
+        "date": "2026-02-05",
+        "cumulativeMean": 1.126984126984127
+      },
+      {
+        "period": "26017",
+        "date": "2026-02-08",
+        "cumulativeMean": 1.140625
+      },
+      {
+        "period": "26018",
+        "date": "2026-02-10",
+        "cumulativeMean": 1.123076923076923
+      },
+      {
+        "period": "26019",
+        "date": "2026-02-12",
+        "cumulativeMean": 1.106060606060606
+      },
+      {
+        "period": "26020",
+        "date": "2026-02-24",
+        "cumulativeMean": 1.1044776119402986
+      },
+      {
+        "period": "26021",
+        "date": "2026-02-26",
+        "cumulativeMean": 1.1176470588235294
+      },
+      {
+        "period": "26022",
+        "date": "2026-03-01",
+        "cumulativeMean": 1.1014492753623188
+      },
+      {
+        "period": "26023",
+        "date": "2026-03-03",
+        "cumulativeMean": 1.1
+      },
+      {
+        "period": "26024",
+        "date": "2026-03-05",
+        "cumulativeMean": 1.1126760563380282
+      },
+      {
+        "period": "26025",
+        "date": "2026-03-08",
+        "cumulativeMean": 1.125
+      },
+      {
+        "period": "26026",
+        "date": "2026-03-10",
+        "cumulativeMean": 1.1369863013698631
+      },
+      {
+        "period": "26027",
+        "date": "2026-03-12",
+        "cumulativeMean": 1.1486486486486487
+      },
+      {
+        "period": "26028",
+        "date": "2026-03-15",
+        "cumulativeMean": 1.16
+      },
+      {
+        "period": "26029",
+        "date": "2026-03-17",
+        "cumulativeMean": 1.144736842105263
+      },
+      {
+        "period": "26030",
+        "date": "2026-03-19",
+        "cumulativeMean": 1.1428571428571428
+      },
+      {
+        "period": "26031",
+        "date": "2026-03-22",
+        "cumulativeMean": 1.1538461538461537
+      },
+      {
+        "period": "26032",
+        "date": "2026-03-24",
+        "cumulativeMean": 1.1518987341772151
+      },
+      {
+        "period": "26033",
+        "date": "2026-03-26",
+        "cumulativeMean": 1.1625
+      },
+      {
+        "period": "26034",
+        "date": "2026-03-29",
+        "cumulativeMean": 1.1975308641975309
+      },
+      {
+        "period": "26035",
+        "date": "2026-03-31",
+        "cumulativeMean": 1.1951219512195121
+      },
+      {
+        "period": "26036",
+        "date": "2026-04-02",
+        "cumulativeMean": 1.1927710843373494
+      },
+      {
+        "period": "26037",
+        "date": "2026-04-05",
+        "cumulativeMean": 1.1904761904761905
+      },
+      {
+        "period": "26038",
+        "date": "2026-04-07",
+        "cumulativeMean": 1.2117647058823529
+      },
+      {
+        "period": "26039",
+        "date": "2026-04-09",
+        "cumulativeMean": 1.197674418604651
+      },
+      {
+        "period": "26040",
+        "date": "2026-04-12",
+        "cumulativeMean": 1.206896551724138
+      },
+      {
+        "period": "26041",
+        "date": "2026-04-14",
+        "cumulativeMean": 1.2045454545454546
+      },
+      {
+        "period": "26042",
+        "date": "2026-04-16",
+        "cumulativeMean": 1.202247191011236
+      },
+      {
+        "period": "26043",
+        "date": "2026-04-19",
+        "cumulativeMean": 1.2
+      },
+      {
+        "period": "26044",
+        "date": "2026-04-21",
+        "cumulativeMean": 1.2087912087912087
+      },
+      {
+        "period": "26045",
+        "date": "2026-04-23",
+        "cumulativeMean": 1.2065217391304348
+      },
+      {
+        "period": "26046",
+        "date": "2026-04-26",
+        "cumulativeMean": 1.2043010752688172
+      },
+      {
+        "period": "26047",
+        "date": "2026-04-28",
+        "cumulativeMean": 1.202127659574468
+      },
+      {
+        "period": "26048",
+        "date": "2026-04-30",
+        "cumulativeMean": 1.1894736842105262
+      },
+      {
+        "period": "26049",
+        "date": "2026-05-03",
+        "cumulativeMean": 1.1875
+      },
+      {
+        "period": "26050",
+        "date": "2026-05-05",
+        "cumulativeMean": 1.1958762886597938
+      },
+      {
+        "period": "26051",
+        "date": "2026-05-07",
+        "cumulativeMean": 1.2040816326530612
+      },
+      {
+        "period": "26052",
+        "date": "2026-05-10",
+        "cumulativeMean": 1.2121212121212122
+      },
+      {
+        "period": "26053",
+        "date": "2026-05-12",
+        "cumulativeMean": 1.23
+      },
+      {
+        "period": "26054",
+        "date": "2026-05-14",
+        "cumulativeMean": 1.2376237623762376
+      },
+      {
+        "period": "26055",
+        "date": "2026-05-17",
+        "cumulativeMean": 1.2352941176470589
+      },
+      {
+        "period": "26056",
+        "date": "2026-05-19",
+        "cumulativeMean": 1.233009708737864
+      },
+      {
+        "period": "26057",
+        "date": "2026-05-21",
+        "cumulativeMean": 1.2403846153846154
+      },
+      {
+        "period": "26058",
+        "date": "2026-05-24",
+        "cumulativeMean": 1.2285714285714286
+      },
+      {
+        "period": "26059",
+        "date": "2026-05-26",
+        "cumulativeMean": 1.2264150943396226
+      },
+      {
+        "period": "26060",
+        "date": "2026-05-28",
+        "cumulativeMean": 1.2242990654205608
+      },
+      {
+        "period": "26061",
+        "date": "2026-05-31",
+        "cumulativeMean": 1.212962962962963
+      },
+      {
+        "period": "26062",
+        "date": "2026-06-02",
+        "cumulativeMean": 1.201834862385321
+      },
+      {
+        "period": "26063",
+        "date": "2026-06-04",
+        "cumulativeMean": 1.2181818181818183
+      },
+      {
+        "period": "26064",
+        "date": "2026-06-07",
+        "cumulativeMean": 1.2162162162162162
+      },
+      {
+        "period": "26065",
+        "date": "2026-06-09",
+        "cumulativeMean": 1.2142857142857142
+      },
+      {
+        "period": "26066",
+        "date": "2026-06-11",
+        "cumulativeMean": 1.2123893805309736
+      },
+      {
+        "period": "26067",
+        "date": "2026-06-14",
+        "cumulativeMean": 1.2105263157894737
+      },
+      {
+        "period": "26068",
+        "date": "2026-06-16",
+        "cumulativeMean": 1.208695652173913
+      },
+      {
+        "period": "26069",
+        "date": "2026-06-18",
+        "cumulativeMean": 1.1982758620689655
+      },
+      {
+        "period": "26070",
+        "date": "2026-06-21",
+        "cumulativeMean": 1.188034188034188
+      },
+      {
+        "period": "26071",
+        "date": "2026-06-23",
+        "cumulativeMean": 1.194915254237288
+      },
+      {
+        "period": "26072",
+        "date": "2026-06-25",
+        "cumulativeMean": 1.184873949579832
+      },
+      {
+        "period": "26073",
+        "date": "2026-06-28",
+        "cumulativeMean": 1.175
+      },
+      {
+        "period": "26074",
+        "date": "2026-06-30",
+        "cumulativeMean": 1.1818181818181819
+      },
+      {
+        "period": "26075",
+        "date": "2026-07-02",
+        "cumulativeMean": 1.1885245901639345
+      },
+      {
+        "period": "26076",
+        "date": "2026-07-05",
+        "cumulativeMean": 1.1951219512195121
+      },
+      {
+        "period": "26077",
+        "date": "2026-07-07",
+        "cumulativeMean": 1.1935483870967742
+      },
+      {
+        "period": "26078",
+        "date": "2026-07-09",
+        "cumulativeMean": 1.192
+      },
+      {
+        "period": "26079",
+        "date": "2026-07-12",
+        "cumulativeMean": 1.1984126984126984
+      },
+      {
+        "period": "26080",
+        "date": "2026-07-14",
+        "cumulativeMean": 1.188976377952756
+      },
+      {
+        "period": "26081",
+        "date": "2026-07-16",
+        "cumulativeMean": 1.1875
+      },
+      {
+        "period": "26082",
+        "date": "2026-07-19",
+        "cumulativeMean": 1.186046511627907
+      },
+      {
+        "period": "26083",
+        "date": "2026-07-21",
+        "cumulativeMean": 1.1923076923076923
+      },
+      {
+        "period": "26084",
+        "date": "2026-07-23",
+        "cumulativeMean": 1.1908396946564885
+      },
+      {
+        "period": "26085",
+        "date": "2026-07-26",
+        "cumulativeMean": 1.196969696969697
+      },
+      {
+        "period": "26086",
+        "date": "2026-07-28",
+        "cumulativeMean": 1.2030075187969924
+      },
+      {
+        "period": "26087",
+        "date": "2026-07-30",
+        "cumulativeMean": 1.1940298507462686
+      },
+      {
+        "period": "26088",
+        "date": "2026-08-02",
+        "cumulativeMean": 1.1851851851851851
+      },
+      {
+        "period": "26089",
+        "date": "2026-08-04",
+        "cumulativeMean": 1.1838235294117647
+      },
+      {
+        "period": "26090",
+        "date": "2026-08-06",
+        "cumulativeMean": 1.1824817518248176
+      },
+      {
+        "period": "26091",
+        "date": "2026-08-09",
+        "cumulativeMean": 1.1884057971014492
+      },
+      {
+        "period": "26092",
+        "date": "2026-08-11",
+        "cumulativeMean": 1.1870503597122302
+      },
+      {
+        "period": "26093",
+        "date": "2026-08-13",
+        "cumulativeMean": 1.1857142857142857
+      },
+      {
+        "period": "26094",
+        "date": "2026-08-16",
+        "cumulativeMean": 1.1914893617021276
+      },
+      {
+        "period": "26095",
+        "date": "2026-08-18",
+        "cumulativeMean": 1.1971830985915493
+      },
+      {
+        "period": "26096",
+        "date": "2026-08-20",
+        "cumulativeMean": 1.1958041958041958
+      },
+      {
+        "period": "26097",
+        "date": "2026-08-23",
+        "cumulativeMean": 1.2083333333333333
+      },
+      {
+        "period": "26098",
+        "date": "2026-08-25",
+        "cumulativeMean": 1.206896551724138
+      },
+      {
+        "period": "26099",
+        "date": "2026-08-27",
+        "cumulativeMean": 1.2123287671232876
+      },
+      {
+        "period": "26100",
+        "date": "2026-08-30",
+        "cumulativeMean": 1.2040816326530612
+      },
+      {
+        "period": "26101",
+        "date": "2026-09-01",
+        "cumulativeMean": 1.2027027027027026
+      },
+      {
+        "period": "26102",
+        "date": "2026-09-03",
+        "cumulativeMean": 1.2080536912751678
+      },
+      {
+        "period": "26103",
+        "date": "2026-09-06",
+        "cumulativeMean": 1.2066666666666668
+      },
+      {
+        "period": "26104",
+        "date": "2026-09-08",
+        "cumulativeMean": 1.1986754966887416
+      }
+    ],
+    "cold": [
+      {
+        "period": "25105",
+        "date": "2025-09-11",
+        "cumulativeMean": 0
+      },
+      {
+        "period": "25106",
+        "date": "2025-09-14",
+        "cumulativeMean": 0
+      },
+      {
+        "period": "25107",
+        "date": "2025-09-16",
+        "cumulativeMean": 0.3333333333333333
+      },
+      {
+        "period": "25108",
+        "date": "2025-09-18",
+        "cumulativeMean": 0.75
+      },
+      {
+        "period": "25109",
+        "date": "2025-09-21",
+        "cumulativeMean": 0.8
+      },
+      {
+        "period": "25110",
+        "date": "2025-09-23",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25111",
+        "date": "2025-09-25",
+        "cumulativeMean": 0.8571428571428571
+      },
+      {
+        "period": "25112",
+        "date": "2025-09-28",
+        "cumulativeMean": 0.875
+      },
+      {
+        "period": "25113",
+        "date": "2025-09-30",
+        "cumulativeMean": 0.8888888888888888
+      },
+      {
+        "period": "25114",
+        "date": "2025-10-05",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25115",
+        "date": "2025-10-07",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25116",
+        "date": "2025-10-09",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25117",
+        "date": "2025-10-12",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25118",
+        "date": "2025-10-14",
+        "cumulativeMean": 0.9285714285714286
+      },
+      {
+        "period": "25119",
+        "date": "2025-10-16",
+        "cumulativeMean": 0.9333333333333333
+      },
+      {
+        "period": "25120",
+        "date": "2025-10-19",
+        "cumulativeMean": 0.9375
+      },
+      {
+        "period": "25121",
+        "date": "2025-10-21",
+        "cumulativeMean": 0.9411764705882353
+      },
+      {
+        "period": "25122",
+        "date": "2025-10-23",
+        "cumulativeMean": 0.9444444444444444
+      },
+      {
+        "period": "25123",
+        "date": "2025-10-26",
+        "cumulativeMean": 0.8947368421052632
+      },
+      {
+        "period": "25124",
+        "date": "2025-10-28",
+        "cumulativeMean": 0.9
+      },
+      {
+        "period": "25125",
+        "date": "2025-10-30",
+        "cumulativeMean": 0.9047619047619048
+      },
+      {
+        "period": "25126",
+        "date": "2025-11-02",
+        "cumulativeMean": 0.8636363636363636
+      },
+      {
+        "period": "25127",
+        "date": "2025-11-04",
+        "cumulativeMean": 0.9130434782608695
+      },
+      {
+        "period": "25128",
+        "date": "2025-11-06",
+        "cumulativeMean": 0.9166666666666666
+      },
+      {
+        "period": "25129",
+        "date": "2025-11-09",
+        "cumulativeMean": 0.92
+      },
+      {
+        "period": "25130",
+        "date": "2025-11-11",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25131",
+        "date": "2025-11-13",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25132",
+        "date": "2025-11-16",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25133",
+        "date": "2025-11-18",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25134",
+        "date": "2025-11-20",
+        "cumulativeMean": 1.0333333333333334
+      },
+      {
+        "period": "25135",
+        "date": "2025-11-23",
+        "cumulativeMean": 1.032258064516129
+      },
+      {
+        "period": "25136",
+        "date": "2025-11-25",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25137",
+        "date": "2025-11-27",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25138",
+        "date": "2025-11-30",
+        "cumulativeMean": 0.9705882352941176
+      },
+      {
+        "period": "25139",
+        "date": "2025-12-02",
+        "cumulativeMean": 0.9714285714285714
+      },
+      {
+        "period": "25140",
+        "date": "2025-12-04",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25141",
+        "date": "2025-12-07",
+        "cumulativeMean": 0.972972972972973
+      },
+      {
+        "period": "25142",
+        "date": "2025-12-09",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25143",
+        "date": "2025-12-11",
+        "cumulativeMean": 0.9743589743589743
+      },
+      {
+        "period": "25144",
+        "date": "2025-12-14",
+        "cumulativeMean": 0.975
+      },
+      {
+        "period": "25145",
+        "date": "2025-12-16",
+        "cumulativeMean": 0.975609756097561
+      },
+      {
+        "period": "25146",
+        "date": "2025-12-18",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "25147",
+        "date": "2025-12-21",
+        "cumulativeMean": 0.9767441860465116
+      },
+      {
+        "period": "25148",
+        "date": "2025-12-23",
+        "cumulativeMean": 0.9545454545454546
+      },
+      {
+        "period": "25149",
+        "date": "2025-12-25",
+        "cumulativeMean": 0.9555555555555556
+      },
+      {
+        "period": "25150",
+        "date": "2025-12-28",
+        "cumulativeMean": 0.9782608695652174
+      },
+      {
+        "period": "25151",
+        "date": "2025-12-30",
+        "cumulativeMean": 0.9787234042553191
+      },
+      {
+        "period": "26001",
+        "date": "2026-01-01",
+        "cumulativeMean": 0.9583333333333334
+      },
+      {
+        "period": "26002",
+        "date": "2026-01-04",
+        "cumulativeMean": 0.9387755102040817
+      },
+      {
+        "period": "26003",
+        "date": "2026-01-06",
+        "cumulativeMean": 0.94
+      },
+      {
+        "period": "26004",
+        "date": "2026-01-08",
+        "cumulativeMean": 0.9215686274509803
+      },
+      {
+        "period": "26005",
+        "date": "2026-01-11",
+        "cumulativeMean": 0.9423076923076923
+      },
+      {
+        "period": "26006",
+        "date": "2026-01-13",
+        "cumulativeMean": 0.9433962264150944
+      },
+      {
+        "period": "26007",
+        "date": "2026-01-15",
+        "cumulativeMean": 0.9444444444444444
+      },
+      {
+        "period": "26008",
+        "date": "2026-01-18",
+        "cumulativeMean": 0.9454545454545454
+      },
+      {
+        "period": "26009",
+        "date": "2026-01-20",
+        "cumulativeMean": 0.9464285714285714
+      },
+      {
+        "period": "26010",
+        "date": "2026-01-22",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "26011",
+        "date": "2026-01-25",
+        "cumulativeMean": 0.9827586206896551
+      },
+      {
+        "period": "26012",
+        "date": "2026-01-27",
+        "cumulativeMean": 0.9830508474576272
+      },
+      {
+        "period": "26013",
+        "date": "2026-01-29",
+        "cumulativeMean": 0.9833333333333333
+      },
+      {
+        "period": "26014",
+        "date": "2026-02-01",
+        "cumulativeMean": 0.9672131147540983
+      },
+      {
+        "period": "26015",
+        "date": "2026-02-03",
+        "cumulativeMean": 0.9516129032258065
+      },
+      {
+        "period": "26016",
+        "date": "2026-02-05",
+        "cumulativeMean": 0.9365079365079365
+      },
+      {
+        "period": "26017",
+        "date": "2026-02-08",
+        "cumulativeMean": 0.9375
+      },
+      {
+        "period": "26018",
+        "date": "2026-02-10",
+        "cumulativeMean": 0.9538461538461539
+      },
+      {
+        "period": "26019",
+        "date": "2026-02-12",
+        "cumulativeMean": 0.9545454545454546
+      },
+      {
+        "period": "26020",
+        "date": "2026-02-24",
+        "cumulativeMean": 0.9701492537313433
+      },
+      {
+        "period": "26021",
+        "date": "2026-02-26",
+        "cumulativeMean": 0.9558823529411765
+      },
+      {
+        "period": "26022",
+        "date": "2026-03-01",
+        "cumulativeMean": 0.9710144927536232
+      },
+      {
+        "period": "26023",
+        "date": "2026-03-03",
+        "cumulativeMean": 0.9571428571428572
+      },
+      {
+        "period": "26024",
+        "date": "2026-03-05",
+        "cumulativeMean": 0.9577464788732394
+      },
+      {
+        "period": "26025",
+        "date": "2026-03-08",
+        "cumulativeMean": 0.9583333333333334
+      },
+      {
+        "period": "26026",
+        "date": "2026-03-10",
+        "cumulativeMean": 0.958904109589041
+      },
+      {
+        "period": "26027",
+        "date": "2026-03-12",
+        "cumulativeMean": 0.9459459459459459
+      },
+      {
+        "period": "26028",
+        "date": "2026-03-15",
+        "cumulativeMean": 0.9466666666666667
+      },
+      {
+        "period": "26029",
+        "date": "2026-03-17",
+        "cumulativeMean": 0.9473684210526315
+      },
+      {
+        "period": "26030",
+        "date": "2026-03-19",
+        "cumulativeMean": 0.948051948051948
+      },
+      {
+        "period": "26031",
+        "date": "2026-03-22",
+        "cumulativeMean": 0.9615384615384616
+      },
+      {
+        "period": "26032",
+        "date": "2026-03-24",
+        "cumulativeMean": 0.9493670886075949
+      },
+      {
+        "period": "26033",
+        "date": "2026-03-26",
+        "cumulativeMean": 0.9375
+      },
+      {
+        "period": "26034",
+        "date": "2026-03-29",
+        "cumulativeMean": 0.9382716049382716
+      },
+      {
+        "period": "26035",
+        "date": "2026-03-31",
+        "cumulativeMean": 0.9390243902439024
+      },
+      {
+        "period": "26036",
+        "date": "2026-04-02",
+        "cumulativeMean": 0.9397590361445783
+      },
+      {
+        "period": "26037",
+        "date": "2026-04-05",
+        "cumulativeMean": 0.9404761904761905
+      },
+      {
+        "period": "26038",
+        "date": "2026-04-07",
+        "cumulativeMean": 0.9294117647058824
+      },
+      {
+        "period": "26039",
+        "date": "2026-04-09",
+        "cumulativeMean": 0.9418604651162791
+      },
+      {
+        "period": "26040",
+        "date": "2026-04-12",
+        "cumulativeMean": 0.9425287356321839
+      },
+      {
+        "period": "26041",
+        "date": "2026-04-14",
+        "cumulativeMean": 0.9431818181818182
+      },
+      {
+        "period": "26042",
+        "date": "2026-04-16",
+        "cumulativeMean": 0.9438202247191011
+      },
+      {
+        "period": "26043",
+        "date": "2026-04-19",
+        "cumulativeMean": 0.9666666666666667
+      },
+      {
+        "period": "26044",
+        "date": "2026-04-21",
+        "cumulativeMean": 0.9560439560439561
+      },
+      {
+        "period": "26045",
+        "date": "2026-04-23",
+        "cumulativeMean": 0.967391304347826
+      },
+      {
+        "period": "26046",
+        "date": "2026-04-26",
+        "cumulativeMean": 0.956989247311828
+      },
+      {
+        "period": "26047",
+        "date": "2026-04-28",
+        "cumulativeMean": 0.9468085106382979
+      },
+      {
+        "period": "26048",
+        "date": "2026-04-30",
+        "cumulativeMean": 0.9473684210526315
+      },
+      {
+        "period": "26049",
+        "date": "2026-05-03",
+        "cumulativeMean": 0.9479166666666666
+      },
+      {
+        "period": "26050",
+        "date": "2026-05-05",
+        "cumulativeMean": 0.9381443298969072
+      },
+      {
+        "period": "26051",
+        "date": "2026-05-07",
+        "cumulativeMean": 0.9387755102040817
+      },
+      {
+        "period": "26052",
+        "date": "2026-05-10",
+        "cumulativeMean": 0.9494949494949495
+      },
+      {
+        "period": "26053",
+        "date": "2026-05-12",
+        "cumulativeMean": 0.96
+      },
+      {
+        "period": "26054",
+        "date": "2026-05-14",
+        "cumulativeMean": 0.9504950495049505
+      },
+      {
+        "period": "26055",
+        "date": "2026-05-17",
+        "cumulativeMean": 0.9509803921568627
+      },
+      {
+        "period": "26056",
+        "date": "2026-05-19",
+        "cumulativeMean": 0.9611650485436893
+      },
+      {
+        "period": "26057",
+        "date": "2026-05-21",
+        "cumulativeMean": 0.9519230769230769
+      },
+      {
+        "period": "26058",
+        "date": "2026-05-24",
+        "cumulativeMean": 0.9523809523809523
+      },
+      {
+        "period": "26059",
+        "date": "2026-05-26",
+        "cumulativeMean": 0.9433962264150944
+      },
+      {
+        "period": "26060",
+        "date": "2026-05-28",
+        "cumulativeMean": 0.9345794392523364
+      },
+      {
+        "period": "26061",
+        "date": "2026-05-31",
+        "cumulativeMean": 0.9444444444444444
+      },
+      {
+        "period": "26062",
+        "date": "2026-06-02",
+        "cumulativeMean": 0.944954128440367
+      },
+      {
+        "period": "26063",
+        "date": "2026-06-04",
+        "cumulativeMean": 0.9363636363636364
+      },
+      {
+        "period": "26064",
+        "date": "2026-06-07",
+        "cumulativeMean": 0.9369369369369369
+      },
+      {
+        "period": "26065",
+        "date": "2026-06-09",
+        "cumulativeMean": 0.9285714285714286
+      },
+      {
+        "period": "26066",
+        "date": "2026-06-11",
+        "cumulativeMean": 0.9203539823008849
+      },
+      {
+        "period": "26067",
+        "date": "2026-06-14",
+        "cumulativeMean": 0.9122807017543859
+      },
+      {
+        "period": "26068",
+        "date": "2026-06-16",
+        "cumulativeMean": 0.9130434782608695
+      },
+      {
+        "period": "26069",
+        "date": "2026-06-18",
+        "cumulativeMean": 0.9224137931034483
+      },
+      {
+        "period": "26070",
+        "date": "2026-06-21",
+        "cumulativeMean": 0.9316239316239316
+      },
+      {
+        "period": "26071",
+        "date": "2026-06-23",
+        "cumulativeMean": 0.9322033898305084
+      },
+      {
+        "period": "26072",
+        "date": "2026-06-25",
+        "cumulativeMean": 0.9243697478991597
+      },
+      {
+        "period": "26073",
+        "date": "2026-06-28",
+        "cumulativeMean": 0.9333333333333333
+      },
+      {
+        "period": "26074",
+        "date": "2026-06-30",
+        "cumulativeMean": 0.9421487603305785
+      },
+      {
+        "period": "26075",
+        "date": "2026-07-02",
+        "cumulativeMean": 0.9426229508196722
+      },
+      {
+        "period": "26076",
+        "date": "2026-07-05",
+        "cumulativeMean": 0.9512195121951219
+      },
+      {
+        "period": "26077",
+        "date": "2026-07-07",
+        "cumulativeMean": 0.9596774193548387
+      },
+      {
+        "period": "26078",
+        "date": "2026-07-09",
+        "cumulativeMean": 0.968
+      },
+      {
+        "period": "26079",
+        "date": "2026-07-12",
+        "cumulativeMean": 0.9761904761904762
+      },
+      {
+        "period": "26080",
+        "date": "2026-07-14",
+        "cumulativeMean": 0.968503937007874
+      },
+      {
+        "period": "26081",
+        "date": "2026-07-16",
+        "cumulativeMean": 0.984375
+      },
+      {
+        "period": "26082",
+        "date": "2026-07-19",
+        "cumulativeMean": 0.9767441860465116
+      },
+      {
+        "period": "26083",
+        "date": "2026-07-21",
+        "cumulativeMean": 0.9846153846153847
+      },
+      {
+        "period": "26084",
+        "date": "2026-07-23",
+        "cumulativeMean": 0.9770992366412213
+      },
+      {
+        "period": "26085",
+        "date": "2026-07-26",
+        "cumulativeMean": 0.9848484848484849
+      },
+      {
+        "period": "26086",
+        "date": "2026-07-28",
+        "cumulativeMean": 0.9924812030075187
+      },
+      {
+        "period": "26087",
+        "date": "2026-07-30",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "26088",
+        "date": "2026-08-02",
+        "cumulativeMean": 1
+      },
+      {
+        "period": "26089",
+        "date": "2026-08-04",
+        "cumulativeMean": 0.9926470588235294
+      },
+      {
+        "period": "26090",
+        "date": "2026-08-06",
+        "cumulativeMean": 0.9854014598540146
+      },
+      {
+        "period": "26091",
+        "date": "2026-08-09",
+        "cumulativeMean": 0.9855072463768116
+      },
+      {
+        "period": "26092",
+        "date": "2026-08-11",
+        "cumulativeMean": 0.9784172661870504
+      },
+      {
+        "period": "26093",
+        "date": "2026-08-13",
+        "cumulativeMean": 0.9857142857142858
+      },
+      {
+        "period": "26094",
+        "date": "2026-08-16",
+        "cumulativeMean": 0.9858156028368794
+      },
+      {
+        "period": "26095",
+        "date": "2026-08-18",
+        "cumulativeMean": 0.9788732394366197
+      },
+      {
+        "period": "26096",
+        "date": "2026-08-20",
+        "cumulativeMean": 0.986013986013986
+      },
+      {
+        "period": "26097",
+        "date": "2026-08-23",
+        "cumulativeMean": 0.9861111111111112
+      },
+      {
+        "period": "26098",
+        "date": "2026-08-25",
+        "cumulativeMean": 0.9793103448275862
+      },
+      {
+        "period": "26099",
+        "date": "2026-08-27",
+        "cumulativeMean": 0.9726027397260274
+      },
+      {
+        "period": "26100",
+        "date": "2026-08-30",
+        "cumulativeMean": 0.9727891156462585
+      },
+      {
+        "period": "26101",
+        "date": "2026-09-01",
+        "cumulativeMean": 0.9662162162162162
+      },
+      {
+        "period": "26102",
+        "date": "2026-09-03",
+        "cumulativeMean": 0.9664429530201343
+      },
+      {
+        "period": "26103",
+        "date": "2026-09-06",
+        "cumulativeMean": 0.9733333333333334
+      },
+      {
+        "period": "26104",
+        "date": "2026-09-08",
+        "cumulativeMean": 0.9735099337748344
+      }
+    ],
+    "theoreticalExpectation": 1.0909090909090908
+  },
+  "monte_carlo": {
+    "runs": 5000,
+    "mean": 1.0916,
+    "std": 0.0696,
+    "min": 0.8278,
+    "max": 1.3576,
+    "histogram": [
+      {
+        "bucket": 0.82,
+        "count": 2
+      },
+      {
+        "bucket": 0.86,
+        "count": 2
+      },
+      {
+        "bucket": 0.88,
+        "count": 6
+      },
+      {
+        "bucket": 0.9,
+        "count": 15
+      },
+      {
+        "bucket": 0.92,
+        "count": 38
+      },
+      {
+        "bucket": 0.94,
+        "count": 41
+      },
+      {
+        "bucket": 0.96,
+        "count": 91
+      },
+      {
+        "bucket": 0.98,
+        "count": 142
+      },
+      {
+        "bucket": 1,
+        "count": 244
+      },
+      {
+        "bucket": 1.02,
+        "count": 333
+      },
+      {
+        "bucket": 1.04,
+        "count": 460
+      },
+      {
+        "bucket": 1.06,
+        "count": 518
+      },
+      {
+        "bucket": 1.08,
+        "count": 585
+      },
+      {
+        "bucket": 1.1,
+        "count": 554
+      },
+      {
+        "bucket": 1.12,
+        "count": 520
+      },
+      {
+        "bucket": 1.14,
+        "count": 452
+      },
+      {
+        "bucket": 1.16,
+        "count": 334
+      },
+      {
+        "bucket": 1.18,
+        "count": 254
+      },
+      {
+        "bucket": 1.2,
+        "count": 164
+      },
+      {
+        "bucket": 1.22,
+        "count": 116
+      },
+      {
+        "bucket": 1.24,
+        "count": 58
+      },
+      {
+        "bucket": 1.26,
+        "count": 38
+      },
+      {
+        "bucket": 1.28,
+        "count": 17
+      },
+      {
+        "bucket": 1.3,
+        "count": 8
+      },
+      {
+        "bucket": 1.32,
+        "count": 6
+      },
+      {
+        "bucket": 1.34,
+        "count": 1
+      },
+      {
+        "bucket": 1.36,
+        "count": 1
+      }
+    ]
+  },
+  "fund": {
+    "random": [
+      {
+        "period": "25105",
+        "date": "2025-09-11",
+        "net": -2
+      },
+      {
+        "period": "25106",
+        "date": "2025-09-14",
+        "net": -4
+      },
+      {
+        "period": "25107",
+        "date": "2025-09-16",
+        "net": -6
+      },
+      {
+        "period": "25108",
+        "date": "2025-09-18",
+        "net": -8
+      },
+      {
+        "period": "25109",
+        "date": "2025-09-21",
+        "net": -10
+      },
+      {
+        "period": "25110",
+        "date": "2025-09-23",
+        "net": -12
+      },
+      {
+        "period": "25111",
+        "date": "2025-09-25",
+        "net": -14
+      },
+      {
+        "period": "25112",
+        "date": "2025-09-28",
+        "net": -11
+      },
+      {
+        "period": "25113",
+        "date": "2025-09-30",
+        "net": -13
+      },
+      {
+        "period": "25114",
+        "date": "2025-10-05",
+        "net": -15
+      },
+      {
+        "period": "25115",
+        "date": "2025-10-07",
+        "net": -17
+      },
+      {
+        "period": "25116",
+        "date": "2025-10-09",
+        "net": -19
+      },
+      {
+        "period": "25117",
+        "date": "2025-10-12",
+        "net": -21
+      },
+      {
+        "period": "25118",
+        "date": "2025-10-14",
+        "net": -23
+      },
+      {
+        "period": "25119",
+        "date": "2025-10-16",
+        "net": -25
+      },
+      {
+        "period": "25120",
+        "date": "2025-10-19",
+        "net": -27
+      },
+      {
+        "period": "25121",
+        "date": "2025-10-21",
+        "net": -29
+      },
+      {
+        "period": "25122",
+        "date": "2025-10-23",
+        "net": -31
+      },
+      {
+        "period": "25123",
+        "date": "2025-10-26",
+        "net": -33
+      },
+      {
+        "period": "25124",
+        "date": "2025-10-28",
+        "net": -35
+      },
+      {
+        "period": "25125",
+        "date": "2025-10-30",
+        "net": -37
+      },
+      {
+        "period": "25126",
+        "date": "2025-11-02",
+        "net": -39
+      },
+      {
+        "period": "25127",
+        "date": "2025-11-04",
+        "net": -41
+      },
+      {
+        "period": "25128",
+        "date": "2025-11-06",
+        "net": -43
+      },
+      {
+        "period": "25129",
+        "date": "2025-11-09",
+        "net": -45
+      },
+      {
+        "period": "25130",
+        "date": "2025-11-11",
+        "net": -47
+      },
+      {
+        "period": "25131",
+        "date": "2025-11-13",
+        "net": -49
+      },
+      {
+        "period": "25132",
+        "date": "2025-11-16",
+        "net": -51
+      },
+      {
+        "period": "25133",
+        "date": "2025-11-18",
+        "net": -53
+      },
+      {
+        "period": "25134",
+        "date": "2025-11-20",
+        "net": -55
+      },
+      {
+        "period": "25135",
+        "date": "2025-11-23",
+        "net": -57
+      },
+      {
+        "period": "25136",
+        "date": "2025-11-25",
+        "net": -59
+      },
+      {
+        "period": "25137",
+        "date": "2025-11-27",
+        "net": -61
+      },
+      {
+        "period": "25138",
+        "date": "2025-11-30",
+        "net": -63
+      },
+      {
+        "period": "25139",
+        "date": "2025-12-02",
+        "net": -65
+      },
+      {
+        "period": "25140",
+        "date": "2025-12-04",
+        "net": -67
+      },
+      {
+        "period": "25141",
+        "date": "2025-12-07",
+        "net": -69
+      },
+      {
+        "period": "25142",
+        "date": "2025-12-09",
+        "net": -71
+      },
+      {
+        "period": "25143",
+        "date": "2025-12-11",
+        "net": -73
+      },
+      {
+        "period": "25144",
+        "date": "2025-12-14",
+        "net": -75
+      },
+      {
+        "period": "25145",
+        "date": "2025-12-16",
+        "net": -77
+      },
+      {
+        "period": "25146",
+        "date": "2025-12-18",
+        "net": -79
+      },
+      {
+        "period": "25147",
+        "date": "2025-12-21",
+        "net": -81
+      },
+      {
+        "period": "25148",
+        "date": "2025-12-23",
+        "net": -83
+      },
+      {
+        "period": "25149",
+        "date": "2025-12-25",
+        "net": -85
+      },
+      {
+        "period": "25150",
+        "date": "2025-12-28",
+        "net": -82
+      },
+      {
+        "period": "25151",
+        "date": "2025-12-30",
+        "net": -84
+      },
+      {
+        "period": "26001",
+        "date": "2026-01-01",
+        "net": -86
+      },
+      {
+        "period": "26002",
+        "date": "2026-01-04",
+        "net": -88
+      },
+      {
+        "period": "26003",
+        "date": "2026-01-06",
+        "net": -90
+      },
+      {
+        "period": "26004",
+        "date": "2026-01-08",
+        "net": -92
+      },
+      {
+        "period": "26005",
+        "date": "2026-01-11",
+        "net": -94
+      },
+      {
+        "period": "26006",
+        "date": "2026-01-13",
+        "net": -96
+      },
+      {
+        "period": "26007",
+        "date": "2026-01-15",
+        "net": -98
+      },
+      {
+        "period": "26008",
+        "date": "2026-01-18",
+        "net": -100
+      },
+      {
+        "period": "26009",
+        "date": "2026-01-20",
+        "net": -102
+      },
+      {
+        "period": "26010",
+        "date": "2026-01-22",
+        "net": -104
+      },
+      {
+        "period": "26011",
+        "date": "2026-01-25",
+        "net": -106
+      },
+      {
+        "period": "26012",
+        "date": "2026-01-27",
+        "net": -108
+      },
+      {
+        "period": "26013",
+        "date": "2026-01-29",
+        "net": -110
+      },
+      {
+        "period": "26014",
+        "date": "2026-02-01",
+        "net": -112
+      },
+      {
+        "period": "26015",
+        "date": "2026-02-03",
+        "net": -114
+      },
+      {
+        "period": "26016",
+        "date": "2026-02-05",
+        "net": -111
+      },
+      {
+        "period": "26017",
+        "date": "2026-02-08",
+        "net": -113
+      },
+      {
+        "period": "26018",
+        "date": "2026-02-10",
+        "net": -115
+      },
+      {
+        "period": "26019",
+        "date": "2026-02-12",
+        "net": -117
+      },
+      {
+        "period": "26020",
+        "date": "2026-02-24",
+        "net": -119
+      },
+      {
+        "period": "26021",
+        "date": "2026-02-26",
+        "net": -121
+      },
+      {
+        "period": "26022",
+        "date": "2026-03-01",
+        "net": -123
+      },
+      {
+        "period": "26023",
+        "date": "2026-03-03",
+        "net": -125
+      },
+      {
+        "period": "26024",
+        "date": "2026-03-05",
+        "net": -127
+      },
+      {
+        "period": "26025",
+        "date": "2026-03-08",
+        "net": -129
+      },
+      {
+        "period": "26026",
+        "date": "2026-03-10",
+        "net": -131
+      },
+      {
+        "period": "26027",
+        "date": "2026-03-12",
+        "net": -133
+      },
+      {
+        "period": "26028",
+        "date": "2026-03-15",
+        "net": -135
+      },
+      {
+        "period": "26029",
+        "date": "2026-03-17",
+        "net": -137
+      },
+      {
+        "period": "26030",
+        "date": "2026-03-19",
+        "net": -139
+      },
+      {
+        "period": "26031",
+        "date": "2026-03-22",
+        "net": -141
+      },
+      {
+        "period": "26032",
+        "date": "2026-03-24",
+        "net": -143
+      },
+      {
+        "period": "26033",
+        "date": "2026-03-26",
+        "net": -145
+      },
+      {
+        "period": "26034",
+        "date": "2026-03-29",
+        "net": -147
+      },
+      {
+        "period": "26035",
+        "date": "2026-03-31",
+        "net": -149
+      },
+      {
+        "period": "26036",
+        "date": "2026-04-02",
+        "net": -151
+      },
+      {
+        "period": "26037",
+        "date": "2026-04-05",
+        "net": -153
+      },
+      {
+        "period": "26038",
+        "date": "2026-04-07",
+        "net": -155
+      },
+      {
+        "period": "26039",
+        "date": "2026-04-09",
+        "net": -157
+      },
+      {
+        "period": "26040",
+        "date": "2026-04-12",
+        "net": -159
+      },
+      {
+        "period": "26041",
+        "date": "2026-04-14",
+        "net": -161
+      },
+      {
+        "period": "26042",
+        "date": "2026-04-16",
+        "net": -163
+      },
+      {
+        "period": "26043",
+        "date": "2026-04-19",
+        "net": -165
+      },
+      {
+        "period": "26044",
+        "date": "2026-04-21",
+        "net": -167
+      },
+      {
+        "period": "26045",
+        "date": "2026-04-23",
+        "net": -169
+      },
+      {
+        "period": "26046",
+        "date": "2026-04-26",
+        "net": -171
+      },
+      {
+        "period": "26047",
+        "date": "2026-04-28",
+        "net": -173
+      },
+      {
+        "period": "26048",
+        "date": "2026-04-30",
+        "net": -175
+      },
+      {
+        "period": "26049",
+        "date": "2026-05-03",
+        "net": -177
+      },
+      {
+        "period": "26050",
+        "date": "2026-05-05",
+        "net": -179
+      },
+      {
+        "period": "26051",
+        "date": "2026-05-07",
+        "net": -181
+      },
+      {
+        "period": "26052",
+        "date": "2026-05-10",
+        "net": -183
+      },
+      {
+        "period": "26053",
+        "date": "2026-05-12",
+        "net": -185
+      },
+      {
+        "period": "26054",
+        "date": "2026-05-14",
+        "net": -187
+      },
+      {
+        "period": "26055",
+        "date": "2026-05-17",
+        "net": -189
+      },
+      {
+        "period": "26056",
+        "date": "2026-05-19",
+        "net": -191
+      },
+      {
+        "period": "26057",
+        "date": "2026-05-21",
+        "net": -193
+      },
+      {
+        "period": "26058",
+        "date": "2026-05-24",
+        "net": -195
+      },
+      {
+        "period": "26059",
+        "date": "2026-05-26",
+        "net": -192
+      },
+      {
+        "period": "26060",
+        "date": "2026-05-28",
+        "net": -194
+      },
+      {
+        "period": "26061",
+        "date": "2026-05-31",
+        "net": -196
+      },
+      {
+        "period": "26062",
+        "date": "2026-06-02",
+        "net": -198
+      },
+      {
+        "period": "26063",
+        "date": "2026-06-04",
+        "net": -200
+      },
+      {
+        "period": "26064",
+        "date": "2026-06-07",
+        "net": -202
+      },
+      {
+        "period": "26065",
+        "date": "2026-06-09",
+        "net": -204
+      },
+      {
+        "period": "26066",
+        "date": "2026-06-11",
+        "net": -206
+      },
+      {
+        "period": "26067",
+        "date": "2026-06-14",
+        "net": -208
+      },
+      {
+        "period": "26068",
+        "date": "2026-06-16",
+        "net": -210
+      },
+      {
+        "period": "26069",
+        "date": "2026-06-18",
+        "net": -212
+      },
+      {
+        "period": "26070",
+        "date": "2026-06-21",
+        "net": -214
+      },
+      {
+        "period": "26071",
+        "date": "2026-06-23",
+        "net": -216
+      },
+      {
+        "period": "26072",
+        "date": "2026-06-25",
+        "net": -218
+      },
+      {
+        "period": "26073",
+        "date": "2026-06-28",
+        "net": -220
+      },
+      {
+        "period": "26074",
+        "date": "2026-06-30",
+        "net": -222
+      },
+      {
+        "period": "26075",
+        "date": "2026-07-02",
+        "net": -224
+      },
+      {
+        "period": "26076",
+        "date": "2026-07-05",
+        "net": -226
+      },
+      {
+        "period": "26077",
+        "date": "2026-07-07",
+        "net": -228
+      },
+      {
+        "period": "26078",
+        "date": "2026-07-09",
+        "net": -225
+      },
+      {
+        "period": "26079",
+        "date": "2026-07-12",
+        "net": -227
+      },
+      {
+        "period": "26080",
+        "date": "2026-07-14",
+        "net": -229
+      },
+      {
+        "period": "26081",
+        "date": "2026-07-16",
+        "net": -231
+      },
+      {
+        "period": "26082",
+        "date": "2026-07-19",
+        "net": -233
+      },
+      {
+        "period": "26083",
+        "date": "2026-07-21",
+        "net": -235
+      },
+      {
+        "period": "26084",
+        "date": "2026-07-23",
+        "net": -237
+      },
+      {
+        "period": "26085",
+        "date": "2026-07-26",
+        "net": -239
+      },
+      {
+        "period": "26086",
+        "date": "2026-07-28",
+        "net": -241
+      },
+      {
+        "period": "26087",
+        "date": "2026-07-30",
+        "net": -243
+      },
+      {
+        "period": "26088",
+        "date": "2026-08-02",
+        "net": -245
+      },
+      {
+        "period": "26089",
+        "date": "2026-08-04",
+        "net": -247
+      },
+      {
+        "period": "26090",
+        "date": "2026-08-06",
+        "net": -249
+      },
+      {
+        "period": "26091",
+        "date": "2026-08-09",
+        "net": -251
+      },
+      {
+        "period": "26092",
+        "date": "2026-08-11",
+        "net": -253
+      },
+      {
+        "period": "26093",
+        "date": "2026-08-13",
+        "net": -255
+      },
+      {
+        "period": "26094",
+        "date": "2026-08-16",
+        "net": -252
+      },
+      {
+        "period": "26095",
+        "date": "2026-08-18",
+        "net": -254
+      },
+      {
+        "period": "26096",
+        "date": "2026-08-20",
+        "net": -256
+      },
+      {
+        "period": "26097",
+        "date": "2026-08-23",
+        "net": -258
+      },
+      {
+        "period": "26098",
+        "date": "2026-08-25",
+        "net": -260
+      },
+      {
+        "period": "26099",
+        "date": "2026-08-27",
+        "net": -262
+      },
+      {
+        "period": "26100",
+        "date": "2026-08-30",
+        "net": -264
+      },
+      {
+        "period": "26101",
+        "date": "2026-09-01",
+        "net": -266
+      },
+      {
+        "period": "26102",
+        "date": "2026-09-03",
+        "net": -268
+      },
+      {
+        "period": "26103",
+        "date": "2026-09-06",
+        "net": -270
+      },
+      {
+        "period": "26104",
+        "date": "2026-09-08",
+        "net": -272
+      }
+    ],
+    "hot": [
+      {
+        "period": "25105",
+        "date": "2025-09-11",
+        "net": -2
+      },
+      {
+        "period": "25106",
+        "date": "2025-09-14",
+        "net": -4
+      },
+      {
+        "period": "25107",
+        "date": "2025-09-16",
+        "net": -6
+      },
+      {
+        "period": "25108",
+        "date": "2025-09-18",
+        "net": -8
+      },
+      {
+        "period": "25109",
+        "date": "2025-09-21",
+        "net": -10
+      },
+      {
+        "period": "25110",
+        "date": "2025-09-23",
+        "net": -12
+      },
+      {
+        "period": "25111",
+        "date": "2025-09-25",
+        "net": -14
+      },
+      {
+        "period": "25112",
+        "date": "2025-09-28",
+        "net": -16
+      },
+      {
+        "period": "25113",
+        "date": "2025-09-30",
+        "net": -18
+      },
+      {
+        "period": "25114",
+        "date": "2025-10-05",
+        "net": -20
+      },
+      {
+        "period": "25115",
+        "date": "2025-10-07",
+        "net": -22
+      },
+      {
+        "period": "25116",
+        "date": "2025-10-09",
+        "net": -24
+      },
+      {
+        "period": "25117",
+        "date": "2025-10-12",
+        "net": -26
+      },
+      {
+        "period": "25118",
+        "date": "2025-10-14",
+        "net": -28
+      },
+      {
+        "period": "25119",
+        "date": "2025-10-16",
+        "net": -30
+      },
+      {
+        "period": "25120",
+        "date": "2025-10-19",
+        "net": -32
+      },
+      {
+        "period": "25121",
+        "date": "2025-10-21",
+        "net": -34
+      },
+      {
+        "period": "25122",
+        "date": "2025-10-23",
+        "net": -36
+      },
+      {
+        "period": "25123",
+        "date": "2025-10-26",
+        "net": -38
+      },
+      {
+        "period": "25124",
+        "date": "2025-10-28",
+        "net": -40
+      },
+      {
+        "period": "25125",
+        "date": "2025-10-30",
+        "net": -42
+      },
+      {
+        "period": "25126",
+        "date": "2025-11-02",
+        "net": -44
+      },
+      {
+        "period": "25127",
+        "date": "2025-11-04",
+        "net": -46
+      },
+      {
+        "period": "25128",
+        "date": "2025-11-06",
+        "net": -48
+      },
+      {
+        "period": "25129",
+        "date": "2025-11-09",
+        "net": -50
+      },
+      {
+        "period": "25130",
+        "date": "2025-11-11",
+        "net": -52
+      },
+      {
+        "period": "25131",
+        "date": "2025-11-13",
+        "net": -54
+      },
+      {
+        "period": "25132",
+        "date": "2025-11-16",
+        "net": -56
+      },
+      {
+        "period": "25133",
+        "date": "2025-11-18",
+        "net": -58
+      },
+      {
+        "period": "25134",
+        "date": "2025-11-20",
+        "net": -60
+      },
+      {
+        "period": "25135",
+        "date": "2025-11-23",
+        "net": -62
+      },
+      {
+        "period": "25136",
+        "date": "2025-11-25",
+        "net": -64
+      },
+      {
+        "period": "25137",
+        "date": "2025-11-27",
+        "net": -66
+      },
+      {
+        "period": "25138",
+        "date": "2025-11-30",
+        "net": -68
+      },
+      {
+        "period": "25139",
+        "date": "2025-12-02",
+        "net": -70
+      },
+      {
+        "period": "25140",
+        "date": "2025-12-04",
+        "net": -72
+      },
+      {
+        "period": "25141",
+        "date": "2025-12-07",
+        "net": -74
+      },
+      {
+        "period": "25142",
+        "date": "2025-12-09",
+        "net": -76
+      },
+      {
+        "period": "25143",
+        "date": "2025-12-11",
+        "net": -78
+      },
+      {
+        "period": "25144",
+        "date": "2025-12-14",
+        "net": -80
+      },
+      {
+        "period": "25145",
+        "date": "2025-12-16",
+        "net": -82
+      },
+      {
+        "period": "25146",
+        "date": "2025-12-18",
+        "net": -84
+      },
+      {
+        "period": "25147",
+        "date": "2025-12-21",
+        "net": -86
+      },
+      {
+        "period": "25148",
+        "date": "2025-12-23",
+        "net": -88
+      },
+      {
+        "period": "25149",
+        "date": "2025-12-25",
+        "net": -90
+      },
+      {
+        "period": "25150",
+        "date": "2025-12-28",
+        "net": -92
+      },
+      {
+        "period": "25151",
+        "date": "2025-12-30",
+        "net": -94
+      },
+      {
+        "period": "26001",
+        "date": "2026-01-01",
+        "net": -96
+      },
+      {
+        "period": "26002",
+        "date": "2026-01-04",
+        "net": -98
+      },
+      {
+        "period": "26003",
+        "date": "2026-01-06",
+        "net": -100
+      },
+      {
+        "period": "26004",
+        "date": "2026-01-08",
+        "net": -102
+      },
+      {
+        "period": "26005",
+        "date": "2026-01-11",
+        "net": -99
+      },
+      {
+        "period": "26006",
+        "date": "2026-01-13",
+        "net": -101
+      },
+      {
+        "period": "26007",
+        "date": "2026-01-15",
+        "net": -103
+      },
+      {
+        "period": "26008",
+        "date": "2026-01-18",
+        "net": -100
+      },
+      {
+        "period": "26009",
+        "date": "2026-01-20",
+        "net": -97
+      },
+      {
+        "period": "26010",
+        "date": "2026-01-22",
+        "net": -99
+      },
+      {
+        "period": "26011",
+        "date": "2026-01-25",
+        "net": -101
+      },
+      {
+        "period": "26012",
+        "date": "2026-01-27",
+        "net": -103
+      },
+      {
+        "period": "26013",
+        "date": "2026-01-29",
+        "net": -105
+      },
+      {
+        "period": "26014",
+        "date": "2026-02-01",
+        "net": -107
+      },
+      {
+        "period": "26015",
+        "date": "2026-02-03",
+        "net": -109
+      },
+      {
+        "period": "26016",
+        "date": "2026-02-05",
+        "net": -111
+      },
+      {
+        "period": "26017",
+        "date": "2026-02-08",
+        "net": -113
+      },
+      {
+        "period": "26018",
+        "date": "2026-02-10",
+        "net": -115
+      },
+      {
+        "period": "26019",
+        "date": "2026-02-12",
+        "net": -117
+      },
+      {
+        "period": "26020",
+        "date": "2026-02-24",
+        "net": -119
+      },
+      {
+        "period": "26021",
+        "date": "2026-02-26",
+        "net": -121
+      },
+      {
+        "period": "26022",
+        "date": "2026-03-01",
+        "net": -123
+      },
+      {
+        "period": "26023",
+        "date": "2026-03-03",
+        "net": -125
+      },
+      {
+        "period": "26024",
+        "date": "2026-03-05",
+        "net": -127
+      },
+      {
+        "period": "26025",
+        "date": "2026-03-08",
+        "net": -124
+      },
+      {
+        "period": "26026",
+        "date": "2026-03-10",
+        "net": -126
+      },
+      {
+        "period": "26027",
+        "date": "2026-03-12",
+        "net": -128
+      },
+      {
+        "period": "26028",
+        "date": "2026-03-15",
+        "net": -130
+      },
+      {
+        "period": "26029",
+        "date": "2026-03-17",
+        "net": -132
+      },
+      {
+        "period": "26030",
+        "date": "2026-03-19",
+        "net": -134
+      },
+      {
+        "period": "26031",
+        "date": "2026-03-22",
+        "net": -136
+      },
+      {
+        "period": "26032",
+        "date": "2026-03-24",
+        "net": -138
+      },
+      {
+        "period": "26033",
+        "date": "2026-03-26",
+        "net": -140
+      },
+      {
+        "period": "26034",
+        "date": "2026-03-29",
+        "net": -132
+      },
+      {
+        "period": "26035",
+        "date": "2026-03-31",
+        "net": -134
+      },
+      {
+        "period": "26036",
+        "date": "2026-04-02",
+        "net": -136
+      },
+      {
+        "period": "26037",
+        "date": "2026-04-05",
+        "net": -138
+      },
+      {
+        "period": "26038",
+        "date": "2026-04-07",
+        "net": -140
+      },
+      {
+        "period": "26039",
+        "date": "2026-04-09",
+        "net": -142
+      },
+      {
+        "period": "26040",
+        "date": "2026-04-12",
+        "net": -144
+      },
+      {
+        "period": "26041",
+        "date": "2026-04-14",
+        "net": -146
+      },
+      {
+        "period": "26042",
+        "date": "2026-04-16",
+        "net": -148
+      },
+      {
+        "period": "26043",
+        "date": "2026-04-19",
+        "net": -150
+      },
+      {
+        "period": "26044",
+        "date": "2026-04-21",
+        "net": -152
+      },
+      {
+        "period": "26045",
+        "date": "2026-04-23",
+        "net": -154
+      },
+      {
+        "period": "26046",
+        "date": "2026-04-26",
+        "net": -156
+      },
+      {
+        "period": "26047",
+        "date": "2026-04-28",
+        "net": -158
+      },
+      {
+        "period": "26048",
+        "date": "2026-04-30",
+        "net": -160
+      },
+      {
+        "period": "26049",
+        "date": "2026-05-03",
+        "net": -162
+      },
+      {
+        "period": "26050",
+        "date": "2026-05-05",
+        "net": -164
+      },
+      {
+        "period": "26051",
+        "date": "2026-05-07",
+        "net": -166
+      },
+      {
+        "period": "26052",
+        "date": "2026-05-10",
+        "net": -168
+      },
+      {
+        "period": "26053",
+        "date": "2026-05-12",
+        "net": -170
+      },
+      {
+        "period": "26054",
+        "date": "2026-05-14",
+        "net": -172
+      },
+      {
+        "period": "26055",
+        "date": "2026-05-17",
+        "net": -174
+      },
+      {
+        "period": "26056",
+        "date": "2026-05-19",
+        "net": -176
+      },
+      {
+        "period": "26057",
+        "date": "2026-05-21",
+        "net": -178
+      },
+      {
+        "period": "26058",
+        "date": "2026-05-24",
+        "net": -180
+      },
+      {
+        "period": "26059",
+        "date": "2026-05-26",
+        "net": -182
+      },
+      {
+        "period": "26060",
+        "date": "2026-05-28",
+        "net": -184
+      },
+      {
+        "period": "26061",
+        "date": "2026-05-31",
+        "net": -186
+      },
+      {
+        "period": "26062",
+        "date": "2026-06-02",
+        "net": -188
+      },
+      {
+        "period": "26063",
+        "date": "2026-06-04",
+        "net": -190
+      },
+      {
+        "period": "26064",
+        "date": "2026-06-07",
+        "net": -192
+      },
+      {
+        "period": "26065",
+        "date": "2026-06-09",
+        "net": -189
+      },
+      {
+        "period": "26066",
+        "date": "2026-06-11",
+        "net": -191
+      },
+      {
+        "period": "26067",
+        "date": "2026-06-14",
+        "net": -193
+      },
+      {
+        "period": "26068",
+        "date": "2026-06-16",
+        "net": -195
+      },
+      {
+        "period": "26069",
+        "date": "2026-06-18",
+        "net": -197
+      },
+      {
+        "period": "26070",
+        "date": "2026-06-21",
+        "net": -199
+      },
+      {
+        "period": "26071",
+        "date": "2026-06-23",
+        "net": -201
+      },
+      {
+        "period": "26072",
+        "date": "2026-06-25",
+        "net": -203
+      },
+      {
+        "period": "26073",
+        "date": "2026-06-28",
+        "net": -205
+      },
+      {
+        "period": "26074",
+        "date": "2026-06-30",
+        "net": -207
+      },
+      {
+        "period": "26075",
+        "date": "2026-07-02",
+        "net": -209
+      },
+      {
+        "period": "26076",
+        "date": "2026-07-05",
+        "net": -211
+      },
+      {
+        "period": "26077",
+        "date": "2026-07-07",
+        "net": -213
+      },
+      {
+        "period": "26078",
+        "date": "2026-07-09",
+        "net": -215
+      },
+      {
+        "period": "26079",
+        "date": "2026-07-12",
+        "net": -217
+      },
+      {
+        "period": "26080",
+        "date": "2026-07-14",
+        "net": -219
+      },
+      {
+        "period": "26081",
+        "date": "2026-07-16",
+        "net": -221
+      },
+      {
+        "period": "26082",
+        "date": "2026-07-19",
+        "net": -223
+      },
+      {
+        "period": "26083",
+        "date": "2026-07-21",
+        "net": -225
+      },
+      {
+        "period": "26084",
+        "date": "2026-07-23",
+        "net": -227
+      },
+      {
+        "period": "26085",
+        "date": "2026-07-26",
+        "net": -229
+      },
+      {
+        "period": "26086",
+        "date": "2026-07-28",
+        "net": -231
+      },
+      {
+        "period": "26087",
+        "date": "2026-07-30",
+        "net": -233
+      },
+      {
+        "period": "26088",
+        "date": "2026-08-02",
+        "net": -235
+      },
+      {
+        "period": "26089",
+        "date": "2026-08-04",
+        "net": -237
+      },
+      {
+        "period": "26090",
+        "date": "2026-08-06",
+        "net": -239
+      },
+      {
+        "period": "26091",
+        "date": "2026-08-09",
+        "net": -241
+      },
+      {
+        "period": "26092",
+        "date": "2026-08-11",
+        "net": -243
+      },
+      {
+        "period": "26093",
+        "date": "2026-08-13",
+        "net": -245
+      },
+      {
+        "period": "26094",
+        "date": "2026-08-16",
+        "net": -242
+      },
+      {
+        "period": "26095",
+        "date": "2026-08-18",
+        "net": -244
+      },
+      {
+        "period": "26096",
+        "date": "2026-08-20",
+        "net": -246
+      },
+      {
+        "period": "26097",
+        "date": "2026-08-23",
+        "net": -248
+      },
+      {
+        "period": "26098",
+        "date": "2026-08-25",
+        "net": -250
+      },
+      {
+        "period": "26099",
+        "date": "2026-08-27",
+        "net": -247
+      },
+      {
+        "period": "26100",
+        "date": "2026-08-30",
+        "net": -249
+      },
+      {
+        "period": "26101",
+        "date": "2026-09-01",
+        "net": -251
+      },
+      {
+        "period": "26102",
+        "date": "2026-09-03",
+        "net": -253
+      },
+      {
+        "period": "26103",
+        "date": "2026-09-06",
+        "net": -255
+      },
+      {
+        "period": "26104",
+        "date": "2026-09-08",
+        "net": -257
+      }
+    ],
+    "cold": [
+      {
+        "period": "25105",
+        "date": "2025-09-11",
+        "net": -2
+      },
+      {
+        "period": "25106",
+        "date": "2025-09-14",
+        "net": -4
+      },
+      {
+        "period": "25107",
+        "date": "2025-09-16",
+        "net": -6
+      },
+      {
+        "period": "25108",
+        "date": "2025-09-18",
+        "net": -8
+      },
+      {
+        "period": "25109",
+        "date": "2025-09-21",
+        "net": -5
+      },
+      {
+        "period": "25110",
+        "date": "2025-09-23",
+        "net": -7
+      },
+      {
+        "period": "25111",
+        "date": "2025-09-25",
+        "net": -9
+      },
+      {
+        "period": "25112",
+        "date": "2025-09-28",
+        "net": -11
+      },
+      {
+        "period": "25113",
+        "date": "2025-09-30",
+        "net": -13
+      },
+      {
+        "period": "25114",
+        "date": "2025-10-05",
+        "net": -15
+      },
+      {
+        "period": "25115",
+        "date": "2025-10-07",
+        "net": -17
+      },
+      {
+        "period": "25116",
+        "date": "2025-10-09",
+        "net": -14
+      },
+      {
+        "period": "25117",
+        "date": "2025-10-12",
+        "net": -16
+      },
+      {
+        "period": "25118",
+        "date": "2025-10-14",
+        "net": -18
+      },
+      {
+        "period": "25119",
+        "date": "2025-10-16",
+        "net": -20
+      },
+      {
+        "period": "25120",
+        "date": "2025-10-19",
+        "net": -22
+      },
+      {
+        "period": "25121",
+        "date": "2025-10-21",
+        "net": -24
+      },
+      {
+        "period": "25122",
+        "date": "2025-10-23",
+        "net": -26
+      },
+      {
+        "period": "25123",
+        "date": "2025-10-26",
+        "net": -28
+      },
+      {
+        "period": "25124",
+        "date": "2025-10-28",
+        "net": -30
+      },
+      {
+        "period": "25125",
+        "date": "2025-10-30",
+        "net": -32
+      },
+      {
+        "period": "25126",
+        "date": "2025-11-02",
+        "net": -34
+      },
+      {
+        "period": "25127",
+        "date": "2025-11-04",
+        "net": -36
+      },
+      {
+        "period": "25128",
+        "date": "2025-11-06",
+        "net": -33
+      },
+      {
+        "period": "25129",
+        "date": "2025-11-09",
+        "net": -35
+      },
+      {
+        "period": "25130",
+        "date": "2025-11-11",
+        "net": -27
+      },
+      {
+        "period": "25131",
+        "date": "2025-11-13",
+        "net": -29
+      },
+      {
+        "period": "25132",
+        "date": "2025-11-16",
+        "net": -31
+      },
+      {
+        "period": "25133",
+        "date": "2025-11-18",
+        "net": -33
+      },
+      {
+        "period": "25134",
+        "date": "2025-11-20",
+        "net": -35
+      },
+      {
+        "period": "25135",
+        "date": "2025-11-23",
+        "net": -37
+      },
+      {
+        "period": "25136",
+        "date": "2025-11-25",
+        "net": -39
+      },
+      {
+        "period": "25137",
+        "date": "2025-11-27",
+        "net": -41
+      },
+      {
+        "period": "25138",
+        "date": "2025-11-30",
+        "net": -38
+      },
+      {
+        "period": "25139",
+        "date": "2025-12-02",
+        "net": -40
+      },
+      {
+        "period": "25140",
+        "date": "2025-12-04",
+        "net": -42
+      },
+      {
+        "period": "25141",
+        "date": "2025-12-07",
+        "net": -44
+      },
+      {
+        "period": "25142",
+        "date": "2025-12-09",
+        "net": -46
+      },
+      {
+        "period": "25143",
+        "date": "2025-12-11",
+        "net": -48
+      },
+      {
+        "period": "25144",
+        "date": "2025-12-14",
+        "net": -50
+      },
+      {
+        "period": "25145",
+        "date": "2025-12-16",
+        "net": -47
+      },
+      {
+        "period": "25146",
+        "date": "2025-12-18",
+        "net": -49
+      },
+      {
+        "period": "25147",
+        "date": "2025-12-21",
+        "net": -51
+      },
+      {
+        "period": "25148",
+        "date": "2025-12-23",
+        "net": -53
+      },
+      {
+        "period": "25149",
+        "date": "2025-12-25",
+        "net": -55
+      },
+      {
+        "period": "25150",
+        "date": "2025-12-28",
+        "net": -57
+      },
+      {
+        "period": "25151",
+        "date": "2025-12-30",
+        "net": -54
+      },
+      {
+        "period": "26001",
+        "date": "2026-01-01",
+        "net": -56
+      },
+      {
+        "period": "26002",
+        "date": "2026-01-04",
+        "net": -58
+      },
+      {
+        "period": "26003",
+        "date": "2026-01-06",
+        "net": -60
+      },
+      {
+        "period": "26004",
+        "date": "2026-01-08",
+        "net": -62
+      },
+      {
+        "period": "26005",
+        "date": "2026-01-11",
+        "net": -64
+      },
+      {
+        "period": "26006",
+        "date": "2026-01-13",
+        "net": -66
+      },
+      {
+        "period": "26007",
+        "date": "2026-01-15",
+        "net": -68
+      },
+      {
+        "period": "26008",
+        "date": "2026-01-18",
+        "net": -70
+      },
+      {
+        "period": "26009",
+        "date": "2026-01-20",
+        "net": -72
+      },
+      {
+        "period": "26010",
+        "date": "2026-01-22",
+        "net": -64
+      },
+      {
+        "period": "26011",
+        "date": "2026-01-25",
+        "net": -66
+      },
+      {
+        "period": "26012",
+        "date": "2026-01-27",
+        "net": -68
+      },
+      {
+        "period": "26013",
+        "date": "2026-01-29",
+        "net": -70
+      },
+      {
+        "period": "26014",
+        "date": "2026-02-01",
+        "net": -72
+      },
+      {
+        "period": "26015",
+        "date": "2026-02-03",
+        "net": -74
+      },
+      {
+        "period": "26016",
+        "date": "2026-02-05",
+        "net": -76
+      },
+      {
+        "period": "26017",
+        "date": "2026-02-08",
+        "net": -78
+      },
+      {
+        "period": "26018",
+        "date": "2026-02-10",
+        "net": -80
+      },
+      {
+        "period": "26019",
+        "date": "2026-02-12",
+        "net": -82
+      },
+      {
+        "period": "26020",
+        "date": "2026-02-24",
+        "net": -84
+      },
+      {
+        "period": "26021",
+        "date": "2026-02-26",
+        "net": -86
+      },
+      {
+        "period": "26022",
+        "date": "2026-03-01",
+        "net": -88
+      },
+      {
+        "period": "26023",
+        "date": "2026-03-03",
+        "net": -90
+      },
+      {
+        "period": "26024",
+        "date": "2026-03-05",
+        "net": -92
+      },
+      {
+        "period": "26025",
+        "date": "2026-03-08",
+        "net": -94
+      },
+      {
+        "period": "26026",
+        "date": "2026-03-10",
+        "net": -96
+      },
+      {
+        "period": "26027",
+        "date": "2026-03-12",
+        "net": -98
+      },
+      {
+        "period": "26028",
+        "date": "2026-03-15",
+        "net": -100
+      },
+      {
+        "period": "26029",
+        "date": "2026-03-17",
+        "net": -102
+      },
+      {
+        "period": "26030",
+        "date": "2026-03-19",
+        "net": -104
+      },
+      {
+        "period": "26031",
+        "date": "2026-03-22",
+        "net": -106
+      },
+      {
+        "period": "26032",
+        "date": "2026-03-24",
+        "net": -108
+      },
+      {
+        "period": "26033",
+        "date": "2026-03-26",
+        "net": -110
+      },
+      {
+        "period": "26034",
+        "date": "2026-03-29",
+        "net": -112
+      },
+      {
+        "period": "26035",
+        "date": "2026-03-31",
+        "net": -114
+      },
+      {
+        "period": "26036",
+        "date": "2026-04-02",
+        "net": -116
+      },
+      {
+        "period": "26037",
+        "date": "2026-04-05",
+        "net": -118
+      },
+      {
+        "period": "26038",
+        "date": "2026-04-07",
+        "net": -120
+      },
+      {
+        "period": "26039",
+        "date": "2026-04-09",
+        "net": -122
+      },
+      {
+        "period": "26040",
+        "date": "2026-04-12",
+        "net": -124
+      },
+      {
+        "period": "26041",
+        "date": "2026-04-14",
+        "net": -126
+      },
+      {
+        "period": "26042",
+        "date": "2026-04-16",
+        "net": -128
+      },
+      {
+        "period": "26043",
+        "date": "2026-04-19",
+        "net": -130
+      },
+      {
+        "period": "26044",
+        "date": "2026-04-21",
+        "net": -132
+      },
+      {
+        "period": "26045",
+        "date": "2026-04-23",
+        "net": -134
+      },
+      {
+        "period": "26046",
+        "date": "2026-04-26",
+        "net": -136
+      },
+      {
+        "period": "26047",
+        "date": "2026-04-28",
+        "net": -138
+      },
+      {
+        "period": "26048",
+        "date": "2026-04-30",
+        "net": -140
+      },
+      {
+        "period": "26049",
+        "date": "2026-05-03",
+        "net": -142
+      },
+      {
+        "period": "26050",
+        "date": "2026-05-05",
+        "net": -144
+      },
+      {
+        "period": "26051",
+        "date": "2026-05-07",
+        "net": -146
+      },
+      {
+        "period": "26052",
+        "date": "2026-05-10",
+        "net": -148
+      },
+      {
+        "period": "26053",
+        "date": "2026-05-12",
+        "net": -150
+      },
+      {
+        "period": "26054",
+        "date": "2026-05-14",
+        "net": -152
+      },
+      {
+        "period": "26055",
+        "date": "2026-05-17",
+        "net": -154
+      },
+      {
+        "period": "26056",
+        "date": "2026-05-19",
+        "net": -156
+      },
+      {
+        "period": "26057",
+        "date": "2026-05-21",
+        "net": -158
+      },
+      {
+        "period": "26058",
+        "date": "2026-05-24",
+        "net": -160
+      },
+      {
+        "period": "26059",
+        "date": "2026-05-26",
+        "net": -162
+      },
+      {
+        "period": "26060",
+        "date": "2026-05-28",
+        "net": -164
+      },
+      {
+        "period": "26061",
+        "date": "2026-05-31",
+        "net": -166
+      },
+      {
+        "period": "26062",
+        "date": "2026-06-02",
+        "net": -163
+      },
+      {
+        "period": "26063",
+        "date": "2026-06-04",
+        "net": -165
+      },
+      {
+        "period": "26064",
+        "date": "2026-06-07",
+        "net": -167
+      },
+      {
+        "period": "26065",
+        "date": "2026-06-09",
+        "net": -169
+      },
+      {
+        "period": "26066",
+        "date": "2026-06-11",
+        "net": -171
+      },
+      {
+        "period": "26067",
+        "date": "2026-06-14",
+        "net": -173
+      },
+      {
+        "period": "26068",
+        "date": "2026-06-16",
+        "net": -175
+      },
+      {
+        "period": "26069",
+        "date": "2026-06-18",
+        "net": -177
+      },
+      {
+        "period": "26070",
+        "date": "2026-06-21",
+        "net": -179
+      },
+      {
+        "period": "26071",
+        "date": "2026-06-23",
+        "net": -181
+      },
+      {
+        "period": "26072",
+        "date": "2026-06-25",
+        "net": -183
+      },
+      {
+        "period": "26073",
+        "date": "2026-06-28",
+        "net": -185
+      },
+      {
+        "period": "26074",
+        "date": "2026-06-30",
+        "net": -187
+      },
+      {
+        "period": "26075",
+        "date": "2026-07-02",
+        "net": -189
+      },
+      {
+        "period": "26076",
+        "date": "2026-07-05",
+        "net": -191
+      },
+      {
+        "period": "26077",
+        "date": "2026-07-07",
+        "net": -193
+      },
+      {
+        "period": "26078",
+        "date": "2026-07-09",
+        "net": -195
+      },
+      {
+        "period": "26079",
+        "date": "2026-07-12",
+        "net": -197
+      },
+      {
+        "period": "26080",
+        "date": "2026-07-14",
+        "net": -199
+      },
+      {
+        "period": "26081",
+        "date": "2026-07-16",
+        "net": -201
+      },
+      {
+        "period": "26082",
+        "date": "2026-07-19",
+        "net": -203
+      },
+      {
+        "period": "26083",
+        "date": "2026-07-21",
+        "net": -205
+      },
+      {
+        "period": "26084",
+        "date": "2026-07-23",
+        "net": -207
+      },
+      {
+        "period": "26085",
+        "date": "2026-07-26",
+        "net": -209
+      },
+      {
+        "period": "26086",
+        "date": "2026-07-28",
+        "net": -211
+      },
+      {
+        "period": "26087",
+        "date": "2026-07-30",
+        "net": -213
+      },
+      {
+        "period": "26088",
+        "date": "2026-08-02",
+        "net": -215
+      },
+      {
+        "period": "26089",
+        "date": "2026-08-04",
+        "net": -217
+      },
+      {
+        "period": "26090",
+        "date": "2026-08-06",
+        "net": -219
+      },
+      {
+        "period": "26091",
+        "date": "2026-08-09",
+        "net": -221
+      },
+      {
+        "period": "26092",
+        "date": "2026-08-11",
+        "net": -223
+      },
+      {
+        "period": "26093",
+        "date": "2026-08-13",
+        "net": -225
+      },
+      {
+        "period": "26094",
+        "date": "2026-08-16",
+        "net": -227
+      },
+      {
+        "period": "26095",
+        "date": "2026-08-18",
+        "net": -229
+      },
+      {
+        "period": "26096",
+        "date": "2026-08-20",
+        "net": -231
+      },
+      {
+        "period": "26097",
+        "date": "2026-08-23",
+        "net": -233
+      },
+      {
+        "period": "26098",
+        "date": "2026-08-25",
+        "net": -235
+      },
+      {
+        "period": "26099",
+        "date": "2026-08-27",
+        "net": -237
+      },
+      {
+        "period": "26100",
+        "date": "2026-08-30",
+        "net": -239
+      },
+      {
+        "period": "26101",
+        "date": "2026-09-01",
+        "net": -241
+      },
+      {
+        "period": "26102",
+        "date": "2026-09-03",
+        "net": -243
+      },
+      {
+        "period": "26103",
+        "date": "2026-09-06",
+        "net": -245
+      },
+      {
+        "period": "26104",
+        "date": "2026-09-08",
+        "net": -247
+      }
+    ],
+    "betCost": 2,
+    "disclaimer": "一/二等奖按历史近似平均值估算，非官方精算数据，仅用于示意长期负期望现象。"
+  }
+}

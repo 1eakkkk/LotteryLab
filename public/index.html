@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>随机数打脸实验室 · 双色球概率实验室 V0.5</title>
+<style>
+  :root {
+    --paper: #eef0ec;
+    --paper-2: #e4e7e0;
+    --ink: #1c2430;
+    --ink-dim: #5b6472;
+    --red: #b23a3a;
+    --red-soft: #e7cfcf;
+    --blue: #2f5d8a;
+    --blue-soft: #cfdbe7;
+    --amber: #9a7b1f;
+    --line: #c8cbc2;
+    --serif: ui-serif, Georgia, "Songti SC", "Noto Serif SC", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.65;
+  }
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
+  .divider {
+    height: 3px;
+    margin: 48px 0 28px;
+    background: linear-gradient(90deg, var(--red) 0%, var(--red) 48%, var(--blue) 52%, var(--blue) 100%);
+    border-radius: 2px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: 2.15rem;
+    line-height: 1.3;
+    margin: 0 0 18px;
+    max-width: 20ch;
+  }
+  h2 {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    margin: 0 0 14px;
+  }
+  p { margin: 0 0 14px; max-width: 68ch; }
+  .lede { font-size: 1.05rem; color: var(--ink-dim); max-width: 60ch; }
+  .tagline {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-dim);
+    border-left: 3px solid var(--ink-dim);
+    padding-left: 16px;
+    margin: 24px 0 32px;
+    max-width: 56ch;
+  }
+  .badge-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0 8px; }
+  .badge {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink-dim);
+    background: var(--paper-2);
+  }
+  .notice {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-size: 0.92rem;
+    color: var(--ink-dim);
+  }
+  .notice p:last-child { margin-bottom: 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 10px 0 20px;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { font-weight: 600; color: var(--ink-dim); font-size: 0.8rem; }
+  td.mono, .mono { font-family: var(--mono); }
+  .dim { color: var(--ink-dim); font-size: 0.85em; }
+  .strategy-name { font-weight: 600; }
+  .s-random { color: var(--ink-dim); }
+  .s-hot { color: var(--red); }
+  .s-cold { color: var(--blue); }
+  .chart-wrap {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 8px 4px;
+    margin: 10px 0 22px;
+  }
+  svg.chart { width: 100%; height: auto; display: block; font-family: var(--mono); }
+  .line { stroke-width: 2.2; }
+  .s-random.line, .line.s-random { stroke: var(--ink-dim); }
+  .s-hot.line, .line.s-hot { stroke: var(--red); }
+  .s-cold.line, .line.s-cold { stroke: var(--blue); }
+  .grid-line { stroke: var(--line); stroke-width: 1; opacity: 0.6; }
+  .axis-label { fill: var(--ink-dim); font-size: 10px; }
+  .ref-line { stroke: var(--amber); stroke-width: 1.4; }
+  .ref-label { fill: var(--amber); font-size: 10px; }
+  .ref-zero { stroke: var(--ink-dim); }
+  .ref-label.ref-zero { fill: var(--ink-dim); }
+  .hist-bar { fill: #b7bdb2; }
+  .marker-line { stroke-width: 1.6; stroke-dasharray: 3,3; }
+  .marker-line.s-random { stroke: var(--ink-dim); }
+  .marker-line.s-hot { stroke: var(--red); }
+  .marker-line.s-cold { stroke: var(--blue); }
+  .marker-label { font-size: 10px; font-weight: 600; }
+  .marker-label.s-random { fill: var(--ink-dim); }
+  .marker-label.s-hot { fill: var(--red); }
+  .marker-label.s-cold { fill: var(--blue); }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.85rem; margin: 4px 0 18px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .swatch { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+  .swatch.s-random { background: var(--ink-dim); }
+  .swatch.s-hot { background: var(--red); }
+  .swatch.s-cold { background: var(--blue); }
+  footer {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 0.82rem;
+    color: var(--ink-dim);
+  }
+  footer p { max-width: none; }
+  code { font-family: var(--mono); background: var(--paper-2); padding: 1px 5px; border-radius: 4px; font-size: 0.9em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>任何策略，在没有通过盲测之前，都不准自称"有效"。</h1>
+  <p class="lede">这是一个用真实开奖数据持续检验"选号策略是否真的比随机数强"的公开实验平台——不是预测工具，是概率科普实验。</p>
+
+  <div class="badge-row">
+    <span class="badge">数据集截至 2026-09-12</span>
+    <span class="badge">回测区间 第25005~26104期</span>
+    <span class="badge">共251期</span>
+    <span class="badge">Walk-Forward 回测期数 151</span>
+    <span class="badge">蒙特卡洛 5000 次独立模拟</span>
+    <span class="badge">盲测集封存于第26075期起（当前30期）</span>
+  </div>
+
+  <div class="tagline">用 251 期真实开奖数据，让选号玄学、统计策略接受同一个残酷的对手：大数定律。</div>
+
+  <div class="notice">
+    <p>本项目为统计与算法科普实验，<strong>不提供售彩、代购、充值、返利等任何服务</strong>；页面上出现的任何号码都只用于回测展示，不构成购彩建议。彩票开奖是独立随机事件，历史数据不影响未来结果——这句话本身就是本实验想反复验证、而不是想反驳的前提。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>数据与方法</h2>
+  <p>历史开奖数据来自 <code>gudaoxuri/lottery_history</code>（GitHub 公开镜像），当前版本共 <strong>251 期</strong>（25005 ~ 26104）。这是 V0 版本的已知限制：还没有接入更长的历史区间，也还没有做多数据源交叉核对——按方案规则，一旦发现数据源不一致，后续版本会暂停自动发布并报警，而不是随便选一个继续跑。</p>
+  <p>回测采用 <strong>Walk-Forward 滚动预测</strong>：预测第 t+1 期时，策略只能看到第 1~t 期的数据，绝不使用未来信息。本版本 <code>minTrainSize = 100</code>，即前 100 期只作为初始训练数据，从第 101 期开始才正式计入回测成绩，实际参与评分的有 151 期。</p>
+  <p>随机基准和蒙特卡洛模拟都使用「期号 + 策略名」做种子的伪随机数，保证同一份数据永远得到同一份排行榜——回测模式下完全不使用 <code>Math.random()</code>。</p>
+
+  <div class="divider"></div>
+
+  <h2>排行榜</h2>
+  <p>三个策略：<span class="s-random">随机基准</span>（完全不看历史，仅作对照）、<span class="s-hot">热号</span>（近50期出现频率最高的号码）、<span class="s-cold">冷号</span>（遗漏期数最长的号码）。理论期望值 <strong>1.0909</strong> 是红球 33 选 6 在均匀随机假设下的数学期望（6 × 6/33），独立于任何策略。</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>策略</th>
+        <th>均命中(红)</th>
+        <th>理论期望</th>
+        <th>95% 置信区间</th>
+        <th>蓝球命中率</th>
+        <th>跑赢随机分布</th>
+        <th>≥4/≥5/6红次数</th>
+        <th>配对检验显著</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      <tr>
+        <td class="strategy-name s-random">随机基准</td>
+        <td class="mono">1.0596</td>
+        <td class="mono">1.0909</td>
+        <td class="mono">[0.933, 1.186]</td>
+        <td class="mono">4.0% <span class="dim">(理论 6.3%)</span></td>
+        <td class="mono">34.1%</td>
+        <td class="mono">0 / 0 / 0</td>
+        <td>否</td>
+      </tr>
+
+      <tr>
+        <td class="strategy-name s-hot">热号</td>
+        <td class="mono">1.1987</td>
+        <td class="mono">1.0909</td>
+        <td class="mono">[1.062, 1.335]</td>
+        <td class="mono">4.6% <span class="dim">(理论 6.3%)</span></td>
+        <td class="mono">93.9%</td>
+        <td class="mono">1 / 0 / 0</td>
+        <td>否</td>
+      </tr>
+
+      <tr>
+        <td class="strategy-name s-cold">冷号</td>
+        <td class="mono">0.9735</td>
+        <td class="mono">1.0909</td>
+        <td class="mono">[0.841, 1.106]</td>
+        <td class="mono">5.3% <span class="dim">(理论 6.3%)</span></td>
+        <td class="mono">4.6%</td>
+        <td class="mono">1 / 0 / 0</td>
+        <td>否</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="notice">
+    <p><strong class="s-random">随机基准</strong>：均命中 1.0596（理论期望 1.0909）。它的表现落在随机分布的中段（跑赢 34.1% 的随机策略），和"随便选"没有可辨识的差别。</p>
+<p><strong class="s-hot">热号</strong>：均命中 1.1987（理论期望 1.0909）。本期它跑赢了 93.9% 的独立随机策略，看起来很唬人——但这本质上只是恰好落在了随机波动分布里较高的一侧，配对差值检验并未达到统计显著。按照本站的北极星原则：没有通过盲测之前，不能说它"有效"。</p>
+<p><strong class="s-cold">冷号</strong>：均命中 0.9735（理论期望 1.0909）。本期它只跑赢了 4.6% 的独立随机策略，表现落后于大多数随机对照——这同样只是正常的随机波动，不代表这个策略"更差"，样本量还太小，不足以下结论。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>训练 / 验证 / 盲测：三段式分割（V0.5 新增）</h2>
+  <p>上一节的排行榜是训练集、验证集、盲测集<strong>合并在一起</strong>算出来的整体成绩——这正是 V0 版本"这是开发集成绩，不是盲测成绩"的局限。从这一版开始，回测数据被切成三段固定期号区间，<strong>边界写死，不随以后追加新数据而移动</strong>：</p>
+  <ul>
+    <li>训练集：第25105期起（供以后"我的策略"调参数用，当前三个基线策略没有可调参数，暂时空跑）</li>
+    <li>验证集：训练集之后，到第26074期（用于挑选/校准参数，当前同样未使用）</li>
+    <li><strong>盲测集：第26075期起，当前 30 期（第26075~26104期）</strong>——这是本站第一次正式封存的盲测起点。以后每重新抓一批新数据，这个集合只会往后累积变长，起点期号本身不会因为数据变长而重新计算。</li>
+  </ul>
+  <div class="notice">
+    <p><strong>关于当前 30 期盲测集的诚实说明</strong>：这是这个项目第一次跑盲测，样本量还很小，任何一个策略在这里的表现——无论好看还是难看——统计上都不可靠，只是"账本翻开的第一页"。它的意义不在于现在这个数字，而在于：从今往后，"盲测集"和"开发集"会被严格分开展示，不会因为开发集算出来的数字好看，就把它包装成盲测结论。</p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2">策略</th>
+        <th colspan="3">开发集（训练+验证，第25105~26074期）</th>
+        <th colspan="3">盲测集（第26075~26104期）</th>
+      </tr>
+      <tr>
+        <th>均命中(红)</th>
+        <th>95% CI</th>
+        <th>跑赢随机分布</th>
+        <th>均命中(红)</th>
+        <th>95% CI</th>
+        <th>跑赢随机分布</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      <tr>
+        <td class="strategy-name s-random">随机基准</td>
+        <td class="mono">1.0826</td>
+        <td class="mono">[0.936, 1.229]</td>
+        <td class="mono">47.7%</td>
+        <td class="mono">0.9667</td>
+        <td class="mono">[0.727, 1.206]</td>
+        <td class="mono">25.1%</td>
+      </tr>
+
+      <tr>
+        <td class="strategy-name s-hot">热号</td>
+        <td class="mono">1.1818</td>
+        <td class="mono">[1.026, 1.338]</td>
+        <td class="mono">89.4%</td>
+        <td class="mono">1.2667</td>
+        <td class="mono">[0.986, 1.548]</td>
+        <td class="mono">88.1%</td>
+      </tr>
+
+      <tr>
+        <td class="strategy-name s-cold">冷号</td>
+        <td class="mono">0.9421</td>
+        <td class="mono">[0.798, 1.086]</td>
+        <td class="mono">3.1%</td>
+        <td class="mono">1.1000</td>
+        <td class="mono">[0.770, 1.430]</td>
+        <td class="mono">55.7%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="notice">
+    <p><strong class="s-random">随机基准</strong>：盲测集里它落在随机分布中段（跑赢 25.1%），和随手选一注没有可辨识的差别。</p>
+<p><strong class="s-hot">热号</strong>：盲测集里它跑赢了 88.1% 的独立随机策略——看起来亮眼，但样本只有 30 期，这个量级的波动完全在随机噪声范围内。按北极星原则：这不构成"有效"的证据，只是给这个策略记上了它盲测账本的第一笔。</p>
+<p><strong class="s-cold">冷号</strong>：盲测集里它落在随机分布中段（跑赢 55.7%），和随手选一注没有可辨识的差别。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>近期短线表现（近10/30/100期）</h2>
+  <p>只是一个直观的"最近手感"数字，不做置信区间、不做显著性判断——短期波动是这类项目里最容易被误读成"策略突然变强/变弱"的地方，这里刻意不给任何结论性文案。</p>
+  <table>
+    <thead>
+      <tr>
+        <th>策略</th>
+        <th>近10期均命中</th>
+        <th>近30期均命中</th>
+        <th>近100期均命中</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      <tr>
+        <td class="strategy-name s-random">随机基准</td>
+        <td class="mono">1.0000</td>
+        <td class="mono">0.9667</td>
+        <td class="mono">1.0900</td>
+      </tr>
+
+      <tr>
+        <td class="strategy-name s-hot">热号</td>
+        <td class="mono">1.3000</td>
+        <td class="mono">1.2667</td>
+        <td class="mono">1.2400</td>
+      </tr>
+
+      <tr>
+        <td class="strategy-name s-cold">冷号</td>
+        <td class="mono">0.8000</td>
+        <td class="mono">1.1000</td>
+        <td class="mono">1.0000</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <h2>收敛曲线</h2>
+  <p>每个策略"累计平均命中数"随回测期数推进的变化过程。虚线是理论期望值——不是说曲线一定会贴上去，而是长期来看，样本均值和理论期望之间的差异应当落在正常波动范围内，而不是持续、系统性地偏离。</p>
+  <div class="legend">
+    <span class="legend-item"><span class="swatch s-random"></span>随机基准</span>
+    <span class="legend-item"><span class="swatch s-hot"></span>热号</span>
+    <span class="legend-item"><span class="swatch s-cold"></span>冷号</span>
+  </div>
+  <div class="chart-wrap"><svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" class="chart" role="img" aria-label="累计平均命中红球数"><line x1="48" y1="284.0" x2="696" y2="284.0" class="grid-line" /><text x="40" y="288.0" class="axis-label" text-anchor="end">-0.16</text><line x1="48" y1="231.2" x2="696" y2="231.2" class="grid-line" /><text x="40" y="235.2" class="axis-label" text-anchor="end">0.22</text><line x1="48" y1="178.4" x2="696" y2="178.4" class="grid-line" /><text x="40" y="182.4" class="axis-label" text-anchor="end">0.61</text><line x1="48" y1="125.6" x2="696" y2="125.6" class="grid-line" /><text x="40" y="129.6" class="axis-label" text-anchor="end">0.99</text><line x1="48" y1="72.8" x2="696" y2="72.8" class="grid-line" /><text x="40" y="76.8" class="axis-label" text-anchor="end">1.38</text><line x1="48" y1="20.0" x2="696" y2="20.0" class="grid-line" /><text x="40" y="24.0" class="axis-label" text-anchor="end">1.76</text><text x="48.0" y="310" class="axis-label" text-anchor="middle">第1期</text><text x="372.0" y="310" class="axis-label" text-anchor="middle">第76期</text><text x="696.0" y="310" class="axis-label" text-anchor="middle">第151期（最新）</text><line x1="48" y1="112.0" x2="696" y2="112.0" class="ref-line ref-theory" stroke-dasharray="5,4" /><text x="696" y="106.0" class="ref-label ref-theory" text-anchor="end">理论期望 1.0909</text><path d="M48.0,124.5 L52.3,124.5 L56.6,78.7 L61.0,90.1 L65.3,97.0 L69.6,101.6 L73.9,104.9 L78.2,107.3 L82.6,124.5 L86.9,124.5 L91.2,112.0 L95.5,124.5 L99.8,124.5 L104.2,114.7 L108.5,115.3 L112.8,115.9 L117.1,116.4 L121.4,116.9 L125.8,124.5 L130.1,124.5 L134.4,124.5 L138.7,118.3 L143.0,118.5 L147.4,124.5 L151.7,124.5 L156.0,124.5 L160.3,124.5 L164.6,124.5 L169.0,124.5 L173.3,129.1 L177.6,120.1 L181.9,115.9 L186.2,120.3 L190.6,120.5 L194.9,116.6 L199.2,120.7 L203.5,124.5 L207.8,128.1 L212.2,128.0 L216.5,131.4 L220.8,134.6 L225.1,134.3 L229.4,134.1 L233.8,130.8 L238.1,133.7 L242.4,130.5 L246.7,130.4 L251.0,127.4 L255.4,130.1 L259.7,127.3 L264.0,124.5 L268.3,121.9 L272.6,116.7 L277.0,114.3 L281.3,114.5 L285.6,117.1 L289.9,117.3 L294.2,117.4 L298.6,117.5 L302.9,119.9 L307.2,117.7 L311.5,120.1 L315.8,118.0 L320.2,118.1 L324.5,118.2 L328.8,120.3 L333.1,116.3 L337.4,116.4 L341.8,116.5 L346.1,118.6 L350.4,118.7 L354.7,115.0 L359.0,113.2 L363.4,115.2 L367.7,115.3 L372.0,117.3 L376.3,115.6 L380.6,113.9 L385.0,112.3 L389.3,112.5 L393.6,110.9 L397.9,111.1 L402.2,111.2 L406.6,113.0 L410.9,111.6 L415.2,108.5 L419.5,107.1 L423.8,107.3 L428.2,107.5 L432.5,107.7 L436.8,106.4 L441.1,106.6 L445.4,106.8 L449.8,108.4 L454.1,108.6 L458.4,108.7 L462.7,108.9 L467.0,110.5 L471.4,109.2 L475.7,110.8 L480.0,110.9 L484.3,112.4 L488.6,112.5 L493.0,111.3 L497.3,110.1 L501.6,110.2 L505.9,110.4 L510.2,110.5 L514.6,109.4 L518.9,107.0 L523.2,107.2 L527.5,108.5 L531.8,109.9 L536.2,110.0 L540.5,111.3 L544.8,110.3 L549.1,110.4 L553.4,110.5 L557.8,111.8 L562.1,111.9 L566.4,113.1 L570.7,113.2 L575.0,113.3 L579.4,114.5 L583.7,115.7 L588.0,115.8 L592.3,115.8 L596.6,115.9 L601.0,117.0 L605.3,116.0 L609.6,116.1 L613.9,117.2 L618.2,117.3 L622.6,116.3 L626.9,116.4 L631.2,115.4 L635.5,115.5 L639.8,115.5 L644.2,115.6 L648.5,115.7 L652.8,115.7 L657.1,115.8 L661.4,115.8 L665.8,115.0 L670.1,115.0 L674.4,116.0 L678.7,115.1 L683.0,115.2 L687.4,116.2 L691.7,117.2 L696.0,116.3" class="line s-random" fill="none" /><path d="M48.0,262.0 L52.3,193.3 L56.6,78.7 L61.0,55.8 L65.3,42.0 L69.6,55.8 L73.9,65.6 L78.2,72.9 L82.6,78.7 L86.9,97.0 L91.2,112.0 L95.5,101.6 L99.8,92.8 L104.2,104.9 L108.5,115.3 L112.8,124.5 L117.1,116.4 L121.4,116.9 L125.8,110.0 L130.1,117.6 L134.4,118.0 L138.7,118.3 L143.0,112.5 L147.4,113.0 L151.7,119.0 L156.0,124.5 L160.3,119.4 L164.6,124.5 L169.0,124.5 L173.3,124.5 L177.6,124.5 L181.9,128.8 L186.2,132.8 L190.6,132.6 L194.9,132.4 L199.2,136.0 L203.5,128.2 L207.8,124.5 L212.2,117.4 L216.5,121.1 L220.8,124.5 L225.1,121.2 L229.4,118.1 L233.8,118.3 L238.1,118.4 L242.4,115.5 L246.7,115.7 L251.0,113.0 L255.4,110.5 L259.7,108.0 L264.0,108.3 L268.3,108.6 L272.6,108.9 L277.0,106.7 L281.3,107.0 L285.6,107.3 L289.9,107.6 L294.2,107.9 L298.6,108.2 L302.9,106.2 L307.2,106.5 L311.5,106.8 L315.8,107.0 L320.2,105.2 L324.5,107.6 L328.8,109.9 L333.1,110.1 L337.4,108.3 L341.8,110.6 L346.1,110.8 L350.4,109.0 L354.7,107.3 L359.0,105.7 L363.4,104.1 L367.7,102.5 L372.0,104.6 L376.3,104.9 L380.6,103.3 L385.0,103.6 L389.3,102.2 L393.6,97.3 L397.9,97.7 L402.2,98.0 L406.6,98.3 L410.9,95.4 L415.2,97.3 L419.5,96.1 L423.8,96.4 L428.2,96.7 L432.5,97.0 L436.8,95.8 L441.1,96.1 L445.4,96.4 L449.8,96.7 L454.1,98.4 L458.4,98.7 L462.7,97.6 L467.0,96.4 L471.4,95.3 L475.7,92.9 L480.0,91.8 L484.3,92.1 L488.6,92.5 L493.0,91.4 L497.3,93.1 L501.6,93.4 L505.9,93.7 L510.2,95.2 L514.6,96.7 L518.9,94.5 L523.2,94.8 L527.5,95.0 L531.8,95.3 L536.2,95.6 L540.5,95.8 L544.8,97.2 L549.1,98.6 L553.4,97.7 L557.8,99.1 L562.1,100.4 L566.4,99.5 L570.7,98.6 L575.0,97.7 L579.4,97.9 L583.7,98.1 L588.0,97.2 L592.3,98.5 L596.6,98.7 L601.0,98.9 L605.3,98.1 L609.6,98.3 L613.9,97.4 L618.2,96.6 L622.6,97.8 L626.9,99.0 L631.2,99.2 L635.5,99.4 L639.8,98.6 L644.2,98.8 L648.5,99.0 L652.8,98.2 L657.1,97.4 L661.4,97.6 L665.8,95.9 L670.1,96.1 L674.4,95.3 L678.7,96.4 L683.0,96.6 L687.4,95.9 L691.7,96.1 L696.0,97.2" class="line s-hot" fill="none" /><path d="M48.0,262.0 L52.3,262.0 L56.6,216.2 L61.0,158.9 L65.3,152.0 L69.6,124.5 L73.9,144.1 L78.2,141.7 L82.6,139.8 L86.9,124.5 L91.2,124.5 L95.5,124.5 L99.8,124.5 L104.2,134.3 L108.5,133.7 L112.8,133.1 L117.1,132.6 L121.4,132.1 L125.8,139.0 L130.1,138.3 L134.4,137.6 L138.7,143.3 L143.0,136.5 L147.4,136.0 L151.7,135.5 L156.0,124.5 L160.3,124.5 L164.6,124.5 L169.0,124.5 L173.3,119.9 L177.6,120.1 L181.9,124.5 L186.2,124.5 L190.6,128.5 L194.9,128.4 L199.2,124.5 L203.5,128.2 L207.8,124.5 L212.2,128.0 L216.5,127.9 L220.8,127.9 L225.1,124.5 L229.4,127.7 L233.8,130.8 L238.1,130.6 L242.4,127.5 L246.7,127.4 L251.0,130.2 L255.4,132.9 L259.7,132.8 L264.0,135.3 L268.3,132.4 L272.6,132.3 L277.0,132.1 L281.3,132.0 L285.6,131.9 L289.9,124.5 L294.2,126.9 L298.6,126.8 L302.9,126.8 L307.2,129.0 L311.5,131.2 L315.8,133.2 L320.2,133.1 L324.5,130.8 L328.8,130.8 L333.1,128.6 L337.4,130.6 L341.8,128.5 L346.1,130.4 L350.4,130.3 L354.7,130.2 L359.0,130.2 L363.4,131.9 L367.7,131.8 L372.0,131.7 L376.3,131.6 L380.6,129.8 L385.0,131.5 L389.3,133.1 L393.6,133.0 L397.9,132.9 L402.2,132.8 L406.6,132.7 L410.9,134.2 L415.2,132.5 L419.5,132.4 L423.8,132.3 L428.2,132.2 L432.5,129.1 L436.8,130.5 L441.1,129.0 L445.4,130.4 L449.8,131.8 L454.1,131.7 L458.4,131.7 L462.7,133.0 L467.0,132.9 L471.4,131.4 L475.7,130.0 L480.0,131.3 L484.3,131.2 L488.6,129.8 L493.0,131.1 L497.3,131.0 L501.6,132.3 L505.9,133.5 L510.2,132.1 L514.6,132.1 L518.9,133.3 L523.2,133.2 L527.5,134.3 L531.8,135.5 L536.2,136.6 L540.5,136.5 L544.8,135.2 L549.1,133.9 L553.4,133.8 L557.8,134.9 L562.1,133.7 L566.4,132.5 L570.7,132.4 L575.0,131.2 L579.4,130.0 L583.7,128.9 L588.0,127.8 L592.3,128.8 L596.6,126.6 L601.0,127.7 L605.3,126.6 L609.6,127.6 L613.9,126.6 L618.2,125.5 L622.6,124.5 L626.9,124.5 L631.2,125.5 L635.5,126.5 L639.8,126.5 L644.2,127.5 L648.5,126.5 L652.8,126.5 L657.1,127.4 L661.4,126.4 L665.8,126.4 L670.1,127.3 L674.4,128.3 L678.7,128.2 L683.0,129.1 L687.4,129.1 L691.7,128.2 L696.0,128.1" class="line s-cold" fill="none" /></svg></div>
+
+  <div class="divider"></div>
+
+  <h2>蒙特卡洛随机分布</h2>
+  <p>固定住真实开奖序列不变，生成 <strong>5000</strong> 条相互独立的"随机选号策略"，让它们都跑一遍同样的 Walk-Forward 流程，得到下面这条经验分布（均值 1.0916，标准差 0.0696）。三条虚线标出了随机基准、热号、冷号各自的均命中数落在分布里的位置——这比单纯说"跑赢了多少随机策略"更直观：如果一个策略的位置和随机基准挤在分布中间的同一堆里，那它就没有跳出"运气"的范畴。</p>
+  <div class="chart-wrap"><svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" class="chart" role="img" aria-label="蒙特卡洛随机分布直方图"><rect x="36.0" y="239.2" width="23.0" height="0.8" class="hist-bar" /><rect x="84.0" y="239.2" width="23.0" height="0.8" class="hist-bar" /><rect x="108.0" y="237.7" width="23.0" height="2.3" class="hist-bar" /><rect x="132.0" y="234.4" width="23.0" height="5.6" class="hist-bar" /><rect x="156.0" y="225.7" width="23.0" height="14.3" class="hist-bar" /><rect x="180.0" y="224.6" width="23.0" height="15.4" class="hist-bar" /><rect x="204.0" y="205.8" width="23.0" height="34.2" class="hist-bar" /><rect x="228.0" y="186.6" width="23.0" height="53.4" class="hist-bar" /><rect x="252.0" y="148.2" width="23.0" height="91.8" class="hist-bar" /><rect x="276.0" y="114.8" width="23.0" height="125.2" class="hist-bar" /><rect x="300.0" y="67.0" width="23.0" height="173.0" class="hist-bar" /><rect x="324.0" y="45.2" width="23.0" height="194.8" class="hist-bar" /><rect x="348.0" y="20.0" width="23.0" height="220.0" class="hist-bar" /><rect x="372.0" y="31.7" width="23.0" height="208.3" class="hist-bar" /><rect x="396.0" y="44.4" width="23.0" height="195.6" class="hist-bar" /><rect x="420.0" y="70.0" width="23.0" height="170.0" class="hist-bar" /><rect x="444.0" y="114.4" width="23.0" height="125.6" class="hist-bar" /><rect x="468.0" y="144.5" width="23.0" height="95.5" class="hist-bar" /><rect x="492.0" y="178.3" width="23.0" height="61.7" class="hist-bar" /><rect x="516.0" y="196.4" width="23.0" height="43.6" class="hist-bar" /><rect x="540.0" y="218.2" width="23.0" height="21.8" class="hist-bar" /><rect x="564.0" y="225.7" width="23.0" height="14.3" class="hist-bar" /><rect x="588.0" y="233.6" width="23.0" height="6.4" class="hist-bar" /><rect x="612.0" y="237.0" width="23.0" height="3.0" class="hist-bar" /><rect x="636.0" y="237.7" width="23.0" height="2.3" class="hist-bar" /><rect x="660.0" y="239.6" width="23.0" height="0.4" class="hist-bar" /><rect x="684.0" y="239.6" width="23.0" height="0.4" class="hist-bar" /><text x="48.0" y="260" class="axis-label" text-anchor="middle">0.82</text><text x="156.0" y="260" class="axis-label" text-anchor="middle">0.91</text><text x="264.0" y="260" class="axis-label" text-anchor="middle">1.00</text><text x="372.0" y="260" class="axis-label" text-anchor="middle">1.09</text><text x="480.0" y="260" class="axis-label" text-anchor="middle">1.18</text><text x="588.0" y="260" class="axis-label" text-anchor="middle">1.27</text><text x="696.0" y="260" class="axis-label" text-anchor="middle">1.36</text><line x1="335.5" y1="20" x2="335.5" y2="240" class="marker-line s-random" /><text x="335.5" y="34" class="marker-label s-random" text-anchor="middle">随机基准</text><line x1="502.4" y1="20" x2="502.4" y2="240" class="marker-line s-hot" /><text x="502.4" y="50" class="marker-label s-hot" text-anchor="middle">热号</text><line x1="232.2" y1="20" x2="232.2" y2="240" class="marker-line s-cold" /><text x="232.2" y="66" class="marker-label s-cold" text-anchor="middle">冷号</text></svg></div>
+
+  <div class="divider"></div>
+
+  <h2>资金曲线（近似示意，非精算数据）</h2>
+  <p>假设每期固定买 1 注（2 元），按官方奖级规则结算，一二等奖用历史近似平均值估算（不是精确的奖池分配结果）。这条曲线不是这个项目的重点结论，只是把"长期负期望"从一个抽象数字变成一条看得见的曲线。</p>
+  <div class="legend">
+    <span class="legend-item"><span class="swatch s-random"></span>随机基准</span>
+    <span class="legend-item"><span class="swatch s-hot"></span>热号</span>
+    <span class="legend-item"><span class="swatch s-cold"></span>冷号</span>
+  </div>
+  <div class="chart-wrap"><svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" class="chart" role="img" aria-label="累计净值（元，近似估算）"><line x1="48" y1="284.0" x2="696" y2="284.0" class="grid-line" /><text x="40" y="288.0" class="axis-label" text-anchor="end">-299.20</text><line x1="48" y1="231.2" x2="696" y2="231.2" class="grid-line" /><text x="40" y="235.2" class="axis-label" text-anchor="end">-233.92</text><line x1="48" y1="178.4" x2="696" y2="178.4" class="grid-line" /><text x="40" y="182.4" class="axis-label" text-anchor="end">-168.64</text><line x1="48" y1="125.6" x2="696" y2="125.6" class="grid-line" /><text x="40" y="129.6" class="axis-label" text-anchor="end">-103.36</text><line x1="48" y1="72.8" x2="696" y2="72.8" class="grid-line" /><text x="40" y="76.8" class="axis-label" text-anchor="end">-38.08</text><line x1="48" y1="20.0" x2="696" y2="20.0" class="grid-line" /><text x="40" y="24.0" class="axis-label" text-anchor="end">27.20</text><text x="48.0" y="310" class="axis-label" text-anchor="middle">第1期</text><text x="372.0" y="310" class="axis-label" text-anchor="middle">第76期</text><text x="696.0" y="310" class="axis-label" text-anchor="middle">第151期</text><line x1="48" y1="42.0" x2="696" y2="42.0" class="ref-line ref-zero" stroke-dasharray="5,4" /><text x="696" y="36.0" class="ref-label ref-zero" text-anchor="end">收支平衡线</text><path d="M48.0,43.6 L52.3,45.2 L56.6,46.9 L61.0,48.5 L65.3,50.1 L69.6,51.7 L73.9,53.3 L78.2,50.9 L82.6,52.5 L86.9,54.1 L91.2,55.8 L95.5,57.4 L99.8,59.0 L104.2,60.6 L108.5,62.2 L112.8,63.8 L117.1,65.5 L121.4,67.1 L125.8,68.7 L130.1,70.3 L134.4,71.9 L138.7,73.5 L143.0,75.2 L147.4,76.8 L151.7,78.4 L156.0,80.0 L160.3,81.6 L164.6,83.3 L169.0,84.9 L173.3,86.5 L177.6,88.1 L181.9,89.7 L186.2,91.3 L190.6,93.0 L194.9,94.6 L199.2,96.2 L203.5,97.8 L207.8,99.4 L212.2,101.0 L216.5,102.7 L220.8,104.3 L225.1,105.9 L229.4,107.5 L233.8,109.1 L238.1,110.8 L242.4,108.3 L246.7,109.9 L251.0,111.6 L255.4,113.2 L259.7,114.8 L264.0,116.4 L268.3,118.0 L272.6,119.6 L277.0,121.3 L281.3,122.9 L285.6,124.5 L289.9,126.1 L294.2,127.7 L298.6,129.4 L302.9,131.0 L307.2,132.6 L311.5,134.2 L315.8,131.8 L320.2,133.4 L324.5,135.0 L328.8,136.6 L333.1,138.3 L337.4,139.9 L341.8,141.5 L346.1,143.1 L350.4,144.7 L354.7,146.3 L359.0,148.0 L363.4,149.6 L367.7,151.2 L372.0,152.8 L376.3,154.4 L380.6,156.0 L385.0,157.7 L389.3,159.3 L393.6,160.9 L397.9,162.5 L402.2,164.1 L406.6,165.8 L410.9,167.4 L415.2,169.0 L419.5,170.6 L423.8,172.2 L428.2,173.8 L432.5,175.5 L436.8,177.1 L441.1,178.7 L445.4,180.3 L449.8,181.9 L454.1,183.5 L458.4,185.2 L462.7,186.8 L467.0,188.4 L471.4,190.0 L475.7,191.6 L480.0,193.3 L484.3,194.9 L488.6,196.5 L493.0,198.1 L497.3,199.7 L501.6,197.3 L505.9,198.9 L510.2,200.5 L514.6,202.1 L518.9,203.8 L523.2,205.4 L527.5,207.0 L531.8,208.6 L536.2,210.2 L540.5,211.9 L544.8,213.5 L549.1,215.1 L553.4,216.7 L557.8,218.3 L562.1,219.9 L566.4,221.6 L570.7,223.2 L575.0,224.8 L579.4,226.4 L583.7,224.0 L588.0,225.6 L592.3,227.2 L596.6,228.8 L601.0,230.5 L605.3,232.1 L609.6,233.7 L613.9,235.3 L618.2,236.9 L622.6,238.5 L626.9,240.2 L631.2,241.8 L635.5,243.4 L639.8,245.0 L644.2,246.6 L648.5,248.3 L652.8,245.8 L657.1,247.4 L661.4,249.1 L665.8,250.7 L670.1,252.3 L674.4,253.9 L678.7,255.5 L683.0,257.1 L687.4,258.8 L691.7,260.4 L696.0,262.0" class="line s-random" fill="none" /><path d="M48.0,43.6 L52.3,45.2 L56.6,46.9 L61.0,48.5 L65.3,50.1 L69.6,51.7 L73.9,53.3 L78.2,54.9 L82.6,56.6 L86.9,58.2 L91.2,59.8 L95.5,61.4 L99.8,63.0 L104.2,64.6 L108.5,66.3 L112.8,67.9 L117.1,69.5 L121.4,71.1 L125.8,72.7 L130.1,74.4 L134.4,76.0 L138.7,77.6 L143.0,79.2 L147.4,80.8 L151.7,82.4 L156.0,84.1 L160.3,85.7 L164.6,87.3 L169.0,88.9 L173.3,90.5 L177.6,92.1 L181.9,93.8 L186.2,95.4 L190.6,97.0 L194.9,98.6 L199.2,100.2 L203.5,101.9 L207.8,103.5 L212.2,105.1 L216.5,106.7 L220.8,108.3 L225.1,109.9 L229.4,111.6 L233.8,113.2 L238.1,114.8 L242.4,116.4 L246.7,118.0 L251.0,119.6 L255.4,121.3 L259.7,122.9 L264.0,124.5 L268.3,122.1 L272.6,123.7 L277.0,125.3 L281.3,122.9 L285.6,120.5 L289.9,122.1 L294.2,123.7 L298.6,125.3 L302.9,126.9 L307.2,128.5 L311.5,130.2 L315.8,131.8 L320.2,133.4 L324.5,135.0 L328.8,136.6 L333.1,138.3 L337.4,139.9 L341.8,141.5 L346.1,143.1 L350.4,144.7 L354.7,142.3 L359.0,143.9 L363.4,145.5 L367.7,147.1 L372.0,148.8 L376.3,150.4 L380.6,152.0 L385.0,153.6 L389.3,155.2 L393.6,148.8 L397.9,150.4 L402.2,152.0 L406.6,153.6 L410.9,155.2 L415.2,156.9 L419.5,158.5 L423.8,160.1 L428.2,161.7 L432.5,163.3 L436.8,164.9 L441.1,166.6 L445.4,168.2 L449.8,169.8 L454.1,171.4 L458.4,173.0 L462.7,174.6 L467.0,176.3 L471.4,177.9 L475.7,179.5 L480.0,181.1 L484.3,182.7 L488.6,184.4 L493.0,186.0 L497.3,187.6 L501.6,189.2 L505.9,190.8 L510.2,192.4 L514.6,194.1 L518.9,195.7 L523.2,197.3 L527.5,194.9 L531.8,196.5 L536.2,198.1 L540.5,199.7 L544.8,201.3 L549.1,203.0 L553.4,204.6 L557.8,206.2 L562.1,207.8 L566.4,209.4 L570.7,211.0 L575.0,212.7 L579.4,214.3 L583.7,215.9 L588.0,217.5 L592.3,219.1 L596.6,220.8 L601.0,222.4 L605.3,224.0 L609.6,225.6 L613.9,227.2 L618.2,228.8 L622.6,230.5 L626.9,232.1 L631.2,233.7 L635.5,235.3 L639.8,236.9 L644.2,238.5 L648.5,240.2 L652.8,237.7 L657.1,239.4 L661.4,241.0 L665.8,242.6 L670.1,244.2 L674.4,241.8 L678.7,243.4 L683.0,245.0 L687.4,246.6 L691.7,248.3 L696.0,249.9" class="line s-hot" fill="none" /><path d="M48.0,43.6 L52.3,45.2 L56.6,46.9 L61.0,48.5 L65.3,46.0 L69.6,47.7 L73.9,49.3 L78.2,50.9 L82.6,52.5 L86.9,54.1 L91.2,55.8 L95.5,53.3 L99.8,54.9 L104.2,56.6 L108.5,58.2 L112.8,59.8 L117.1,61.4 L121.4,63.0 L125.8,64.6 L130.1,66.3 L134.4,67.9 L138.7,69.5 L143.0,71.1 L147.4,68.7 L151.7,70.3 L156.0,63.8 L160.3,65.5 L164.6,67.1 L169.0,68.7 L173.3,70.3 L177.6,71.9 L181.9,73.5 L186.2,75.2 L190.6,72.7 L194.9,74.4 L199.2,76.0 L203.5,77.6 L207.8,79.2 L212.2,80.8 L216.5,82.4 L220.8,80.0 L225.1,81.6 L229.4,83.3 L233.8,84.9 L238.1,86.5 L242.4,88.1 L246.7,85.7 L251.0,87.3 L255.4,88.9 L259.7,90.5 L264.0,92.1 L268.3,93.8 L272.6,95.4 L277.0,97.0 L281.3,98.6 L285.6,100.2 L289.9,93.8 L294.2,95.4 L298.6,97.0 L302.9,98.6 L307.2,100.2 L311.5,101.9 L315.8,103.5 L320.2,105.1 L324.5,106.7 L328.8,108.3 L333.1,109.9 L337.4,111.6 L341.8,113.2 L346.1,114.8 L350.4,116.4 L354.7,118.0 L359.0,119.6 L363.4,121.3 L367.7,122.9 L372.0,124.5 L376.3,126.1 L380.6,127.7 L385.0,129.4 L389.3,131.0 L393.6,132.6 L397.9,134.2 L402.2,135.8 L406.6,137.4 L410.9,139.1 L415.2,140.7 L419.5,142.3 L423.8,143.9 L428.2,145.5 L432.5,147.1 L436.8,148.8 L441.1,150.4 L445.4,152.0 L449.8,153.6 L454.1,155.2 L458.4,156.9 L462.7,158.5 L467.0,160.1 L471.4,161.7 L475.7,163.3 L480.0,164.9 L484.3,166.6 L488.6,168.2 L493.0,169.8 L497.3,171.4 L501.6,173.0 L505.9,174.6 L510.2,176.3 L514.6,173.8 L518.9,175.5 L523.2,177.1 L527.5,178.7 L531.8,180.3 L536.2,181.9 L540.5,183.5 L544.8,185.2 L549.1,186.8 L553.4,188.4 L557.8,190.0 L562.1,191.6 L566.4,193.3 L570.7,194.9 L575.0,196.5 L579.4,198.1 L583.7,199.7 L588.0,201.3 L592.3,203.0 L596.6,204.6 L601.0,206.2 L605.3,207.8 L609.6,209.4 L613.9,211.0 L618.2,212.7 L622.6,214.3 L626.9,215.9 L631.2,217.5 L635.5,219.1 L639.8,220.8 L644.2,222.4 L648.5,224.0 L652.8,225.6 L657.1,227.2 L661.4,228.8 L665.8,230.5 L670.1,232.1 L674.4,233.7 L678.7,235.3 L683.0,236.9 L687.4,238.5 L691.7,240.2 L696.0,241.8" class="line s-cold" fill="none" /></svg></div>
+  <p class="dim">一/二等奖按历史近似平均值估算，非官方精算数据，仅用于示意长期负期望现象。</p>
+
+  <div class="divider"></div>
+
+  <h2>这是 V0.5：还没做的事</h2>
+  <p>这一版在 V0 的地基上，把"开发集"和"盲测集"正式分开，加了短期窗口表现。还没有做的，留给下一版：</p>
+  <ul>
+    <li>更长的历史区间 + 多数据源交叉核对（当前仍是单一数据源，251 期）</li>
+    <li>"我的策略"权重滑块交互——目前训练/验证集的分割边界已经就位，但还没有可调参数的策略去使用它</li>
+    <li>GitHub Actions 自动抓取新一期数据、自动重算、自动部署，并在数据源不一致时自动暂停发布</li>
+    <li>AI 战报（先用模板文案，暂不接入任何模型）</li>
+    <li>大乐透等第二种彩票、Agent Skill 接口</li>
+  </ul>
+
+  <footer>
+    <p>生成时间 2026-09-12 · 数据集版本 2026-09-12 · 数据来源 gudaoxuri/lottery_history (GitHub)</p>
+    <p>本页面所有数字均由公开算法对上方真实历史数据现算得出，同一份数据重新运行会得到完全相同的结果。不构成任何购彩建议，请理性对待彩票——它是被设计为长期负期望的娱乐消费，不是投资。</p>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,218 @@
+[
+  {
+    "strategy": "随机基准",
+    "strategy_key": "random",
+    "strategy_version": "v1.0",
+    "dataset_snapshot": "2026-09-12",
+    "periods_tested": 151,
+    "mean_hit": 1.0596,
+    "theoretical_expectation": 1.0909,
+    "ci_95": [
+      0.933,
+      1.1862
+    ],
+    "blue_hit_rate": 0.0397,
+    "blue_theoretical": 0.0625,
+    "distribution": [
+      37,
+      74,
+      34,
+      6,
+      0,
+      0,
+      0
+    ],
+    "extreme_events": {
+      "ge4": 0,
+      "ge5": 0,
+      "all6": 0,
+      "prizeCount": 6
+    },
+    "vs_random_percentile": 34.1,
+    "paired_diff_vs_random": 0,
+    "is_significant": false,
+    "recent": {
+      "last10": 1,
+      "last30": 0.9667,
+      "last100": 1.09
+    },
+    "segments": {
+      "dev": {
+        "periods_tested": 121,
+        "period_range": {
+          "from": "25105",
+          "to": "26074"
+        },
+        "mean_hit": 1.0826,
+        "ci_95": [
+          0.9361,
+          1.2292
+        ],
+        "blue_hit_rate": 0.0331,
+        "vs_random_percentile": 47.7,
+        "paired_diff_vs_random": 0,
+        "is_significant": false
+      },
+      "blind": {
+        "periods_tested": 30,
+        "period_range": {
+          "from": "26075",
+          "to": "26104"
+        },
+        "mean_hit": 0.9667,
+        "ci_95": [
+          0.7274,
+          1.2059
+        ],
+        "blue_hit_rate": 0.0667,
+        "vs_random_percentile": 25.1,
+        "paired_diff_vs_random": 0,
+        "is_significant": false
+      }
+    }
+  },
+  {
+    "strategy": "热号",
+    "strategy_key": "hot",
+    "strategy_version": "v1.0 (窗口=50期)",
+    "dataset_snapshot": "2026-09-12",
+    "periods_tested": 151,
+    "mean_hit": 1.1987,
+    "theoretical_expectation": 1.0909,
+    "ci_95": [
+      1.0621,
+      1.3353
+    ],
+    "blue_hit_rate": 0.0464,
+    "blue_theoretical": 0.0625,
+    "distribution": [
+      33,
+      64,
+      46,
+      7,
+      1,
+      0,
+      0
+    ],
+    "extreme_events": {
+      "ge4": 1,
+      "ge5": 0,
+      "all6": 0,
+      "prizeCount": 8
+    },
+    "vs_random_percentile": 93.9,
+    "paired_diff_vs_random": 0.1391,
+    "is_significant": false,
+    "recent": {
+      "last10": 1.3,
+      "last30": 1.2667,
+      "last100": 1.24
+    },
+    "segments": {
+      "dev": {
+        "periods_tested": 121,
+        "period_range": {
+          "from": "25105",
+          "to": "26074"
+        },
+        "mean_hit": 1.1818,
+        "ci_95": [
+          1.0258,
+          1.3378
+        ],
+        "blue_hit_rate": 0.0413,
+        "vs_random_percentile": 89.4,
+        "paired_diff_vs_random": 0.0992,
+        "is_significant": false
+      },
+      "blind": {
+        "periods_tested": 30,
+        "period_range": {
+          "from": "26075",
+          "to": "26104"
+        },
+        "mean_hit": 1.2667,
+        "ci_95": [
+          0.9858,
+          1.5475
+        ],
+        "blue_hit_rate": 0.0667,
+        "vs_random_percentile": 88.1,
+        "paired_diff_vs_random": 0.3,
+        "is_significant": false
+      }
+    }
+  },
+  {
+    "strategy": "冷号",
+    "strategy_key": "cold",
+    "strategy_version": "v1.0 (遗漏优先)",
+    "dataset_snapshot": "2026-09-12",
+    "periods_tested": 151,
+    "mean_hit": 0.9735,
+    "theoretical_expectation": 1.0909,
+    "ci_95": [
+      0.8408,
+      1.1063
+    ],
+    "blue_hit_rate": 0.053,
+    "blue_theoretical": 0.0625,
+    "distribution": [
+      48,
+      64,
+      35,
+      3,
+      1,
+      0,
+      0
+    ],
+    "extreme_events": {
+      "ge4": 1,
+      "ge5": 0,
+      "all6": 0,
+      "prizeCount": 9
+    },
+    "vs_random_percentile": 4.6,
+    "paired_diff_vs_random": -0.0861,
+    "is_significant": false,
+    "recent": {
+      "last10": 0.8,
+      "last30": 1.1,
+      "last100": 1
+    },
+    "segments": {
+      "dev": {
+        "periods_tested": 121,
+        "period_range": {
+          "from": "25105",
+          "to": "26074"
+        },
+        "mean_hit": 0.9421,
+        "ci_95": [
+          0.7979,
+          1.0864
+        ],
+        "blue_hit_rate": 0.0661,
+        "vs_random_percentile": 3.1,
+        "paired_diff_vs_random": -0.1405,
+        "is_significant": false
+      },
+      "blind": {
+        "periods_tested": 30,
+        "period_range": {
+          "from": "26075",
+          "to": "26104"
+        },
+        "mean_hit": 1.1,
+        "ci_95": [
+          0.7697,
+          1.4303
+        ],
+        "blue_hit_rate": 0,
+        "vs_random_percentile": 55.7,
+        "paired_diff_vs_random": 0.1333,
+        "is_significant": false
+      }
+    }
+  }
+]
