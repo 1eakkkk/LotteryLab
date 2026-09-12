@@ -402,7 +402,7 @@ function main() {
   <div class="divider"></div>
 
   <h2>数据与方法</h2>
-  <p>历史开奖数据来自 <code>gudaoxuri/lottery_history</code>（GitHub 公开镜像），当前版本共 <strong>${report.data_range.count} 期</strong>（${report.data_range.from} ~ ${report.data_range.to}）。这是 V0 版本的已知限制：还没有接入更长的历史区间，也还没有做多数据源交叉核对——按方案规则，一旦发现数据源不一致，后续版本会暂停自动发布并报警，而不是随便选一个继续跑。</p>
+  <p>历史开奖数据来自 <code>gudaoxuri/lottery_history</code>（GitHub 公开镜像），当前版本共 <strong>${report.data_range.count} 期</strong>（${report.data_range.from} ~ ${report.data_range.to}）。<strong>诚实说明</strong>：这个仓库名称在公开搜索里暂时没能被独立核实——不确认它是否真实存在、是否还在维护，按方案的风险对策，这属于"未经验证的第三方数据源"，在核实清楚或替换为已验证来源之前，本页数字仅供算法/统计方法本身的演示，数据来源这一环还不能算已尽职核实。这也是 V0 版本已知的限制：还没有接入更长的历史区间，也还没有做多数据源交叉核对——按方案规则，一旦发现数据源不一致，后续版本会暂停自动发布并报警，而不是随便选一个继续跑。</p>
   <p>回测采用 <strong>Walk-Forward 滚动预测</strong>：预测第 t+1 期时，策略只能看到第 1~t 期的数据，绝不使用未来信息。本版本 <code>minTrainSize = ${report.min_train_size}</code>，即前 ${report.min_train_size} 期只作为初始训练数据，从第 ${report.min_train_size + 1} 期开始才正式计入回测成绩，实际参与评分的有 ${totalPeriods} 期。</p>
   <p>随机基准和蒙特卡洛模拟都使用「期号 + 策略名」做种子的伪随机数，保证同一份数据永远得到同一份排行榜——回测模式下完全不使用 <code>Math.random()</code>。</p>
 
@@ -550,6 +550,20 @@ function main() {
     </div>
   </div>
 
+  <h3 style="font-family: var(--serif); font-size: 1.05rem; margin: 28px 0 8px;">附：韭菜模拟器——按当前权重结算的资金曲线（近似示意）</h3>
+  <p class="dim">假设从第一次能预测的那一期起，每期都固定花 2 元买一注当前权重算出来的号码，按官方奖级规则结算（一/二等奖用历史近似平均值估算，非精算数据）。这条曲线接的是开发集+盲测集的完整时间线——钱不需要防"数据窥探"，展示它只是想把"长期负期望"从一句话变成一条看得见往下走的线。</p>
+  <div class="ms-stat-row">
+    <div class="ms-stat">
+      <span class="label">累计投入</span>
+      <span class="value" id="ms-fund-spent">—</span>
+    </div>
+    <div class="ms-stat">
+      <span class="label">当前净值（近似）</span>
+      <span class="value" id="ms-fund-net">—</span>
+    </div>
+  </div>
+  <div class="chart-wrap" id="ms-fund-chart"></div>
+
   <div class="divider"></div>
 
   <h2>收敛曲线</h2>
@@ -582,11 +596,10 @@ function main() {
   <div class="divider"></div>
 
   <h2>这是 V1：还没做的事</h2>
-  <p>这一版加上了"我的策略"权重滑块，把开发集/盲测集的分离从"排行榜上的一张表"变成了用户可以亲手体验的交互。还没有做的，留给下一版：</p>
+  <p>这一版加上了"我的策略"权重滑块和对应的资金曲线，把开发集/盲测集的分离从"排行榜上的一张表"变成了用户可以亲手体验的交互。还没有做的，留给下一版：</p>
   <ul>
-    <li>更长的历史区间 + 多数据源交叉核对（当前仍是单一数据源，251 期——需要联网抓取，本地开发环境暂时没有网络访问权限）</li>
-    <li>蓝球和真实奖级规则的资金曲线目前用的是三个基线策略；"我的策略"权重滑块暂未接入独立的资金曲线展示</li>
-    <li>GitHub Actions 自动抓取新一期数据、自动重算、自动部署，并在数据源不一致时自动暂停发布</li>
+    <li><strong>数据源本身还没有被独立核实过</strong>——当前唯一数据源 <code>gudaoxuri/lottery_history</code> 在公开搜索里没能找到对应仓库，无法确认它是否真实存在、是否还在维护。这是方案风险表里"抓取脚本里的 API/仓库地址是占位符或已失效"这一条本身。在核实清楚之前，不建议接入下面这条自动化管道。</li>
+    <li>GitHub Actions 自动抓取新一期数据、自动重算、自动部署（因上一条暂缓）</li>
     <li>AI 战报（先用模板文案，暂不接入任何模型）</li>
     <li>大乐透等第二种彩票、Agent Skill 接口</li>
   </ul>

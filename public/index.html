@@ -211,7 +211,7 @@
   <div class="divider"></div>
 
   <h2>数据与方法</h2>
-  <p>历史开奖数据来自 <code>gudaoxuri/lottery_history</code>（GitHub 公开镜像），当前版本共 <strong>251 期</strong>（25005 ~ 26104）。这是 V0 版本的已知限制：还没有接入更长的历史区间，也还没有做多数据源交叉核对——按方案规则，一旦发现数据源不一致，后续版本会暂停自动发布并报警，而不是随便选一个继续跑。</p>
+  <p>历史开奖数据来自 <code>gudaoxuri/lottery_history</code>（GitHub 公开镜像），当前版本共 <strong>251 期</strong>（25005 ~ 26104）。<strong>诚实说明</strong>：这个仓库名称在公开搜索里暂时没能被独立核实——不确认它是否真实存在、是否还在维护，按方案的风险对策，这属于"未经验证的第三方数据源"，在核实清楚或替换为已验证来源之前，本页数字仅供算法/统计方法本身的演示，数据来源这一环还不能算已尽职核实。这也是 V0 版本已知的限制：还没有接入更长的历史区间，也还没有做多数据源交叉核对——按方案规则，一旦发现数据源不一致，后续版本会暂停自动发布并报警，而不是随便选一个继续跑。</p>
   <p>回测采用 <strong>Walk-Forward 滚动预测</strong>：预测第 t+1 期时，策略只能看到第 1~t 期的数据，绝不使用未来信息。本版本 <code>minTrainSize = 100</code>，即前 100 期只作为初始训练数据，从第 101 期开始才正式计入回测成绩，实际参与评分的有 151 期。</p>
   <p>随机基准和蒙特卡洛模拟都使用「期号 + 策略名」做种子的伪随机数，保证同一份数据永远得到同一份排行榜——回测模式下完全不使用 <code>Math.random()</code>。</p>
 
@@ -444,6 +444,20 @@
     </div>
   </div>
 
+  <h3 style="font-family: var(--serif); font-size: 1.05rem; margin: 28px 0 8px;">附：韭菜模拟器——按当前权重结算的资金曲线（近似示意）</h3>
+  <p class="dim">假设从第一次能预测的那一期起，每期都固定花 2 元买一注当前权重算出来的号码，按官方奖级规则结算（一/二等奖用历史近似平均值估算，非精算数据）。这条曲线接的是开发集+盲测集的完整时间线——钱不需要防"数据窥探"，展示它只是想把"长期负期望"从一句话变成一条看得见往下走的线。</p>
+  <div class="ms-stat-row">
+    <div class="ms-stat">
+      <span class="label">累计投入</span>
+      <span class="value" id="ms-fund-spent">—</span>
+    </div>
+    <div class="ms-stat">
+      <span class="label">当前净值（近似）</span>
+      <span class="value" id="ms-fund-net">—</span>
+    </div>
+  </div>
+  <div class="chart-wrap" id="ms-fund-chart"></div>
+
   <div class="divider"></div>
 
   <h2>收敛曲线</h2>
@@ -476,11 +490,10 @@
   <div class="divider"></div>
 
   <h2>这是 V1：还没做的事</h2>
-  <p>这一版加上了"我的策略"权重滑块，把开发集/盲测集的分离从"排行榜上的一张表"变成了用户可以亲手体验的交互。还没有做的，留给下一版：</p>
+  <p>这一版加上了"我的策略"权重滑块和对应的资金曲线，把开发集/盲测集的分离从"排行榜上的一张表"变成了用户可以亲手体验的交互。还没有做的，留给下一版：</p>
   <ul>
-    <li>更长的历史区间 + 多数据源交叉核对（当前仍是单一数据源，251 期——需要联网抓取，本地开发环境暂时没有网络访问权限）</li>
-    <li>蓝球和真实奖级规则的资金曲线目前用的是三个基线策略；"我的策略"权重滑块暂未接入独立的资金曲线展示</li>
-    <li>GitHub Actions 自动抓取新一期数据、自动重算、自动部署，并在数据源不一致时自动暂停发布</li>
+    <li><strong>数据源本身还没有被独立核实过</strong>——当前唯一数据源 <code>gudaoxuri/lottery_history</code> 在公开搜索里没能找到对应仓库，无法确认它是否真实存在、是否还在维护。这是方案风险表里"抓取脚本里的 API/仓库地址是占位符或已失效"这一条本身。在核实清楚之前，不建议接入下面这条自动化管道。</li>
+    <li>GitHub Actions 自动抓取新一期数据、自动重算、自动部署（因上一条暂缓）</li>
     <li>AI 战报（先用模板文案，暂不接入任何模型）</li>
     <li>大乐透等第二种彩票、Agent Skill 接口</li>
   </ul>
@@ -677,9 +690,112 @@
       var redHits = actual.red.filter(function (b) {
         return pred.red.indexOf(b) !== -1;
       }).length;
-      records.push({ period: actual.period, redHits: redHits });
+      var blueHit = actual.blue === pred.blue;
+      records.push({
+        period: actual.period,
+        redHits: redHits,
+        blueHit: blueHit,
+        prize: calculatePrize(redHits, blueHit),
+      });
     }
     return records;
+  }
+
+  // 双色球奖级判定，和 src/backtest.js 的 calculatePrize 完全一致
+  function calculatePrize(redHits, blueHit) {
+    if (redHits === 6 && blueHit) return { level: 1, bonusType: "floating" };
+    if (redHits === 6) return { level: 2, bonusType: "floating" };
+    if (redHits === 5 && blueHit) return { level: 3, bonusType: "fixed", bonus: 3000 };
+    if (redHits === 5 || (redHits === 4 && blueHit)) return { level: 4, bonusType: "fixed", bonus: 200 };
+    if (redHits === 4 || (redHits === 3 && blueHit)) return { level: 5, bonusType: "fixed", bonus: 10 };
+    if (blueHit) return { level: 6, bonusType: "fixed", bonus: 5 };
+    return { level: 0, bonusType: "fixed", bonus: 0 };
+  }
+
+  // 一/二等奖近似平均值，和 src/build.js 的 FLOATING_BONUS_ESTIMATE 完全一致——
+  // 只是示意"长期负期望"，不是精算数据。
+  var FLOATING_BONUS_ESTIMATE = { 1: 6000000, 2: 200000 };
+  function bonusOf(prize) {
+    if (prize.bonusType === "floating") return FLOATING_BONUS_ESTIMATE[prize.level] || 0;
+    return prize.bonus;
+  }
+  var BET_COST = 2;
+
+  // 资金曲线（近似示意）：把开发集+盲测集接在一起，按期号顺序累计净值。
+  // 之所以不按 dev/blind 分开画，是因为"钱"是一条连续的时间线，不像回测成绩
+  // 需要严格区分"调参时能看到的"和"调参时看不到的"——这里只是把同一批
+  // walk-forward 记录换一个角度展示。
+  function fundCurve(records) {
+    var spent = 0;
+    var won = 0;
+    var curve = [];
+    records.forEach(function (r) {
+      spent += BET_COST;
+      won += bonusOf(r.prize);
+      curve.push({ period: r.period, net: won - spent });
+    });
+    return curve;
+  }
+
+  // 极简 SVG 折线图（浏览器端手绘，功能上是 src/svg-charts.js 的简化版，
+  // 因为这里只需要画一条线 + 一条零轴参考线，不需要那份文件的完整能力）
+  function renderFundSvg(curve) {
+    if (!curve.length) return "";
+    var W = 640,
+      H = 160,
+      padL = 44,
+      padR = 12,
+      padT = 10,
+      padB = 20;
+    var values = curve.map(function (p) {
+      return p.net;
+    });
+    var minV = Math.min.apply(null, values.concat([0]));
+    var maxV = Math.max.apply(null, values.concat([0]));
+    var span = maxV - minV || 1;
+    function x(i) {
+      return padL + (i / (curve.length - 1 || 1)) * (W - padL - padR);
+    }
+    function y(v) {
+      return H - padB - ((v - minV) / span) * (H - padT - padB);
+    }
+    var points = curve
+      .map(function (p, i) {
+        return x(i).toFixed(1) + "," + y(p.net).toFixed(1);
+      })
+      .join(" ");
+    var zeroY = y(0).toFixed(1);
+    var lastNet = curve[curve.length - 1].net;
+    var lineColor = lastNet >= 0 ? "#2f5d8a" : "#b23a3a";
+    return (
+      '<svg viewBox="0 0 ' +
+      W +
+      " " +
+      H +
+      '" width="100%" height="' +
+      H +
+      '" xmlns="http://www.w3.org/2000/svg">' +
+      '<line x1="' +
+      padL +
+      '" y1="' +
+      zeroY +
+      '" x2="' +
+      (W - padR) +
+      '" y2="' +
+      zeroY +
+      '" stroke="#9a7b1f" stroke-width="1.2" stroke-dasharray="3,3" />' +
+      '<text x="' +
+      (W - padR) +
+      '" y="' +
+      (Number(zeroY) - 4) +
+      '" text-anchor="end" font-size="10" fill="#9a7b1f">收支平衡线</text>' +
+      '<polyline points="' +
+      points +
+      '" fill="none" stroke="' +
+      lineColor +
+      '" stroke-width="2" />' +
+      "</svg>"
+    );
   }
 
   function splitSegments(records) {
@@ -743,6 +859,9 @@
   var $blindMean = document.getElementById("ms-blind-mean");
   var $blindCi = document.getElementById("ms-blind-ci");
   var $blindPct = document.getElementById("ms-blind-pct");
+  var $fundChart = document.getElementById("ms-fund-chart");
+  var $fundNet = document.getElementById("ms-fund-net");
+  var $fundSpent = document.getElementById("ms-fund-spent");
 
   if (!$hot || !$cold || !$rand) return; // 页面结构缺失时安全退出，不报错
 
@@ -769,6 +888,17 @@
     $devMean.textContent = devStats ? fmt(devStats.mean) : "—";
     $devCi.textContent = devStats ? "[" + devStats.ci95[0].toFixed(3) + ", " + devStats.ci95[1].toFixed(3) + "]" : "—";
     $devPct.textContent = pct(devPercentile);
+
+    // 资金曲线（近似示意）：开发集+盲测集接在一起的完整历史，不受"是否揭晓盲测"影响——
+    // 钱是连续的时间线，不是需要防数据窥探的评估指标。
+    if ($fundChart) {
+      var curve = fundCurve(records);
+      $fundChart.innerHTML = renderFundSvg(curve);
+      var lastNet = curve.length ? curve[curve.length - 1].net : 0;
+      var totalSpent = records.length * BET_COST;
+      if ($fundNet) $fundNet.textContent = (lastNet >= 0 ? "+" : "") + lastNet.toFixed(0) + " 元";
+      if ($fundSpent) $fundSpent.textContent = totalSpent.toFixed(0) + " 元（" + records.length + " 期，每期 2 元）";
+    }
 
     // 当前展示的号码：用最新一期之后（即"下一期"）为目标种子，保证和用户当前权重一一对应
     var lastPeriod = history[history.length - 1].period;

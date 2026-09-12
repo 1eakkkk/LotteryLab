@@ -178,9 +178,112 @@
       var redHits = actual.red.filter(function (b) {
         return pred.red.indexOf(b) !== -1;
       }).length;
-      records.push({ period: actual.period, redHits: redHits });
+      var blueHit = actual.blue === pred.blue;
+      records.push({
+        period: actual.period,
+        redHits: redHits,
+        blueHit: blueHit,
+        prize: calculatePrize(redHits, blueHit),
+      });
     }
     return records;
+  }
+
+  // 双色球奖级判定，和 src/backtest.js 的 calculatePrize 完全一致
+  function calculatePrize(redHits, blueHit) {
+    if (redHits === 6 && blueHit) return { level: 1, bonusType: "floating" };
+    if (redHits === 6) return { level: 2, bonusType: "floating" };
+    if (redHits === 5 && blueHit) return { level: 3, bonusType: "fixed", bonus: 3000 };
+    if (redHits === 5 || (redHits === 4 && blueHit)) return { level: 4, bonusType: "fixed", bonus: 200 };
+    if (redHits === 4 || (redHits === 3 && blueHit)) return { level: 5, bonusType: "fixed", bonus: 10 };
+    if (blueHit) return { level: 6, bonusType: "fixed", bonus: 5 };
+    return { level: 0, bonusType: "fixed", bonus: 0 };
+  }
+
+  // 一/二等奖近似平均值，和 src/build.js 的 FLOATING_BONUS_ESTIMATE 完全一致——
+  // 只是示意"长期负期望"，不是精算数据。
+  var FLOATING_BONUS_ESTIMATE = { 1: 6000000, 2: 200000 };
+  function bonusOf(prize) {
+    if (prize.bonusType === "floating") return FLOATING_BONUS_ESTIMATE[prize.level] || 0;
+    return prize.bonus;
+  }
+  var BET_COST = 2;
+
+  // 资金曲线（近似示意）：把开发集+盲测集接在一起，按期号顺序累计净值。
+  // 之所以不按 dev/blind 分开画，是因为"钱"是一条连续的时间线，不像回测成绩
+  // 需要严格区分"调参时能看到的"和"调参时看不到的"——这里只是把同一批
+  // walk-forward 记录换一个角度展示。
+  function fundCurve(records) {
+    var spent = 0;
+    var won = 0;
+    var curve = [];
+    records.forEach(function (r) {
+      spent += BET_COST;
+      won += bonusOf(r.prize);
+      curve.push({ period: r.period, net: won - spent });
+    });
+    return curve;
+  }
+
+  // 极简 SVG 折线图（浏览器端手绘，功能上是 src/svg-charts.js 的简化版，
+  // 因为这里只需要画一条线 + 一条零轴参考线，不需要那份文件的完整能力）
+  function renderFundSvg(curve) {
+    if (!curve.length) return "";
+    var W = 640,
+      H = 160,
+      padL = 44,
+      padR = 12,
+      padT = 10,
+      padB = 20;
+    var values = curve.map(function (p) {
+      return p.net;
+    });
+    var minV = Math.min.apply(null, values.concat([0]));
+    var maxV = Math.max.apply(null, values.concat([0]));
+    var span = maxV - minV || 1;
+    function x(i) {
+      return padL + (i / (curve.length - 1 || 1)) * (W - padL - padR);
+    }
+    function y(v) {
+      return H - padB - ((v - minV) / span) * (H - padT - padB);
+    }
+    var points = curve
+      .map(function (p, i) {
+        return x(i).toFixed(1) + "," + y(p.net).toFixed(1);
+      })
+      .join(" ");
+    var zeroY = y(0).toFixed(1);
+    var lastNet = curve[curve.length - 1].net;
+    var lineColor = lastNet >= 0 ? "#2f5d8a" : "#b23a3a";
+    return (
+      '<svg viewBox="0 0 ' +
+      W +
+      " " +
+      H +
+      '" width="100%" height="' +
+      H +
+      '" xmlns="http://www.w3.org/2000/svg">' +
+      '<line x1="' +
+      padL +
+      '" y1="' +
+      zeroY +
+      '" x2="' +
+      (W - padR) +
+      '" y2="' +
+      zeroY +
+      '" stroke="#9a7b1f" stroke-width="1.2" stroke-dasharray="3,3" />' +
+      '<text x="' +
+      (W - padR) +
+      '" y="' +
+      (Number(zeroY) - 4) +
+      '" text-anchor="end" font-size="10" fill="#9a7b1f">收支平衡线</text>' +
+      '<polyline points="' +
+      points +
+      '" fill="none" stroke="' +
+      lineColor +
+      '" stroke-width="2" />' +
+      "</svg>"
+    );
   }
 
   function splitSegments(records) {
@@ -244,6 +347,9 @@
   var $blindMean = document.getElementById("ms-blind-mean");
   var $blindCi = document.getElementById("ms-blind-ci");
   var $blindPct = document.getElementById("ms-blind-pct");
+  var $fundChart = document.getElementById("ms-fund-chart");
+  var $fundNet = document.getElementById("ms-fund-net");
+  var $fundSpent = document.getElementById("ms-fund-spent");
 
   if (!$hot || !$cold || !$rand) return; // 页面结构缺失时安全退出，不报错
 
@@ -270,6 +376,17 @@
     $devMean.textContent = devStats ? fmt(devStats.mean) : "—";
     $devCi.textContent = devStats ? "[" + devStats.ci95[0].toFixed(3) + ", " + devStats.ci95[1].toFixed(3) + "]" : "—";
     $devPct.textContent = pct(devPercentile);
+
+    // 资金曲线（近似示意）：开发集+盲测集接在一起的完整历史，不受"是否揭晓盲测"影响——
+    // 钱是连续的时间线，不是需要防数据窥探的评估指标。
+    if ($fundChart) {
+      var curve = fundCurve(records);
+      $fundChart.innerHTML = renderFundSvg(curve);
+      var lastNet = curve.length ? curve[curve.length - 1].net : 0;
+      var totalSpent = records.length * BET_COST;
+      if ($fundNet) $fundNet.textContent = (lastNet >= 0 ? "+" : "") + lastNet.toFixed(0) + " 元";
+      if ($fundSpent) $fundSpent.textContent = totalSpent.toFixed(0) + " 元（" + records.length + " 期，每期 2 元）";
+    }
 
     // 当前展示的号码：用最新一期之后（即"下一期"）为目标种子，保证和用户当前权重一一对应
     var lastPeriod = history[history.length - 1].period;
