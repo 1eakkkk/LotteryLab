@@ -4,6 +4,7 @@ const { lineChart, histogram } = require("./svg-charts");
 
 const DATA_DIR = path.join(__dirname, "../data");
 const PUBLIC_DIR = path.join(__dirname, "../public");
+const MY_STRATEGY_CLIENT_JS = fs.readFileSync(path.join(__dirname, "my-strategy-client.js"), "utf-8");
 
 const STRATEGY_LABEL = { random: "随机基准", hot: "热号", cold: "冷号" };
 const STRATEGY_CLASS = { random: "s-random", hot: "s-hot", cold: "s-cold" };
@@ -117,9 +118,28 @@ function buildRecentRows(leaderboard) {
     .join("\n");
 }
 
+// ---- V1 新增：我的策略权重滑块，需要给浏览器端嵌入一份精简历史数据 ----
+function buildLabData(history, split_boundaries, monte_carlo, min_train_size) {
+  const compactHistory = history.map((d) => ({ period: d.period, red: d.red, blue: d.blue }));
+  return {
+    history: compactHistory,
+    minTrainSize: min_train_size,
+    boundaries: {
+      validationStart: split_boundaries.validation_start_period,
+      blindStart: split_boundaries.blind_test_start_period,
+    },
+    mcDevDistribution: monte_carlo.dev_distribution,
+    mcBlindDistribution: monte_carlo.blind_distribution,
+  };
+}
+
 function main() {
   const report = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "report.json"), "utf-8"));
+  const history = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "ssq.json"), "utf-8")).sort(
+    (a, b) => Number(a.period) - Number(b.period)
+  );
   const { leaderboard, convergence, monte_carlo, fund, split_boundaries } = report;
+  const labData = buildLabData(history, split_boundaries, monte_carlo, report.min_train_size);
 
   // ---- 收敛曲线 SVG ----
   const convSeries = ["random", "hot", "cold"].map((key) => ({
@@ -174,7 +194,7 @@ function main() {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>随机数打脸实验室 · 双色球概率实验室 V0.5</title>
+<title>随机数打脸实验室 · 双色球概率实验室 V1</title>
 <style>
   :root {
     --paper: #eef0ec;
@@ -305,6 +325,48 @@ function main() {
   .swatch.s-random { background: var(--ink-dim); }
   .swatch.s-hot { background: var(--red); }
   .swatch.s-cold { background: var(--blue); }
+  .slider-row { display: grid; grid-template-columns: 110px 1fr 46px; align-items: center; gap: 12px; margin: 14px 0; }
+  .slider-row label { font-size: 0.9rem; color: var(--ink-dim); }
+  .slider-row input[type="range"] { width: 100%; accent-color: var(--red); }
+  .slider-row .slider-val { font-family: var(--mono); text-align: right; }
+  .ms-numbers { display: flex; gap: 8px; margin: 18px 0; flex-wrap: wrap; }
+  .ball {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #fff;
+  }
+  .ball-red { background: var(--red); }
+  .ball-blue { background: var(--blue); }
+  .ms-stat-row { display: flex; gap: 28px; flex-wrap: wrap; margin: 6px 0 4px; }
+  .ms-stat { font-size: 0.88rem; }
+  .ms-stat .label { color: var(--ink-dim); display: block; font-size: 0.78rem; }
+  .ms-stat .value { font-family: var(--mono); font-size: 1.05rem; }
+  .ms-blind-box {
+    display: none;
+    margin-top: 16px;
+    padding: 14px 18px;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    background: var(--paper-2);
+  }
+  .btn {
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    padding: 9px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    cursor: pointer;
+  }
+  .btn:disabled { opacity: 0.5; cursor: default; }
   footer {
     margin-top: 56px;
     padding-top: 20px;
@@ -376,8 +438,8 @@ function main() {
   <h2>训练 / 验证 / 盲测：三段式分割（V0.5 新增）</h2>
   <p>上一节的排行榜是训练集、验证集、盲测集<strong>合并在一起</strong>算出来的整体成绩——这正是 V0 版本"这是开发集成绩，不是盲测成绩"的局限。从这一版开始，回测数据被切成三段固定期号区间，<strong>边界写死，不随以后追加新数据而移动</strong>：</p>
   <ul>
-    <li>训练集：第${split_boundaries.dev_period_range.from}期起（供以后"我的策略"调参数用，当前三个基线策略没有可调参数，暂时空跑）</li>
-    <li>验证集：训练集之后，到第${split_boundaries.dev_period_range.to}期（用于挑选/校准参数，当前同样未使用）</li>
+    <li>训练集：第${split_boundaries.dev_period_range.from}期起（下方"我的策略"权重滑块调参时能看到的就是这一段和验证集合并后的"开发集"表现）</li>
+    <li>验证集：训练集之后，到第${split_boundaries.dev_period_range.to}期（本站目前把训练集和验证集合并展示为"开发集"，没有单独做"先在训练集上选参数、再在验证集上确认"这一步中间校准，"我的策略"的权重是用户直接在开发集上调的）</li>
     <li><strong>盲测集：第${split_boundaries.blind_test_start_period}期起，当前 ${split_boundaries.blind_periods_count} 期（第${split_boundaries.blind_period_range.from}~${split_boundaries.blind_period_range.to}期）</strong>——这是本站第一次正式封存的盲测起点。以后每重新抓一批新数据，这个集合只会往后累积变长，起点期号本身不会因为数据变长而重新计算。</li>
   </ul>
   <div class="notice">
@@ -429,6 +491,67 @@ function main() {
 
   <div class="divider"></div>
 
+  <h2>我的策略（V1 新增）：调权重，亲手体验一次"数据窥探"</h2>
+  <p>拖动下面三个滑块，实时生成一组"加权策略"号码——权重只决定<strong>热号频率 / 冷号遗漏 / 随机扰动</strong>三者在打分里的相对占比，同一组权重 + 同一份历史数据，永远算出同一组号码，不是每次刷新都变的抽奖。</p>
+  <p><strong>刻意的设计</strong>：你可以随便拖动滑块，把下面的"历史回测成绩（开发集）"调到很好看——这正是本节想让你亲手体验的东西：只要允许反复调参、挑一个好看的数字，几乎总能"调"出一个看起来不错的策略，这不代表你发现了规律，只是<a href="#" onclick="return false;" title="在成百上千种参数组合里挑出历史表现最好的一组，即使数据完全随机也几乎必然能挑出来">数据窥探</a>的一种用户端形式。真正说明问题的是下面被默认隐藏的<strong>盲测成绩</strong>——一段调参过程中始终看不到、拿不来调整的历史区间，点击按钮才会揭晓。</p>
+
+  <div class="notice">
+    <div class="slider-row">
+      <label for="ms-hot">热号倾向</label>
+      <input type="range" id="ms-hot" min="0" max="100" value="50" />
+      <span class="slider-val" id="ms-hot-val">50</span>
+    </div>
+    <div class="slider-row">
+      <label for="ms-cold">冷号倾向</label>
+      <input type="range" id="ms-cold" min="0" max="100" value="20" />
+      <span class="slider-val" id="ms-cold-val">20</span>
+    </div>
+    <div class="slider-row">
+      <label for="ms-random">随机扰动</label>
+      <input type="range" id="ms-random" min="0" max="100" value="30" />
+      <span class="slider-val" id="ms-random-val">30</span>
+    </div>
+
+    <div class="ms-numbers" id="ms-numbers"></div>
+
+    <div class="ms-stat-row">
+      <div class="ms-stat">
+        <span class="label">历史回测成绩（开发集，均命中）</span>
+        <span class="value" id="ms-dev-mean">—</span>
+      </div>
+      <div class="ms-stat">
+        <span class="label">95% 置信区间</span>
+        <span class="value" id="ms-dev-ci">—</span>
+      </div>
+      <div class="ms-stat">
+        <span class="label">跑赢随机分布</span>
+        <span class="value" id="ms-dev-pct">—</span>
+      </div>
+    </div>
+    <p class="dim" style="margin: 6px 0 14px;">以上三个数字仅供娱乐——它们是你可以一直看着、反复调参数改进的"开发集"成绩，<strong>不作为策略有效性的证据</strong>。</p>
+
+    <button class="btn" id="ms-reveal-btn">揭晓当前权重的盲测成绩</button>
+    <div class="ms-blind-box" id="ms-blind-result">
+      <div class="ms-stat-row">
+        <div class="ms-stat">
+          <span class="label">盲测成绩（第${split_boundaries.blind_test_start_period}期起，均命中）</span>
+          <span class="value" id="ms-blind-mean">—</span>
+        </div>
+        <div class="ms-stat">
+          <span class="label">95% 置信区间</span>
+          <span class="value" id="ms-blind-ci">—</span>
+        </div>
+        <div class="ms-stat">
+          <span class="label">跑赢随机分布</span>
+          <span class="value" id="ms-blind-pct">—</span>
+        </div>
+      </div>
+      <p class="dim" style="margin: 10px 0 0;">这才是相对公平的检验——你调参时完全看不到这段区间的表现。样本量还很小，任何数字（好看或难看）都不构成"有效"或"无效"的结论，只是诚实地把两个口径分开摆出来。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
   <h2>收敛曲线</h2>
   <p>每个策略"累计平均命中数"随回测期数推进的变化过程。虚线是理论期望值——不是说曲线一定会贴上去，而是长期来看，样本均值和理论期望之间的差异应当落在正常波动范围内，而不是持续、系统性地偏离。</p>
   <div class="legend">
@@ -458,11 +581,11 @@ function main() {
 
   <div class="divider"></div>
 
-  <h2>这是 V0.5：还没做的事</h2>
-  <p>这一版在 V0 的地基上，把"开发集"和"盲测集"正式分开，加了短期窗口表现。还没有做的，留给下一版：</p>
+  <h2>这是 V1：还没做的事</h2>
+  <p>这一版加上了"我的策略"权重滑块，把开发集/盲测集的分离从"排行榜上的一张表"变成了用户可以亲手体验的交互。还没有做的，留给下一版：</p>
   <ul>
-    <li>更长的历史区间 + 多数据源交叉核对（当前仍是单一数据源，251 期）</li>
-    <li>"我的策略"权重滑块交互——目前训练/验证集的分割边界已经就位，但还没有可调参数的策略去使用它</li>
+    <li>更长的历史区间 + 多数据源交叉核对（当前仍是单一数据源，251 期——需要联网抓取，本地开发环境暂时没有网络访问权限）</li>
+    <li>蓝球和真实奖级规则的资金曲线目前用的是三个基线策略；"我的策略"权重滑块暂未接入独立的资金曲线展示</li>
     <li>GitHub Actions 自动抓取新一期数据、自动重算、自动部署，并在数据源不一致时自动暂停发布</li>
     <li>AI 战报（先用模板文案，暂不接入任何模型）</li>
     <li>大乐透等第二种彩票、Agent Skill 接口</li>
@@ -474,6 +597,14 @@ function main() {
   </footer>
 
 </div>
+<script>
+  // V1 新增："我的策略"权重滑块需要的精简历史数据 + 蒙特卡洛开发集/盲测集分布，
+  // 全部在构建期写死进页面里，浏览器端 JS 直接计算，不需要任何网络请求。
+  window.__LAB_DATA__ = ${JSON.stringify(labData)};
+</script>
+<script>
+${MY_STRATEGY_CLIENT_JS}
+</script>
 </body>
 </html>
 `;

@@ -209,6 +209,11 @@ function main() {
     histogram: Object.entries(buckets)
       .map(([bucket, count]) => ({ bucket: Number(bucket), count }))
       .sort((a, b) => a.bucket - b.bucket),
+    // V1 新增：把按固定期号边界切分出的开发集/盲测集随机分布也吐出来，
+    // 供前端"我的策略"实时计算"跑赢随机分布"的分位数——盲测集的分位数必须用
+    // 只包含盲测区间的独立随机模拟来算，不能套用整体分布（同 3.6/backtest.js 注释）。
+    dev_distribution: mc.dev.map((v) => Number(v.toFixed(4))),
+    blind_distribution: mc.blind.map((v) => Number(v.toFixed(4))),
   };
 
   // ---- 7. 写出所有产物 ----

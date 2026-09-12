@@ -104,4 +104,99 @@ function coldStrategy(trainData, targetPeriod) {
   };
 }
 
-module.exports = { randomStrategy, hotStrategy, coldStrategy, allReds, allBlues };
+function normalizeMap(map) {
+  const values = Object.values(map);
+  const max = Math.max(1, ...values);
+  const out = {};
+  Object.keys(map).forEach((k) => (out[k] = map[k] / max));
+  return out;
+}
+
+function hotFreqMap(trainData, windowSize = 50) {
+  const windowData = trainData.slice(-windowSize);
+  const freq = {};
+  allReds().forEach((b) => (freq[b] = 0));
+  windowData.forEach((draw) => draw.red.forEach((b) => (freq[b] += 1)));
+  return freq;
+}
+
+function coldOmissionMap(trainData) {
+  const n = trainData.length;
+  const lastSeen = {};
+  allReds().forEach((b) => (lastSeen[b] = -1));
+  trainData.forEach((draw, idx) => draw.red.forEach((b) => (lastSeen[b] = idx)));
+  const omission = {};
+  allReds().forEach((b) => (omission[b] = n - 1 - lastSeen[b]));
+  return omission;
+}
+
+/**
+ * "我的策略"（V1 新增，方案第五节第6条）：用户可调权重的加权策略。
+ * weights = { hot, cold, random }，每项建议 0~100，表示三种倾向的相对强度：
+ *   hot    —— 越大越偏向"近50期出现频率高"的号码（热号倾向）
+ *   cold   —— 越大越偏向"遗漏期数长"的号码（冷号倾向）
+ *   random —— 越大，"期号+random-strategy"派生的确定性噪声在打分里占比越高（随机扰动）
+ * 关键设计：噪声本身是「期号+runId」做种子的伪随机数，不是裸 Math.random()——
+ * 保证同一组权重 + 同一份历史数据，永远打出同一组号码，不是每次刷新都变的抽奖，
+ * 这样用户拖动滑块看到的"历史回测成绩"变化，只反映权重变化本身，不掺杂运气噪声。
+ */
+function weightedStrategy(trainData, targetPeriod, weights = {}, runId = "my-strategy") {
+  const hotW = weights.hot || 0;
+  const coldW = weights.cold || 0;
+  const randW = weights.random || 0;
+
+  const hotFreq = normalizeMap(hotFreqMap(trainData));
+  const coldOmit = normalizeMap(coldOmissionMap(trainData));
+  const rng = seededRandom(hashSeed(`${runId}-${targetPeriod}`));
+  const noise = {};
+  allReds().forEach((b) => (noise[b] = rng()));
+
+  const score = {};
+  allReds().forEach((b) => {
+    score[b] = hotW * hotFreq[b] + coldW * coldOmit[b] + randW * noise[b];
+  });
+  const sortedReds = Object.keys(score).sort((a, b) => {
+    if (score[b] !== score[a]) return score[b] - score[a];
+    return Number(a) - Number(b);
+  });
+
+  const blueFreqRaw = {};
+  allBlues().forEach((b) => (blueFreqRaw[b] = 0));
+  trainData.slice(-50).forEach((draw) => (blueFreqRaw[draw.blue] += 1));
+  const blueFreq = normalizeMap(blueFreqRaw);
+
+  const n = trainData.length;
+  const lastSeenBlue = {};
+  allBlues().forEach((b) => (lastSeenBlue[b] = -1));
+  trainData.forEach((draw, idx) => (lastSeenBlue[draw.blue] = idx));
+  const blueOmitRaw = {};
+  allBlues().forEach((b) => (blueOmitRaw[b] = n - 1 - lastSeenBlue[b]));
+  const blueOmit = normalizeMap(blueOmitRaw);
+
+  const blueRng = seededRandom(hashSeed(`${runId}-blue-${targetPeriod}`));
+  const blueNoise = {};
+  allBlues().forEach((b) => (blueNoise[b] = blueRng()));
+
+  const blueScore = {};
+  allBlues().forEach((b) => {
+    blueScore[b] = hotW * blueFreq[b] + coldW * blueOmit[b] + randW * blueNoise[b];
+  });
+  const sortedBlues = Object.keys(blueScore).sort((a, b) => {
+    if (blueScore[b] !== blueScore[a]) return blueScore[b] - blueScore[a];
+    return Number(a) - Number(b);
+  });
+
+  return {
+    red: sortedReds.slice(0, 6).sort((a, b) => Number(a) - Number(b)),
+    blue: sortedBlues[0],
+  };
+}
+
+module.exports = {
+  randomStrategy,
+  hotStrategy,
+  coldStrategy,
+  weightedStrategy,
+  allReds,
+  allBlues,
+};
