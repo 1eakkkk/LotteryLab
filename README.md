@@ -169,7 +169,7 @@ powershell -ExecutionPolicy Bypass -File scripts\update.ps1
 
 ## V0 已完成（原有内容，未改动）
 
-- 真实历史数据：`gudaoxuri/lottery_history`（GitHub 公开镜像），251 期（2025-01-12 ~ 2026-09-08）
+- 真实历史数据：`gudaoxuri/lottery_history`（GitHub 公开仓库，每日自动更新），当前 252 期（2025-01-12 ~ 2026-09-10）
 - 正确的 Walk-Forward 滚动回测：修正了原方案中"预测目标该用 `history[t]` 而不是 `history[t+1]`"的 off-by-one 错误，入口处强制按期号升序排序（防御数据源"最新一期在前"的倒序陷阱）
 - 三个基线策略：随机基准（种子随机，不看历史）、热号（近50期频率最高）、冷号（遗漏期数最长）
 - 独立的理论基准层：红球 33 选 6 的理论期望值 1.0909，不混在"随机策略"里

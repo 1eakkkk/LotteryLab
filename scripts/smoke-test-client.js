@@ -182,6 +182,30 @@ function main() {
   });
   if (failures === 0) console.log("  [pass] 全部内联脚本执行无异常");
 
+  // ---- 校验：页面顶部的「下一期观测」区块（V4 第 4 层）----
+  // 这一块是纯服务端渲染的，但它承载着"号码 + 证据等级 + 随机对照"三件套，
+  // 一旦某次改动漏掉其中一样（比如把随机对照组弄丢了），页面看起来照样正常——
+  // 所以这里把它当成必须存在的契约来检查。
+  const obsGroups = ["热号规则", "遗漏规则", "均衡倾向规则", "纯随机对照组"];
+  obsGroups.forEach((n) => {
+    check(`顶部观测区含「${n}」`, html.includes(n));
+  });
+  check("顶部观测区含随机对照组标记", html.includes("obs-card-random"), "缺少对照组卡片样式");
+  check("顶部观测区含「先把话说清楚，再给号码」", html.includes("先把话说清楚，再给号码"));
+  check("顶部观测区含证据等级徽标", /class="ev ev-(insufficient|none|weak|moderate)"/.test(html));
+  check("顶部观测区含一等奖概率", html.includes("1 / 17,721,088") || /1 \/ [\d,]{7,}/.test(html));
+  check("顶部观测区说明号码是参数化产物而非预测", html.includes("不是预测结论") || html.includes("本站没有、也不提供"), "缺少免责说明");
+
+  // 位置断言：号码区块必须排在"排行榜"之前（用户要求：号码相关放最上面）
+  const posObs = html.indexOf("下一期观测");
+  const posTools = html.indexOf("数字体检：每个号码的出现次数");
+  const posRank = html.indexOf("<h2>排行榜</h2>");
+  check(
+    "顺序：下一期观测 → 数字体检 → 排行榜",
+    posObs > 0 && posTools > posObs && posRank > posTools,
+    `实际位置 obs=${posObs} tools=${posTools} rank=${posRank}`
+  );
+
   // ---- 校验：数据确实挂上了 ----
   const lab = sandbox.window.__LAB_DATA__;
   check("window.__LAB_DATA__ 已注入", !!lab);

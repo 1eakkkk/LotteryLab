@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const { randomStrategy, hotStrategy, coldStrategy } = require("./strategies");
+const { randomStrategy, hotStrategy, coldStrategy, weightedStrategy } = require("./strategies");
 const {
   buildNumberHealth,
   buildOmissionAnalysis,
@@ -174,6 +174,96 @@ function fundCurve(records) {
     curve.push({ period: r.period, date: r.date, net: won - spent });
   });
   return curve;
+}
+
+/**
+ * 下一期观测组数据（方案 17.3 第 4 层「下一期观测」）。
+ *
+ * 设计约束（每一条都是刻意加的，改动前请先读）：
+ *   1. **不做单一"推荐号码"**，一次给出三组参数化规则 + 一组纯随机对照；
+ *   2. 每一组都必须同时带上"历史成绩 + 配对检验 + 证据等级"，三样缺一不可——
+ *      只给号码不给这三样，就是在制造一个数据里并不存在的结论；
+ *   3. **随机对照组永远同屏出现**：抽掉它单独展示任何一组，都是在制造假因果；
+ *   4. 展示的是"这组号码本身"在历史每一期上的平均命中，而不是策略抽象成绩——
+ *      这样读者看到的数字与眼前这 6 个号码直接对应。
+ *
+ * 用确定性种子（期号 + 组名），保证同一份数据每次构建给出同一组号码：
+ * 同一份历史数据必须永远得到同一个结果，这是本项目对可复现性的基本承诺。
+ */
+function buildNextPeriodObservation(history, benchmarkRecords) {
+  const last = history[history.length - 1];
+  const nextPeriod = String(Number(last.period) + 1);
+
+  // 「均衡倾向规则」的权重：热 40 / 遗漏 40 / 随机扰动 20。
+  // 刻意不提供"最优权重"——那等于替用户调参，而调参正是本站反复警告的数据窥探。
+  const balancedWeights = { hot: 40, cold: 40, random: 20 };
+
+  const groups = [
+    {
+      key: "hot",
+      name: "热号规则",
+      desc: "取最近 50 期出现频率最高的 6 个红球 + 出现频率最高的蓝球",
+      fn: (train, period) => hotStrategy(train, period),
+    },
+    {
+      key: "cold",
+      name: "遗漏规则",
+      desc: "取遗漏期数最长的 6 个红球 + 遗漏最长的蓝球（就是常说的「冷号」）",
+      fn: (train, period) => coldStrategy(train, period),
+    },
+    {
+      key: "balanced",
+      name: "均衡倾向规则",
+      desc: "热号 40 / 遗漏 40 / 随机扰动 20 的加权打分（「我的策略」里可自行调这三项）",
+      fn: (train, period) => weightedStrategy(train, period, balancedWeights, "next-observation-balanced"),
+    },
+    {
+      key: "random",
+      name: "纯随机对照组",
+      desc: "完全不看历史，均匀随机生成——用来证明上面三组并不特殊",
+      fn: (train, period) => randomStrategy(train, period, "next-observation-random"),
+    },
+  ];
+
+  return {
+    next_period: nextPeriod,
+    based_on_through: last.period,
+    based_on_date: last.date,
+    groups: groups.map((g) => {
+      // 这一组"号码本身"在历史每一期上的命中（等价于每期都买这一注）
+      const records = walkForwardBacktest(history, g.fn, MIN_TRAIN_SIZE);
+      const stats = summarize(records);
+      const diff = pairedDiffTest(records, benchmarkRecords);
+      const p = pairedPValue(diff.tStat);
+      const q = benjaminiHochberg([p])[0];
+      const evidence = deriveEvidence({
+        periodsTested: stats.periodsTested,
+        meanHit: stats.meanHit,
+        ci95: stats.ci95,
+        theoreticalExpectation: RED_EXPECTATION,
+        qValue: q,
+        scopeLabel: `该组号码在历史上`,
+      });
+      return {
+        key: g.key,
+        name: g.name,
+        desc: g.desc,
+        numbers: g.fn(history, nextPeriod),
+        backtest: {
+          periods_tested: stats.periodsTested,
+          mean_hit: Number(stats.meanHit.toFixed(4)),
+          ci_95: stats.ci95.map((v) => Number(v.toFixed(4))),
+          blue_hit_rate: Number(stats.blueHitRate.toFixed(4)),
+          vs_theoretical: Number((stats.meanHit - RED_EXPECTATION).toFixed(4)),
+          paired_diff_vs_random: Number(diff.meanDiff.toFixed(4)),
+          p_value_raw: Number(p.toFixed(4)),
+          q_value_fdr: Number(q.toFixed(4)),
+          is_significant: q < 0.05,
+        },
+        evidence,
+      };
+    }),
+  };
 }
 
 function main() {
@@ -409,6 +499,8 @@ function main() {
       // 这个基线必须和体检结果一起展示，否则读者会把正常的随机波动读成"发现了规律"。
       multiple_comparison_baseline: estimateMultipleComparisonBaseline(history.length),
     },
+    // V4 第 4 层：下一期观测（三组参数化规则 + 一组随机对照）
+    next_period_observation: buildNextPeriodObservation(history, benchmarkRandomRecords),
   };
 
   fs.writeFileSync(path.join(DATA_DIR, "leaderboard.json"), JSON.stringify(leaderboard, null, 2));
@@ -477,6 +569,22 @@ function main() {
   console.log(
     `  形态组合表：C(33,6) = ${nt.pattern_table.total_combinations.toLocaleString()}，` +
       `奇偶/大小/三区/连号/和值五个维度各自枚举合计均已校验等于总组合数`
+  );
+
+  // ---- V4 第 4 层自检输出：下一期观测组 ----
+  const obs = report.next_period_observation;
+  console.log(`\n=== 下一期观测（第 ${obs.next_period} 期，基于截至 ${obs.based_on_through} 期的数据）===`);
+  obs.groups.forEach((g) => {
+    console.log(
+      `  ${g.name.padEnd(7)} 红[${g.numbers.red.join(" ")}] 蓝${g.numbers.blue}  ` +
+        `历史均命中=${g.backtest.mean_hit} CI95=[${g.backtest.ci_95[0]}, ${g.backtest.ci_95[1]}] ` +
+        `证据等级=${g.evidence.label}`
+    );
+  });
+  const allSame = new Set(obs.groups.map((g) => g.backtest.mean_hit)).size;
+  console.log(
+    `  ↳ 四组历史均命中是否完全一致：${allSame === 1 ? "是" : "否（差异 " + (Math.max(...obs.groups.map((g) => g.backtest.mean_hit)) - Math.min(...obs.groups.map((g) => g.backtest.mean_hit))).toFixed(4) + "）"}` +
+      `；所有组证据等级：${[...new Set(obs.groups.map((g) => g.evidence.label))].join("/")}`
   );
 
   console.log(`\n已写入 ${path.join(DATA_DIR, "report.json")}`);

@@ -467,6 +467,99 @@ function buildNumberToolsSection(numberTools) {
   <p class="dim">本区块所有统计量都在构建期算好、写死在页面里（<code>src/number-health.js</code>，Node 与浏览器共用同一份公式），浏览器端只做查表与展示，不重算。这一点是刻意的：如果两端各算一套，页面上早晚会出现两个对不上的数字。</p>`;
 }
 
+// ===========================================================================
+// V4 第 4 层：下一期观测（页面最顶部区块）
+// ---------------------------------------------------------------------------
+// 这是用户最想要的那个东西——"根据往期给出下一期可能出现的号码"。
+// 做法上刻意做了四个约束，缺任何一个都会让它变成选号器：
+//   1. 三组参数化规则 + 一组纯随机对照，同屏并列，永远不单独展示一组；
+//   2. 每组必带"历史均命中 + 95% 区间 + 证据等级"三件套；
+//   3. 结论句由数据生成（"最好看的那组是怎么被挑出来的"），不写死；
+//   4. 号码只以"这一组号码"的身份出现，不出现"推荐/主推/看好"这类措辞。
+// ===========================================================================
+function buildObservationSection(obs, verification, report_theoretical_expectation) {
+  if (!obs) {
+    return `<h2>下一期观测</h2>
+  <div class="notice"><p>本区块需要 <code>report.json</code> 里的 <code>next_period_observation</code> 数据（由 <code>node src/build.js</code> 生成）。它当前缺失，因此这一版不渲染任何号码——而不是临时手写一组顶上。</p></div>`;
+  }
+
+  const groups = obs.groups;
+  // 理论期望取自报告（6 × 6/33 = 1.0909），不写死
+  const theoretical = report_theoretical_expectation;
+  const best = groups.reduce((a, b) => (b.backtest.mean_hit > a.backtest.mean_hit ? b : a), groups[0]);
+  const randomGroup = groups.find((g) => g.key === "random");
+  const spread = (
+    Math.max(...groups.map((g) => g.backtest.mean_hit)) - Math.min(...groups.map((g) => g.backtest.mean_hit))
+  ).toFixed(4);
+  const bestMargin = best.backtest.mean_hit - randomGroup.backtest.mean_hit;
+  const evLabels = [...new Set(groups.map((g) => g.evidence.label))];
+  const coversCount = groups.filter((g) => g.backtest.ci_95[0] <= theoretical && theoretical <= g.backtest.ci_95[1]).length;
+
+  const cards = groups
+    .map((g) => {
+      const reds = g.numbers.red.map((n) => `<span class="obs-ball">${n}</span>`).join("");
+      const isRandom = g.key === "random";
+      return `
+    <div class="obs-card${isRandom ? " obs-card-random" : ""}">
+      <div class="obs-card-head">
+        <span class="obs-card-name">${g.name}</span>
+        ${isRandom ? '<span class="obs-tag">对照组</span>' : ""}
+      </div>
+      <div class="obs-balls">${reds}<span class="obs-ball obs-ball-blue">${g.numbers.blue}</span></div>
+      <p class="obs-desc">${g.desc}</p>
+      <table class="obs-table"><tbody>
+        <tr><td>历史均命中（红）</td><td class="mono">${g.backtest.mean_hit.toFixed(4)}</td></tr>
+        <tr><td>95% 置信区间</td><td class="mono">[${g.backtest.ci_95[0].toFixed(3)}, ${g.backtest.ci_95[1].toFixed(3)}]</td></tr>
+        <tr><td>理论期望</td><td class="mono">${theoretical.toFixed(4)}</td></tr>
+        <tr><td>蓝球命中率</td><td class="mono">${(g.backtest.blue_hit_rate * 100).toFixed(1)}%</td></tr>
+        <tr><td>vs 随机对照（配对差值）</td><td class="mono">${g.backtest.paired_diff_vs_random >= 0 ? "+" : ""}${g.backtest.paired_diff_vs_random.toFixed(4)}</td></tr>
+        <tr><td>证据等级</td><td><span class="ev ev-${g.evidence.level}">${g.evidence.label}</span></td></tr>
+      </tbody></table>
+    </div>`;
+    })
+    .join("\n");
+
+  const prizeTable = verification ? buildPrizeTable(verification) : "";
+  const firstPrizeOdds = verification
+    ? verification.prize_probability_table[0].odds_one_in.toLocaleString("en-US")
+    : "17,721,088";
+  const totalCombos = verification ? verification.total_combinations.toLocaleString("en-US") : "17,721,088";
+  const winProb = verification ? (verification.winning_probability * 100).toFixed(4) : "6.7095";
+  const expLow = verification ? verification.expectation.expected_return_low.toFixed(4) : "0.7402";
+  const expMid = verification ? verification.expectation.expected_return_mid.toFixed(4) : "0.9942";
+
+  return `
+  <h2>下一期观测：第 ${obs.next_period} 期</h2>
+  <p>下面是基于<b>截至第 ${obs.based_on_through} 期（${obs.based_on_date}）</b>的全部历史数据，按三种规则算出的下一期号码，以及专门用来做对照的<b>第四组纯随机号码</b>。四组并列显示、不分主次。</p>
+
+  <div class="notice notice-strong">
+    <p><strong>先把话说清楚，再给号码。</strong>本站没有、也不提供"预测准确"的号码——下一期开奖是独立随机事件，任何基于往期数据的规则，都不会让某一组号码更容易被开出来。四组的历史均命中极差是 <span class="mono">${spread}</span>，其中 <b>${best.name}</b> 最高，看着像"找到了规律"。但请注意两件事：</p>
+    <p>① 它是<b>从四组里挑出来最好看的那一组</b>。只要允许挑，总能挑出一个好看的——这不叫规律，叫选择性偏差；<br>
+       ② 它相对纯随机对照组的优势只有 <span class="mono">${bestMargin >= 0 ? "+" : ""}${bestMargin.toFixed(4)}</span>，而四组的证据等级全部是 <b>${evLabels.join(" / ")}</b>，四组里有 <b>${coversCount} 组</b>的 95% 置信区间覆盖了理论期望 ${theoretical.toFixed(4)}。</p>
+    <p>换句话说：<b>这四组号码在统计上没有一组比另外三组更可能中奖。</b>把它们放在页面最顶部，是因为这是你最想看的东西；紧挨着它们的这些数字，才是本站真正想让你看到的东西。</p>
+  </div>
+
+  <div class="obs-grid">
+    ${cards}
+  </div>
+
+  <div class="notice">
+    <p><strong>四组一起看才有意义：</strong>${groups
+      .map((g) => `${g.name} <span class="mono">${g.backtest.mean_hit.toFixed(4)}</span>`)
+      .join(" ｜ ")}。四组全部落在彼此的正常波动范围内，没有任何一组越出理论期望附近的正常区间。</p>
+    <p>"最高的一组"并不稳定：它之所以是 ${best.name}，只是因为在这批数据上它恰好最高。换一批历史数据重新算，最高的通常会是另一组——这正是"每种选号规则都能找到一段表现好看的历史"的含义，也是本站把四组并列、而不是只给你一组的原因。</p>
+  </div>
+
+  <p class="dim">号码生成规则写在 <code>src/build.js</code> 的 <code>buildNextPeriodObservation</code> 里，全部使用确定性种子（期号 + 组名），因此<b>同一份历史数据永远得到同一组号码</b>——不做"每次刷新换一组"的事，那样就没法验证任何东西了。「均衡倾向规则」的权重（热 40 / 遗漏 40 / 随机 20）是固定值，本站刻意不提供"最优权重"——那等于替用户调参，而调参正是本站反复警告的数据窥探。</p>
+
+  <h3>无论你看着哪一组号码，中奖概率都是同一个数</h3>
+  <p>全部可能的号码组合共 <strong>${totalCombos}</strong> 组，每一组被开出来的概率完全相同。你选中任意一组号码，中一等奖的概率都是 <strong>1 / ${firstPrizeOdds}</strong>——不因为它是"热号"还是"冷号"而有任何区别。下面这张表由组合数精确计算，不是抄来的：</p>
+  ${prizeTable}
+  <div class="notice">
+    <p>合计中奖概率 <strong>${winProb}%</strong>，单注期望回报约 <strong>${expLow}~${expMid}</strong> 元，而成本是 2 元。<strong>选号规则改变不了这两个数字中的任何一个。</strong>这也是为什么本站把"概率"放在号码旁边，而不是放在免责声明里。</p>
+  </div>`;
+}
+
 // ---- V1 新增：我的策略权重滑块，需要给浏览器端嵌入一份精简历史数据 ----
 function buildLabData(history, split_boundaries, monte_carlo, min_train_size, report_number_tools, next_period) {
   const compactHistory = history.map((d) => ({ period: d.period, red: d.red, blue: d.blue }));
@@ -566,6 +659,13 @@ function main() {
     : "";
   // V4 第 1~3 层：数字体检 / 遗漏分布 / 形态诊断
   const numberToolsSection = buildNumberToolsSection(report.number_tools);
+  // V4 第 4 层：下一期观测（放在页面最顶部——用户最想看的东西在最上面，
+  // 但它必须被"证据等级 + 随机对照组 + 概率表"包住，否则就成了选号器）
+  const observationSection = buildObservationSection(
+    report.next_period_observation,
+    verification,
+    report.theoretical_expectation
+  );
 
   const html = `<!doctype html>
 <html lang="zh-CN">
@@ -754,6 +854,63 @@ function main() {
   }
   .btn-ghost { background: transparent; color: var(--ink-dim); }
   .dz-error { color: var(--red); font-size: 0.85rem; margin: 8px 0 0; min-height: 1.1em; }
+  /* V4 第 4 层：下一期观测（页面顶部区块） */
+  .notice-strong {
+    border-left: 3px solid var(--red);
+    background: var(--paper-2);
+  }
+  .obs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 16px 0 20px;
+  }
+  .obs-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: #fff;
+  }
+  /* 随机对照组用虚线与略暗的底色，视觉上明确"它和前几组是同一档东西"，
+     而不是把它做成一个不起眼的附注——它是这一屏里最重要的一组号码。 */
+  .obs-card-random {
+    border-style: dashed;
+    background: var(--paper-2);
+  }
+  .obs-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .obs-card-name { font-weight: 600; font-size: 0.95rem; }
+  .obs-tag {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    padding: 2px 7px;
+    border-radius: 999px;
+    border: 1px dashed var(--line);
+    color: var(--ink-dim);
+  }
+  .obs-balls { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .obs-ball {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    width: 34px;
+    height: 34px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--red);
+  }
+  .obs-ball-blue { color: var(--blue); }
+  .obs-desc { font-size: 0.8rem; color: var(--ink-dim); margin: 0 0 10px; }
+  .obs-table { margin: 0; font-size: 0.82rem; }
+  .obs-table td { padding: 4px 6px; }
+  .obs-table td:first-child { color: var(--ink-dim); }
   .strategy-name { font-weight: 600; }
   .s-random { color: var(--ink-dim); }
   .s-hot { color: var(--red); }
@@ -858,6 +1015,29 @@ function main() {
     <span class="badge">蒙特卡洛 ${monte_carlo.runs} 次独立模拟</span>
     <span class="badge">盲测集封存于第${split_boundaries.blind_test_start_period}期起（当前${split_boundaries.blind_periods_count}期）</span>
   </div>
+
+  <div class="divider"></div>
+
+  ${observationSection}
+
+  <div class="divider"></div>
+
+  ${numberToolsSection}
+
+  <div class="divider"></div>
+
+  ${predictionSection}
+
+  <div class="divider"></div>
+
+  <h2>怎么读这一页</h2>
+  <p>上面的号码区块是这一页最显眼的部分，也是最容易被误读的部分，所以这里给出读它的顺序：</p>
+  <ul>
+    <li><b>先看四组号码下面那张表里的"证据等级"</b>，再看号码本身。等级是"无证据"时，那一组号码和一个随机数没有区别。</li>
+    <li><b>四组要一起看。</b>只截取"最好看的那一组"发出去，就等于制造了一个本站数据并不支持的结论——这也是本站永远把随机对照组放在同一屏的原因。</li>
+    <li><b>再看下面的"数字体检"和"遗漏分布"</b>：你会看到每个号码的出现次数后面都配着置信区间，而"某号码很久没出"在整份数据里其实经常发生。</li>
+    <li><b>最后看排行榜和盲测集</b>：那里有我们检验过的全部策略，以及它们能不能算"有效"的诚实回答——目前答案是"一个都不能"。</li>
+  </ul>
 
   <div class="tagline">用 ${report.data_range.count} 期真实开奖数据，让选号玄学、统计策略接受同一个残酷的对手：大数定律。</div>
 
@@ -1064,29 +1244,21 @@ function main() {
 
   <div class="divider"></div>
 
-  ${predictionSection}
-
-  <div class="divider"></div>
-
-  ${numberToolsSection}
-
-  <div class="divider"></div>
-
   ${dataSection}
 
   <div class="divider"></div>
 
   <h2>这一版做了什么、还没做什么</h2>
-  <p>当前完成的是方案里的 <strong>V1</strong>（"我的策略"权重滑块 + 资金曲线，把开发集/盲测集的分离变成可以亲手体验的交互），以及 <strong>V4 第零步</strong>（上面这一节的概率表与预测悖论、证据等级标注、数据指纹与核对表）。</p>
-  <p>需要说明的是：<strong>本站目前仍然没有"预测下一期号码"的界面，而这是有意为之的</strong>。方案第十七节把预测功能拆成五层，其中"下一期观测"（含随机对照组）排在最后——它必须建立在证据等级、概率表、随机对照这三样东西都能正常展示之后，否则它只会变成一个看起来更专业的选号器。已经完成的这一层，正是它能不能上线的先决条件。</p>
+  <p>当前已完成：<strong>V1</strong>（"我的策略"权重滑块 + 资金曲线）、<strong>V4 第零步</strong>（概率表与预测悖论、证据等级标注、数据指纹与核对表）、<strong>V4 第 1~4 层</strong>（数字体检、遗漏分布、形态诊断，以及本页最顶部的"下一期观测"），以及<strong>开奖后自动更新管道</strong>（GitHub Actions 定时抓取 → 交叉核对 → 硬校验 → 重算 → 生成页面 → 冒烟测试 → 工作流校验 → 合规审计 → 提交，任一门禁失败即不发布）。</p>
+  <p><strong>关于顶部那个"下一期观测"区块，需要特别说明它的性质</strong>：它给出的是三组参数化规则 + 一组纯随机对照，<strong>不是预测结论</strong>。方案第十七节把预测功能拆成五层并规定：必须等证据等级、概率表、随机对照三样东西都能正常展示之后，"下一期观测"才允许上线——否则它只会变成一个看起来更专业的选号器。现在这三样都已就位，它才被放到最顶部。反过来也成立：<strong>如果哪天为了页面好看而把随机对照组或证据等级拿掉，这个区块就必须一起下线。</strong></p>
   <p>还没有做的，留给下一版：</p>
   <ul>
-    <li><strong>数据源这一条已经解决了</strong>——原先"数据源未能核实"的结论是错的：仓库真实存在（<code>gudaoxuri/lottery_history</code>，GitHub Actions 每日更新），本地 251 期与上游逐期逐号核对 0 处不符，新增的 26105 期另经官方开奖公告双源复核。抓取脚本 <code>scripts/fetch-data.js</code> 已就位（含重试、两个来源不一致即停线报警、写入前自动备份）。下一步的缺口是：历史 251 期仍属单源数据，未逐期与官方比对。</li>
-    <li>把抓取 + 核对 + 重算 + 审计串成 GitHub Actions 定时任务（脚本已齐，尚未接 CI：每次开奖后自动跑完五步，任一门禁失败就不发布）</li>
-    <li>数字体检报告 / 遗漏分布工具 / 形态诊断器 / "下一期观测"受控预测界面（方案 17.3 第 1~4 层）</li>
+    <li><strong>数据源这一条已经解决了，但还有一个缺口</strong>——仓库真实存在（<code>gudaoxuri/lottery_history</code>，GitHub Actions 每日更新），本地数据与上游逐期逐号核对 0 处不符，新增期另经官方开奖公告双源复核。缺口是：<strong>历史 252 期仍属单一来源</strong>，通过了内部自洽校验，但没有逐期与官方比对。</li>
+    <li>资金模拟器参数化（初始本金 / 每期注数可调）、传播素材导出（擂台图 / 收敛曲线静态图片）</li>
     <li>AI 战报（先用模板文案，暂不接入任何模型）</li>
     <li>大乐透等第二种彩票、Agent Skill 接口</li>
   </ul>
+  <p class="dim">关于"自动更新"为什么曾经失败过一次：工作流最初把 cron 的星期写成了 <code>7</code>（cron 合法域是 0~6），GitHub 因此在校验阶段拒绝解析整份文件，症状是"0 个 job、failure、无日志"，完全不像 cron 的问题。现已修复，并新增了工作流规则级校验与排程语义校验两道门禁防止复发——完整记录见 README 与方案 17.13。</p>
 
   <footer>
     <p>生成时间 ${generatedDate} · 数据集版本 ${report.dataset_snapshot} · 数据来源 ${report.data_source}</p>

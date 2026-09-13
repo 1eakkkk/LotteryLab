@@ -185,6 +185,63 @@
   }
   .btn-ghost { background: transparent; color: var(--ink-dim); }
   .dz-error { color: var(--red); font-size: 0.85rem; margin: 8px 0 0; min-height: 1.1em; }
+  /* V4 第 4 层：下一期观测（页面顶部区块） */
+  .notice-strong {
+    border-left: 3px solid var(--red);
+    background: var(--paper-2);
+  }
+  .obs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 16px 0 20px;
+  }
+  .obs-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: #fff;
+  }
+  /* 随机对照组用虚线与略暗的底色，视觉上明确"它和前几组是同一档东西"，
+     而不是把它做成一个不起眼的附注——它是这一屏里最重要的一组号码。 */
+  .obs-card-random {
+    border-style: dashed;
+    background: var(--paper-2);
+  }
+  .obs-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .obs-card-name { font-weight: 600; font-size: 0.95rem; }
+  .obs-tag {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    padding: 2px 7px;
+    border-radius: 999px;
+    border: 1px dashed var(--line);
+    color: var(--ink-dim);
+  }
+  .obs-balls { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .obs-ball {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    width: 34px;
+    height: 34px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--red);
+  }
+  .obs-ball-blue { color: var(--blue); }
+  .obs-desc { font-size: 0.8rem; color: var(--ink-dim); margin: 0 0 10px; }
+  .obs-table { margin: 0; font-size: 0.82rem; }
+  .obs-table td { padding: 4px 6px; }
+  .obs-table td:first-child { color: var(--ink-dim); }
   .strategy-name { font-weight: 600; }
   .s-random { color: var(--ink-dim); }
   .s-hot { color: var(--red); }
@@ -289,6 +346,362 @@
     <span class="badge">蒙特卡洛 5000 次独立模拟</span>
     <span class="badge">盲测集封存于第26075期起（当前31期）</span>
   </div>
+
+  <div class="divider"></div>
+
+  
+  <h2>下一期观测：第 26106 期</h2>
+  <p>下面是基于<b>截至第 26105 期（2026-09-10）</b>的全部历史数据，按三种规则算出的下一期号码，以及专门用来做对照的<b>第四组纯随机号码</b>。四组并列显示、不分主次。</p>
+
+  <div class="notice notice-strong">
+    <p><strong>先把话说清楚，再给号码。</strong>本站没有、也不提供"预测准确"的号码——下一期开奖是独立随机事件，任何基于往期数据的规则，都不会让某一组号码更容易被开出来。四组的历史均命中极差是 <span class="mono">0.2236</span>，其中 <b>热号规则</b> 最高，看着像"找到了规律"。但请注意两件事：</p>
+    <p>① 它是<b>从四组里挑出来最好看的那一组</b>。只要允许挑，总能挑出一个好看的——这不叫规律，叫选择性偏差；<br>
+       ② 它相对纯随机对照组的优势只有 <span class="mono">+0.1710</span>，而四组的证据等级全部是 <b>无证据</b>，四组里有 <b>4 组</b>的 95% 置信区间覆盖了理论期望 1.0909。</p>
+    <p>换句话说：<b>这四组号码在统计上没有一组比另外三组更可能中奖。</b>把它们放在页面最顶部，是因为这是你最想看的东西；紧挨着它们的这些数字，才是本站真正想让你看到的东西。</p>
+  </div>
+
+  <div class="obs-grid">
+    
+    <div class="obs-card">
+      <div class="obs-card-head">
+        <span class="obs-card-name">热号规则</span>
+        
+      </div>
+      <div class="obs-balls"><span class="obs-ball">04</span><span class="obs-ball">05</span><span class="obs-ball">14</span><span class="obs-ball">16</span><span class="obs-ball">24</span><span class="obs-ball">30</span><span class="obs-ball obs-ball-blue">04</span></div>
+      <p class="obs-desc">取最近 50 期出现频率最高的 6 个红球 + 出现频率最高的蓝球</p>
+      <table class="obs-table"><tbody>
+        <tr><td>历史均命中（红）</td><td class="mono">1.2039</td></tr>
+        <tr><td>95% 置信区间</td><td class="mono">[1.068, 1.340]</td></tr>
+        <tr><td>理论期望</td><td class="mono">1.0909</td></tr>
+        <tr><td>蓝球命中率</td><td class="mono">4.6%</td></tr>
+        <tr><td>vs 随机对照（配对差值）</td><td class="mono">+0.1447</td></tr>
+        <tr><td>证据等级</td><td><span class="ev ev-none">无证据</span></td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="obs-card">
+      <div class="obs-card-head">
+        <span class="obs-card-name">遗漏规则</span>
+        
+      </div>
+      <div class="obs-balls"><span class="obs-ball">07</span><span class="obs-ball">17</span><span class="obs-ball">21</span><span class="obs-ball">23</span><span class="obs-ball">32</span><span class="obs-ball">33</span><span class="obs-ball obs-ball-blue">14</span></div>
+      <p class="obs-desc">取遗漏期数最长的 6 个红球 + 遗漏最长的蓝球（就是常说的「冷号」）</p>
+      <table class="obs-table"><tbody>
+        <tr><td>历史均命中（红）</td><td class="mono">0.9803</td></tr>
+        <tr><td>95% 置信区间</td><td class="mono">[0.848, 1.113]</td></tr>
+        <tr><td>理论期望</td><td class="mono">1.0909</td></tr>
+        <tr><td>蓝球命中率</td><td class="mono">5.3%</td></tr>
+        <tr><td>vs 随机对照（配对差值）</td><td class="mono">-0.0789</td></tr>
+        <tr><td>证据等级</td><td><span class="ev ev-none">无证据</span></td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="obs-card">
+      <div class="obs-card-head">
+        <span class="obs-card-name">均衡倾向规则</span>
+        
+      </div>
+      <div class="obs-balls"><span class="obs-ball">05</span><span class="obs-ball">07</span><span class="obs-ball">16</span><span class="obs-ball">23</span><span class="obs-ball">24</span><span class="obs-ball">32</span><span class="obs-ball obs-ball-blue">05</span></div>
+      <p class="obs-desc">热号 40 / 遗漏 40 / 随机扰动 20 的加权打分（「我的策略」里可自行调这三项）</p>
+      <table class="obs-table"><tbody>
+        <tr><td>历史均命中（红）</td><td class="mono">1.0000</td></tr>
+        <tr><td>95% 置信区间</td><td class="mono">[0.863, 1.137]</td></tr>
+        <tr><td>理论期望</td><td class="mono">1.0909</td></tr>
+        <tr><td>蓝球命中率</td><td class="mono">5.9%</td></tr>
+        <tr><td>vs 随机对照（配对差值）</td><td class="mono">-0.0592</td></tr>
+        <tr><td>证据等级</td><td><span class="ev ev-none">无证据</span></td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="obs-card obs-card-random">
+      <div class="obs-card-head">
+        <span class="obs-card-name">纯随机对照组</span>
+        <span class="obs-tag">对照组</span>
+      </div>
+      <div class="obs-balls"><span class="obs-ball">05</span><span class="obs-ball">12</span><span class="obs-ball">16</span><span class="obs-ball">21</span><span class="obs-ball">26</span><span class="obs-ball">31</span><span class="obs-ball obs-ball-blue">15</span></div>
+      <p class="obs-desc">完全不看历史，均匀随机生成——用来证明上面三组并不特殊</p>
+      <table class="obs-table"><tbody>
+        <tr><td>历史均命中（红）</td><td class="mono">1.0329</td></tr>
+        <tr><td>95% 置信区间</td><td class="mono">[0.900, 1.165]</td></tr>
+        <tr><td>理论期望</td><td class="mono">1.0909</td></tr>
+        <tr><td>蓝球命中率</td><td class="mono">7.2%</td></tr>
+        <tr><td>vs 随机对照（配对差值）</td><td class="mono">-0.0263</td></tr>
+        <tr><td>证据等级</td><td><span class="ev ev-none">无证据</span></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <div class="notice">
+    <p><strong>四组一起看才有意义：</strong>热号规则 <span class="mono">1.2039</span> ｜ 遗漏规则 <span class="mono">0.9803</span> ｜ 均衡倾向规则 <span class="mono">1.0000</span> ｜ 纯随机对照组 <span class="mono">1.0329</span>。四组全部落在彼此的正常波动范围内，没有任何一组越出理论期望附近的正常区间。</p>
+    <p>"最高的一组"并不稳定：它之所以是 热号规则，只是因为在这批数据上它恰好最高。换一批历史数据重新算，最高的通常会是另一组——这正是"每种选号规则都能找到一段表现好看的历史"的含义，也是本站把四组并列、而不是只给你一组的原因。</p>
+  </div>
+
+  <p class="dim">号码生成规则写在 <code>src/build.js</code> 的 <code>buildNextPeriodObservation</code> 里，全部使用确定性种子（期号 + 组名），因此<b>同一份历史数据永远得到同一组号码</b>——不做"每次刷新换一组"的事，那样就没法验证任何东西了。「均衡倾向规则」的权重（热 40 / 遗漏 40 / 随机 20）是固定值，本站刻意不提供"最优权重"——那等于替用户调参，而调参正是本站反复警告的数据窥探。</p>
+
+  <h3>无论你看着哪一组号码，中奖概率都是同一个数</h3>
+  <p>全部可能的号码组合共 <strong>17,721,088</strong> 组，每一组被开出来的概率完全相同。你选中任意一组号码，中一等奖的概率都是 <strong>1 / 17,721,088</strong>——不因为它是"热号"还是"冷号"而有任何区别。下面这张表由组合数精确计算，不是抄来的：</p>
+  
+  <table>
+    <thead>
+      <tr><th>奖级</th><th>中奖条件</th><th>组合数</th><th>概率</th><th>约等于</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="mono">1 等奖</td>
+        <td>6红 + 蓝</td>
+        <td class="mono">1</td>
+        <td class="mono">5.64e-6%</td>
+        <td class="mono">约 1 / 17,721,088</td>
+      </tr>
+
+      <tr>
+        <td class="mono">2 等奖</td>
+        <td>6红</td>
+        <td class="mono">15</td>
+        <td class="mono">8.46e-5%</td>
+        <td class="mono">约 1 / 1,181,406</td>
+      </tr>
+
+      <tr>
+        <td class="mono">3 等奖</td>
+        <td>5红 + 蓝</td>
+        <td class="mono">162</td>
+        <td class="mono">9.14e-4%</td>
+        <td class="mono">约 1 / 109,389</td>
+      </tr>
+
+      <tr>
+        <td class="mono">4 等奖</td>
+        <td>5红 或 4红+蓝</td>
+        <td class="mono">7,695</td>
+        <td class="mono">0.04%</td>
+        <td class="mono">约 1 / 2,303</td>
+      </tr>
+
+      <tr>
+        <td class="mono">5 等奖</td>
+        <td>4红 或 3红+蓝</td>
+        <td class="mono">137,475</td>
+        <td class="mono">0.78%</td>
+        <td class="mono">约 1 / 129</td>
+      </tr>
+
+      <tr>
+        <td class="mono">6 等奖</td>
+        <td>仅蓝球</td>
+        <td class="mono">1,043,640</td>
+        <td class="mono">5.89%</td>
+        <td class="mono">约 1 / 17</td>
+      </tr></tbody>
+  </table>
+  <div class="notice">
+    <p>合计中奖概率 <strong>6.7095%</strong>，单注期望回报约 <strong>0.7402~0.9942</strong> 元，而成本是 2 元。<strong>选号规则改变不了这两个数字中的任何一个。</strong>这也是为什么本站把"概率"放在号码旁边，而不是放在免责声明里。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  
+  <h2>数字体检：每个号码的出现次数，后面都站着一条区间</h2>
+  <p>很多人想知道"哪个号偏热、哪个号偏冷"。这一层把这件事彻底做完：<strong>每一个号码</strong>的出现次数、理论期望、95% 置信区间，以及最近 10/30/50/100 期的表现，全部摊开。点任意一个号码就能看到它的完整体检报告。</p>
+  <p>判断标准只有一条：<strong>理论期望是否落在置信区间内</strong>。而不是"出现次数比别的号码多几个"。置信区间用的是 Wilson 区间（不是常见的正态近似）——因为正态近似在样本量小或比例接近 0/1 时会算出负数边界，页面上出现"−3% 的出现率"这种数字就没人信了。</p>
+
+  <div class="nh-panel">
+    <div class="nh-label">红球（每期出现概率 6/33 ≈ 18.18%），共 252 期</div>
+    <div class="nh-grid" id="nh-grid-red"></div>
+    <div class="nh-label">蓝球（每期出现概率 1/16 = 6.25%）</div>
+    <div class="nh-grid" id="nh-grid-blue"></div>
+    <p class="dim" style="margin: 8px 0 0;">虚线框 = 该号码的出现次数落在 95% 区间之外（下面解释为什么这不代表"发现了规律"）。点任意号码看详情。</p>
+  </div>
+  <div id="nh-detail" class="nh-detail"><p class="dim">点上面任意一个号码，这里会显示它的完整体检报告。</p></div>
+
+  <div class="notice">
+    <p><strong>先说清楚结果会怎么被误读。</strong>在这份数据里，有 <strong>2</strong> 个号码（红球 24、26）的出现次数落在 95% 区间之外。看上去像是"发现了异常号码"——但它什么都不是：</p>
+    <p>在 95% 水平上对 33 个红球各自做一次检验，<strong>即使开奖完全随机</strong>，平均也会有 <span class="mono">1.793</span> 个号码落到区间外（理论值 1.65 个）。用蒙特卡洛模拟 2000 次纯随机数据实测：出现"至少 2 个号码偏离"的概率高达 <strong>56.2%</strong>。</p>
+    <p>换句话说，<strong>你现在看到的这个"偏离"，是完全随机的情况下最正常的结果之一</strong>。这就是多重比较陷阱：检验的次数越多，"碰巧越界"的号码就越多——而只看那一个越界的号码，是看不见这回事的。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>遗漏分布：回答那句"这个号是不是该出了"</h2>
+  <p>这是被问得最多的一句话，所以必须有正面答案。点任意号码，会看到它当前遗漏了多久、历史上最长遗漏过多久，以及——<strong>这么长的遗漏，在整份数据里本来就该出现多少次</strong>。</p>
+  <div class="nh-panel">
+    <div class="nh-label">红球当前遗漏（数字 = 已经连续多少期没出现）</div>
+    <div class="nh-grid" id="om-grid-red"></div>
+    <div class="nh-label">蓝球当前遗漏</div>
+    <div class="nh-grid" id="om-grid-blue"></div>
+  </div>
+  <div id="om-detail" class="nh-detail"><p class="dim">点上面任意一个号码，这里会显示它的遗漏分析。</p></div>
+
+  <div class="notice">
+    <p><strong>「该出了」这个直觉错在哪。</strong>以当前遗漏最长的红球 <span class="mono">32</span> 为例：它已经 19 期没出现。在每期等概率假设下，单个号码遗漏到 19 期及以上的概率是 <span class="mono">0.02209</span>——看上去极小。但这份数据里有 33 个号码 × 252 期 = 8316 次"号码-期"的机会，按这个概率，<strong>这种长度的遗漏在整个数据集里本来就会出现约 183.68 次</strong>。</p>
+    <p>人只看了概率很小，没看机会有多少次——这就是"该出了"的全部逻辑漏洞。而且每次开奖都是独立事件，它下一期的出现概率仍然是 6/33，和 252 期之前完全一样：它不"欠"你。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>形态诊断：看看你的号码落在多大的一堆里</h2>
+  <p>输入任意 6 个红球（或点"生成一组演示号码"），下面会给出它的奇偶比、大小比、三区分布、连号情况和和值，并且——<strong>关键是最后一列</strong>——告诉你有多少组号码和它"长得一样"。</p>
+  <div class="nh-panel">
+    <label class="nh-label" for="dz-input">输入 6 个红球号码（1~33，用空格或逗号分隔）</label>
+    <div class="dz-row">
+      <input type="text" id="dz-input" class="dz-input" placeholder="例如：02 04 13 14 15 30" />
+      <button type="button" class="btn" id="dz-btn">诊断这组号码</button>
+      <button type="button" class="btn btn-ghost" id="dz-gen">生成一组演示号码</button>
+    </div>
+    <p class="dz-error" id="dz-error"></p>
+  </div>
+  <div id="dz-result" class="nh-detail"><p class="dim">还没诊断。输入一组号码，或点"生成一组演示号码"。</p></div>
+
+  <div class="notice">
+    <p><strong>把这一层读对，只需要看懂最后一列。</strong>它的意思是"全部 1,107,568 组红球里，有多少组和这组长得一样"——<strong>不是</strong>"这组号码中奖的机会有多大"。这两个数字完全不是一回事。</p>
+    <p>形态稀有只说明这组号码"长得比较特别"，不说明它更容易或更不容易被开出来。相反的方向才是真相：<strong>形态越"普通"（比如奇偶均衡、三区均匀），符合它的组合数越多</strong>——也就是说越是"看起来正常"的形态，同时选中它的人越多，万一真中了一等奖，还要和别人分。当然，这个影响小到可以忽略，因为中一等奖本身就是 1/17,721,088 的事。</p>
+  </div>
+  <p class="dim">本区块所有统计量都在构建期算好、写死在页面里（<code>src/number-health.js</code>，Node 与浏览器共用同一份公式），浏览器端只做查表与展示，不重算。这一点是刻意的：如果两端各算一套，页面上早晚会出现两个对不上的数字。</p>
+
+  <div class="divider"></div>
+
+  
+  <h2>命中概率表（由组合数精确计算）</h2>
+  <p>下面这张表不是抄来的，是<strong>算出来的</strong>：双色球红球 33 选 6、蓝球 16 选 1，总组合数 <code>C(33,6) × 16 = 17,721,088</code>。每一档奖级的"组合数"用超几何分布直接数出来，概率 = 该奖级组合数 ÷ 总组合数。任何人都能拿计算器复算一遍——这是本页和"预测网站"最本质的区别。</p>
+  
+  <table>
+    <thead>
+      <tr><th>奖级</th><th>中奖条件</th><th>组合数</th><th>概率</th><th>约等于</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="mono">1 等奖</td>
+        <td>6红 + 蓝</td>
+        <td class="mono">1</td>
+        <td class="mono">5.64e-6%</td>
+        <td class="mono">约 1 / 17,721,088</td>
+      </tr>
+
+      <tr>
+        <td class="mono">2 等奖</td>
+        <td>6红</td>
+        <td class="mono">15</td>
+        <td class="mono">8.46e-5%</td>
+        <td class="mono">约 1 / 1,181,406</td>
+      </tr>
+
+      <tr>
+        <td class="mono">3 等奖</td>
+        <td>5红 + 蓝</td>
+        <td class="mono">162</td>
+        <td class="mono">9.14e-4%</td>
+        <td class="mono">约 1 / 109,389</td>
+      </tr>
+
+      <tr>
+        <td class="mono">4 等奖</td>
+        <td>5红 或 4红+蓝</td>
+        <td class="mono">7,695</td>
+        <td class="mono">0.04%</td>
+        <td class="mono">约 1 / 2,303</td>
+      </tr>
+
+      <tr>
+        <td class="mono">5 等奖</td>
+        <td>4红 或 3红+蓝</td>
+        <td class="mono">137,475</td>
+        <td class="mono">0.78%</td>
+        <td class="mono">约 1 / 129</td>
+      </tr>
+
+      <tr>
+        <td class="mono">6 等奖</td>
+        <td>仅蓝球</td>
+        <td class="mono">1,043,640</td>
+        <td class="mono">5.89%</td>
+        <td class="mono">约 1 / 17</td>
+      </tr></tbody>
+  </table>
+  <div class="notice">
+    <p><strong>合计中奖概率：6.7095%</strong>——也就是说，约 <strong>14.9 注里才有 1 注</strong>能中任意一个奖级，而且其中绝大多数是末等奖。剩下约 93.29% 的情况是一分钱不中。</p>
+  </div>
+
+  <h2>预测悖论：就算你真有"预测能力"，期望仍然是负的</h2>
+  <p>这是本站最重要的一块内容，也是唯一一块<strong>不依赖任何历史数据、只靠数学就成立</strong>的结论。</p>
+
+  <p><strong>第一步：单注的期望回报是多少？</strong>把每一档奖级的"概率 × 奖金"加起来。一、二等奖是浮动奖金（取决于当期奖池和中奖注数），这里给出低、中两档公开常见区间的估算——<em>估算假设本身也写在数据里</em>，不藏：</p>
+  <table>
+    <thead><tr><th>口径</th><th>单注期望回报</th><th>单注成本</th><th>每投入 2 元，平均拿回</th></tr></thead>
+    <tbody>
+      <tr><td>只算固定奖级（三~六等奖，金额是官方固定值）</td><td class="mono">0.4863 元</td><td class="mono">2 元</td><td class="mono">24.3%</td></tr>
+      <tr><td>含浮动奖级（低档估算：一等奖 3,000,000 元）</td><td class="mono">0.7402 元</td><td class="mono">2 元</td><td class="mono">37.0%</td></tr>
+      <tr><td>含浮动奖级（中档估算：一等奖 6,000,000 元）</td><td class="mono">0.9942 元</td><td class="mono">2 元</td><td class="mono">49.7%</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>第二步：那"多买几注"能解决吗？</strong>不能，因为期望是线性的。想要靠"每期买若干注"把期望回报凑到 100 元，按不同估算口径需要：</p>
+  <ul>
+    <li>低档估算：每期约 <strong>135 注</strong>，每期投入 <strong>270 元</strong>，而这些注的期望回报正好是 100 元——<strong>依然是亏的，而且亏损比例和只买 1 注时完全相同</strong>；</li>
+    <li>中档估算：每期约 <strong>101 注</strong>，每期投入 <strong>202 元</strong>，期望回报同样是 100 元。</li>
+  </ul>
+  <p>换句话说：买得越多，中奖次数确实会变多，但<strong>亏损的期望只会等比放大</strong>——把注数放大 135 倍，投入放大 135 倍，期望回报也只放大 135 倍，比例纹丝不动（约 37.0%）。这就是"预测悖论"：<strong>即使一个人在选号上真有 1% 的优势（已经比本页检验过的所有策略都强），他也无法把负期望翻正</strong>——因为需要的优势量级是<strong>成百倍</strong>，而不是百分之几。</p>
+
+  <h2>形态过滤器：为什么"选得更专业"没有提高中奖概率</h2>
+  <p>很多人相信"避开连号、保持奇偶平衡、和值落在中间"能提高中奖率。下面这个演示把这个念头量化：每加一个条件，可选组合数就少一批——但请注意最后一列告诉你真正发生了什么。</p>
+  <table>
+    <thead><tr><th>过滤条件</th><th>剩余红球组合数</th><th>占全部组合</th><th>相对全部组合"精选"了</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>不加任何过滤（全部组合）</td>
+        <td class="mono">1,107,568</td>
+        <td class="mono">100.00%</td>
+        <td class="mono">1.0 倍</td>
+      </tr>
+
+      <tr>
+        <td>必须是 3 奇 3 偶</td>
+        <td class="mono">380,800</td>
+        <td class="mono">34.38%</td>
+        <td class="mono">2.9 倍</td>
+      </tr>
+
+      <tr>
+        <td>不带连号</td>
+        <td class="mono">376,740</td>
+        <td class="mono">34.02%</td>
+        <td class="mono">2.9 倍</td>
+      </tr>
+
+      <tr>
+        <td>和值落在 90~115（看上去最“正常”的区间）</td>
+        <td class="mono">494,450</td>
+        <td class="mono">44.64%</td>
+        <td class="mono">2.2 倍</td>
+      </tr>
+
+      <tr>
+        <td>三区分布刚好 2:2:2</td>
+        <td class="mono">166,375</td>
+        <td class="mono">15.02%</td>
+        <td class="mono">6.7 倍</td>
+      </tr>
+
+      <tr>
+        <td>以上四个条件同时满足（“最专业”的选号方式）</td>
+        <td class="mono">23,109</td>
+        <td class="mono">2.09%</td>
+        <td class="mono">47.9 倍</td>
+      </tr></tbody>
+  </table>
+  <div class="notice">
+    <p><strong>关键在于：概率没有变。</strong>把四个"最专业"的过滤条件全加上，可选红球组合从 1,107,568 组降到 23,109 组（剩下 2.09%，相当于"精选"了 47.9 倍）。但开奖结果不会因为你的组合变少而更倾向于落在里面——<strong>你改变的只是"你把钱押在哪些组合上"，而不是"哪些组合会被开出来"</strong>。如果一定要说这个过滤动作有什么用，它只做了一件事：把同样 2 元的赌注集中到了更少的组合上（顺带一提，这反而降低了你和別人分摊一等奖的概率——但那个影响小到可以忽略，因为中一等奖本身就是 1/17,721,088）。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>怎么读这一页</h2>
+  <p>上面的号码区块是这一页最显眼的部分，也是最容易被误读的部分，所以这里给出读它的顺序：</p>
+  <ul>
+    <li><b>先看四组号码下面那张表里的"证据等级"</b>，再看号码本身。等级是"无证据"时，那一组号码和一个随机数没有区别。</li>
+    <li><b>四组要一起看。</b>只截取"最好看的那一组"发出去，就等于制造了一个本站数据并不支持的结论——这也是本站永远把随机对照组放在同一屏的原因。</li>
+    <li><b>再看下面的"数字体检"和"遗漏分布"</b>：你会看到每个号码的出现次数后面都配着置信区间，而"某号码很久没出"在整份数据里其实经常发生。</li>
+    <li><b>最后看排行榜和盲测集</b>：那里有我们检验过的全部策略，以及它们能不能算"有效"的诚实回答——目前答案是"一个都不能"。</li>
+  </ul>
 
   <div class="tagline">用 252 期真实开奖数据，让选号玄学、统计策略接受同一个残酷的对手：大数定律。</div>
 
@@ -588,200 +1001,6 @@
   <div class="divider"></div>
 
   
-  <h2>命中概率表（由组合数精确计算）</h2>
-  <p>下面这张表不是抄来的，是<strong>算出来的</strong>：双色球红球 33 选 6、蓝球 16 选 1，总组合数 <code>C(33,6) × 16 = 17,721,088</code>。每一档奖级的"组合数"用超几何分布直接数出来，概率 = 该奖级组合数 ÷ 总组合数。任何人都能拿计算器复算一遍——这是本页和"预测网站"最本质的区别。</p>
-  
-  <table>
-    <thead>
-      <tr><th>奖级</th><th>中奖条件</th><th>组合数</th><th>概率</th><th>约等于</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="mono">1 等奖</td>
-        <td>6红 + 蓝</td>
-        <td class="mono">1</td>
-        <td class="mono">5.64e-6%</td>
-        <td class="mono">约 1 / 17,721,088</td>
-      </tr>
-
-      <tr>
-        <td class="mono">2 等奖</td>
-        <td>6红</td>
-        <td class="mono">15</td>
-        <td class="mono">8.46e-5%</td>
-        <td class="mono">约 1 / 1,181,406</td>
-      </tr>
-
-      <tr>
-        <td class="mono">3 等奖</td>
-        <td>5红 + 蓝</td>
-        <td class="mono">162</td>
-        <td class="mono">9.14e-4%</td>
-        <td class="mono">约 1 / 109,389</td>
-      </tr>
-
-      <tr>
-        <td class="mono">4 等奖</td>
-        <td>5红 或 4红+蓝</td>
-        <td class="mono">7,695</td>
-        <td class="mono">0.04%</td>
-        <td class="mono">约 1 / 2,303</td>
-      </tr>
-
-      <tr>
-        <td class="mono">5 等奖</td>
-        <td>4红 或 3红+蓝</td>
-        <td class="mono">137,475</td>
-        <td class="mono">0.78%</td>
-        <td class="mono">约 1 / 129</td>
-      </tr>
-
-      <tr>
-        <td class="mono">6 等奖</td>
-        <td>仅蓝球</td>
-        <td class="mono">1,043,640</td>
-        <td class="mono">5.89%</td>
-        <td class="mono">约 1 / 17</td>
-      </tr></tbody>
-  </table>
-  <div class="notice">
-    <p><strong>合计中奖概率：6.7095%</strong>——也就是说，约 <strong>14.9 注里才有 1 注</strong>能中任意一个奖级，而且其中绝大多数是末等奖。剩下约 93.29% 的情况是一分钱不中。</p>
-  </div>
-
-  <h2>预测悖论：就算你真有"预测能力"，期望仍然是负的</h2>
-  <p>这是本站最重要的一块内容，也是唯一一块<strong>不依赖任何历史数据、只靠数学就成立</strong>的结论。</p>
-
-  <p><strong>第一步：单注的期望回报是多少？</strong>把每一档奖级的"概率 × 奖金"加起来。一、二等奖是浮动奖金（取决于当期奖池和中奖注数），这里给出低、中两档公开常见区间的估算——<em>估算假设本身也写在数据里</em>，不藏：</p>
-  <table>
-    <thead><tr><th>口径</th><th>单注期望回报</th><th>单注成本</th><th>每投入 2 元，平均拿回</th></tr></thead>
-    <tbody>
-      <tr><td>只算固定奖级（三~六等奖，金额是官方固定值）</td><td class="mono">0.4863 元</td><td class="mono">2 元</td><td class="mono">24.3%</td></tr>
-      <tr><td>含浮动奖级（低档估算：一等奖 3,000,000 元）</td><td class="mono">0.7402 元</td><td class="mono">2 元</td><td class="mono">37.0%</td></tr>
-      <tr><td>含浮动奖级（中档估算：一等奖 6,000,000 元）</td><td class="mono">0.9942 元</td><td class="mono">2 元</td><td class="mono">49.7%</td></tr>
-    </tbody>
-  </table>
-
-  <p><strong>第二步：那"多买几注"能解决吗？</strong>不能，因为期望是线性的。想要靠"每期买若干注"把期望回报凑到 100 元，按不同估算口径需要：</p>
-  <ul>
-    <li>低档估算：每期约 <strong>135 注</strong>，每期投入 <strong>270 元</strong>，而这些注的期望回报正好是 100 元——<strong>依然是亏的，而且亏损比例和只买 1 注时完全相同</strong>；</li>
-    <li>中档估算：每期约 <strong>101 注</strong>，每期投入 <strong>202 元</strong>，期望回报同样是 100 元。</li>
-  </ul>
-  <p>换句话说：买得越多，中奖次数确实会变多，但<strong>亏损的期望只会等比放大</strong>——把注数放大 135 倍，投入放大 135 倍，期望回报也只放大 135 倍，比例纹丝不动（约 37.0%）。这就是"预测悖论"：<strong>即使一个人在选号上真有 1% 的优势（已经比本页检验过的所有策略都强），他也无法把负期望翻正</strong>——因为需要的优势量级是<strong>成百倍</strong>，而不是百分之几。</p>
-
-  <h2>形态过滤器：为什么"选得更专业"没有提高中奖概率</h2>
-  <p>很多人相信"避开连号、保持奇偶平衡、和值落在中间"能提高中奖率。下面这个演示把这个念头量化：每加一个条件，可选组合数就少一批——但请注意最后一列告诉你真正发生了什么。</p>
-  <table>
-    <thead><tr><th>过滤条件</th><th>剩余红球组合数</th><th>占全部组合</th><th>相对全部组合"精选"了</th></tr></thead>
-    <tbody>
-      <tr>
-        <td>不加任何过滤（全部组合）</td>
-        <td class="mono">1,107,568</td>
-        <td class="mono">100.00%</td>
-        <td class="mono">1.0 倍</td>
-      </tr>
-
-      <tr>
-        <td>必须是 3 奇 3 偶</td>
-        <td class="mono">380,800</td>
-        <td class="mono">34.38%</td>
-        <td class="mono">2.9 倍</td>
-      </tr>
-
-      <tr>
-        <td>不带连号</td>
-        <td class="mono">376,740</td>
-        <td class="mono">34.02%</td>
-        <td class="mono">2.9 倍</td>
-      </tr>
-
-      <tr>
-        <td>和值落在 90~115（看上去最“正常”的区间）</td>
-        <td class="mono">494,450</td>
-        <td class="mono">44.64%</td>
-        <td class="mono">2.2 倍</td>
-      </tr>
-
-      <tr>
-        <td>三区分布刚好 2:2:2</td>
-        <td class="mono">166,375</td>
-        <td class="mono">15.02%</td>
-        <td class="mono">6.7 倍</td>
-      </tr>
-
-      <tr>
-        <td>以上四个条件同时满足（“最专业”的选号方式）</td>
-        <td class="mono">23,109</td>
-        <td class="mono">2.09%</td>
-        <td class="mono">47.9 倍</td>
-      </tr></tbody>
-  </table>
-  <div class="notice">
-    <p><strong>关键在于：概率没有变。</strong>把四个"最专业"的过滤条件全加上，可选红球组合从 1,107,568 组降到 23,109 组（剩下 2.09%，相当于"精选"了 47.9 倍）。但开奖结果不会因为你的组合变少而更倾向于落在里面——<strong>你改变的只是"你把钱押在哪些组合上"，而不是"哪些组合会被开出来"</strong>。如果一定要说这个过滤动作有什么用，它只做了一件事：把同样 2 元的赌注集中到了更少的组合上（顺带一提，这反而降低了你和別人分摊一等奖的概率——但那个影响小到可以忽略，因为中一等奖本身就是 1/17,721,088）。</p>
-  </div>
-
-  <div class="divider"></div>
-
-  
-  <h2>数字体检：每个号码的出现次数，后面都站着一条区间</h2>
-  <p>很多人想知道"哪个号偏热、哪个号偏冷"。这一层把这件事彻底做完：<strong>每一个号码</strong>的出现次数、理论期望、95% 置信区间，以及最近 10/30/50/100 期的表现，全部摊开。点任意一个号码就能看到它的完整体检报告。</p>
-  <p>判断标准只有一条：<strong>理论期望是否落在置信区间内</strong>。而不是"出现次数比别的号码多几个"。置信区间用的是 Wilson 区间（不是常见的正态近似）——因为正态近似在样本量小或比例接近 0/1 时会算出负数边界，页面上出现"−3% 的出现率"这种数字就没人信了。</p>
-
-  <div class="nh-panel">
-    <div class="nh-label">红球（每期出现概率 6/33 ≈ 18.18%），共 252 期</div>
-    <div class="nh-grid" id="nh-grid-red"></div>
-    <div class="nh-label">蓝球（每期出现概率 1/16 = 6.25%）</div>
-    <div class="nh-grid" id="nh-grid-blue"></div>
-    <p class="dim" style="margin: 8px 0 0;">虚线框 = 该号码的出现次数落在 95% 区间之外（下面解释为什么这不代表"发现了规律"）。点任意号码看详情。</p>
-  </div>
-  <div id="nh-detail" class="nh-detail"><p class="dim">点上面任意一个号码，这里会显示它的完整体检报告。</p></div>
-
-  <div class="notice">
-    <p><strong>先说清楚结果会怎么被误读。</strong>在这份数据里，有 <strong>2</strong> 个号码（红球 24、26）的出现次数落在 95% 区间之外。看上去像是"发现了异常号码"——但它什么都不是：</p>
-    <p>在 95% 水平上对 33 个红球各自做一次检验，<strong>即使开奖完全随机</strong>，平均也会有 <span class="mono">1.793</span> 个号码落到区间外（理论值 1.65 个）。用蒙特卡洛模拟 2000 次纯随机数据实测：出现"至少 2 个号码偏离"的概率高达 <strong>56.2%</strong>。</p>
-    <p>换句话说，<strong>你现在看到的这个"偏离"，是完全随机的情况下最正常的结果之一</strong>。这就是多重比较陷阱：检验的次数越多，"碰巧越界"的号码就越多——而只看那一个越界的号码，是看不见这回事的。</p>
-  </div>
-
-  <div class="divider"></div>
-
-  <h2>遗漏分布：回答那句"这个号是不是该出了"</h2>
-  <p>这是被问得最多的一句话，所以必须有正面答案。点任意号码，会看到它当前遗漏了多久、历史上最长遗漏过多久，以及——<strong>这么长的遗漏，在整份数据里本来就该出现多少次</strong>。</p>
-  <div class="nh-panel">
-    <div class="nh-label">红球当前遗漏（数字 = 已经连续多少期没出现）</div>
-    <div class="nh-grid" id="om-grid-red"></div>
-    <div class="nh-label">蓝球当前遗漏</div>
-    <div class="nh-grid" id="om-grid-blue"></div>
-  </div>
-  <div id="om-detail" class="nh-detail"><p class="dim">点上面任意一个号码，这里会显示它的遗漏分析。</p></div>
-
-  <div class="notice">
-    <p><strong>「该出了」这个直觉错在哪。</strong>以当前遗漏最长的红球 <span class="mono">32</span> 为例：它已经 19 期没出现。在每期等概率假设下，单个号码遗漏到 19 期及以上的概率是 <span class="mono">0.02209</span>——看上去极小。但这份数据里有 33 个号码 × 252 期 = 8316 次"号码-期"的机会，按这个概率，<strong>这种长度的遗漏在整个数据集里本来就会出现约 183.68 次</strong>。</p>
-    <p>人只看了概率很小，没看机会有多少次——这就是"该出了"的全部逻辑漏洞。而且每次开奖都是独立事件，它下一期的出现概率仍然是 6/33，和 252 期之前完全一样：它不"欠"你。</p>
-  </div>
-
-  <div class="divider"></div>
-
-  <h2>形态诊断：看看你的号码落在多大的一堆里</h2>
-  <p>输入任意 6 个红球（或点"生成一组演示号码"），下面会给出它的奇偶比、大小比、三区分布、连号情况和和值，并且——<strong>关键是最后一列</strong>——告诉你有多少组号码和它"长得一样"。</p>
-  <div class="nh-panel">
-    <label class="nh-label" for="dz-input">输入 6 个红球号码（1~33，用空格或逗号分隔）</label>
-    <div class="dz-row">
-      <input type="text" id="dz-input" class="dz-input" placeholder="例如：02 04 13 14 15 30" />
-      <button type="button" class="btn" id="dz-btn">诊断这组号码</button>
-      <button type="button" class="btn btn-ghost" id="dz-gen">生成一组演示号码</button>
-    </div>
-    <p class="dz-error" id="dz-error"></p>
-  </div>
-  <div id="dz-result" class="nh-detail"><p class="dim">还没诊断。输入一组号码，或点"生成一组演示号码"。</p></div>
-
-  <div class="notice">
-    <p><strong>把这一层读对，只需要看懂最后一列。</strong>它的意思是"全部 1,107,568 组红球里，有多少组和这组长得一样"——<strong>不是</strong>"这组号码中奖的机会有多大"。这两个数字完全不是一回事。</p>
-    <p>形态稀有只说明这组号码"长得比较特别"，不说明它更容易或更不容易被开出来。相反的方向才是真相：<strong>形态越"普通"（比如奇偶均衡、三区均匀），符合它的组合数越多</strong>——也就是说越是"看起来正常"的形态，同时选中它的人越多，万一真中了一等奖，还要和别人分。当然，这个影响小到可以忽略，因为中一等奖本身就是 1/17,721,088 的事。</p>
-  </div>
-  <p class="dim">本区块所有统计量都在构建期算好、写死在页面里（<code>src/number-health.js</code>，Node 与浏览器共用同一份公式），浏览器端只做查表与展示，不重算。这一点是刻意的：如果两端各算一套，页面上早晚会出现两个对不上的数字。</p>
-
-  <div class="divider"></div>
-
-  
   <h2>数据来源核实记录</h2>
   <p>本站的每一个数字都建立在"这份历史开奖数据是对的"这个前提上，所以这一节把"数据从哪来、核实到什么程度"摊开讲。<strong>这一段记录的是已经做过的事，不是"我们相信它没问题"</strong>——包括本站一度写错、这次被纠正的那条（见本节最后一张表）。</p>
   <div class="notice">
@@ -819,7 +1038,7 @@
   <ul><li>格式/范围/顺序（期号唯一且严格递增、日期递增、红球 6 个互异升序、蓝球 01~16、source/fetched_at 齐全）</li>
 <li>奖级规则全枚举自检（14 种红球命中 × 蓝球命中组合逐条对照官方奖级表）</li>
 <li>组合层概率自检（总组合数、各奖级组合数、中奖概率合计）</li></ul>
-  <p>校验范围：第 25005 ~ 26105 期，共 252 期。校验时间：2026-09-13T02:34:52.776Z。</p>
+  <p>校验范围：第 25005 ~ 26105 期，共 252 期。校验时间：2026-09-13T02:43:31.251Z。</p>
 
   <p><strong>分布自洽性检验（蒙特卡洛校准的卡方检验）</strong>：在"每期每个号码等概率"的假设下模拟 2000 次同规模数据集，看真实数据的卡方统计量落在模拟分布的什么位置。结果：</p>
   <table>
@@ -853,16 +1072,16 @@
   <div class="divider"></div>
 
   <h2>这一版做了什么、还没做什么</h2>
-  <p>当前完成的是方案里的 <strong>V1</strong>（"我的策略"权重滑块 + 资金曲线，把开发集/盲测集的分离变成可以亲手体验的交互），以及 <strong>V4 第零步</strong>（上面这一节的概率表与预测悖论、证据等级标注、数据指纹与核对表）。</p>
-  <p>需要说明的是：<strong>本站目前仍然没有"预测下一期号码"的界面，而这是有意为之的</strong>。方案第十七节把预测功能拆成五层，其中"下一期观测"（含随机对照组）排在最后——它必须建立在证据等级、概率表、随机对照这三样东西都能正常展示之后，否则它只会变成一个看起来更专业的选号器。已经完成的这一层，正是它能不能上线的先决条件。</p>
+  <p>当前已完成：<strong>V1</strong>（"我的策略"权重滑块 + 资金曲线）、<strong>V4 第零步</strong>（概率表与预测悖论、证据等级标注、数据指纹与核对表）、<strong>V4 第 1~4 层</strong>（数字体检、遗漏分布、形态诊断，以及本页最顶部的"下一期观测"），以及<strong>开奖后自动更新管道</strong>（GitHub Actions 定时抓取 → 交叉核对 → 硬校验 → 重算 → 生成页面 → 冒烟测试 → 工作流校验 → 合规审计 → 提交，任一门禁失败即不发布）。</p>
+  <p><strong>关于顶部那个"下一期观测"区块，需要特别说明它的性质</strong>：它给出的是三组参数化规则 + 一组纯随机对照，<strong>不是预测结论</strong>。方案第十七节把预测功能拆成五层并规定：必须等证据等级、概率表、随机对照三样东西都能正常展示之后，"下一期观测"才允许上线——否则它只会变成一个看起来更专业的选号器。现在这三样都已就位，它才被放到最顶部。反过来也成立：<strong>如果哪天为了页面好看而把随机对照组或证据等级拿掉，这个区块就必须一起下线。</strong></p>
   <p>还没有做的，留给下一版：</p>
   <ul>
-    <li><strong>数据源这一条已经解决了</strong>——原先"数据源未能核实"的结论是错的：仓库真实存在（<code>gudaoxuri/lottery_history</code>，GitHub Actions 每日更新），本地 251 期与上游逐期逐号核对 0 处不符，新增的 26105 期另经官方开奖公告双源复核。抓取脚本 <code>scripts/fetch-data.js</code> 已就位（含重试、两个来源不一致即停线报警、写入前自动备份）。下一步的缺口是：历史 251 期仍属单源数据，未逐期与官方比对。</li>
-    <li>把抓取 + 核对 + 重算 + 审计串成 GitHub Actions 定时任务（脚本已齐，尚未接 CI：每次开奖后自动跑完五步，任一门禁失败就不发布）</li>
-    <li>数字体检报告 / 遗漏分布工具 / 形态诊断器 / "下一期观测"受控预测界面（方案 17.3 第 1~4 层）</li>
+    <li><strong>数据源这一条已经解决了，但还有一个缺口</strong>——仓库真实存在（<code>gudaoxuri/lottery_history</code>，GitHub Actions 每日更新），本地数据与上游逐期逐号核对 0 处不符，新增期另经官方开奖公告双源复核。缺口是：<strong>历史 252 期仍属单一来源</strong>，通过了内部自洽校验，但没有逐期与官方比对。</li>
+    <li>资金模拟器参数化（初始本金 / 每期注数可调）、传播素材导出（擂台图 / 收敛曲线静态图片）</li>
     <li>AI 战报（先用模板文案，暂不接入任何模型）</li>
     <li>大乐透等第二种彩票、Agent Skill 接口</li>
   </ul>
+  <p class="dim">关于"自动更新"为什么曾经失败过一次：工作流最初把 cron 的星期写成了 <code>7</code>（cron 合法域是 0~6），GitHub 因此在校验阶段拒绝解析整份文件，症状是"0 个 job、failure、无日志"，完全不像 cron 的问题。现已修复，并新增了工作流规则级校验与排程语义校验两道门禁防止复发——完整记录见 README 与方案 17.13。</p>
 
   <footer>
     <p>生成时间 2026-09-13 · 数据集版本 2026-09-12 · 数据来源 gudaoxuri/lottery_history (GitHub)</p>

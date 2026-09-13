@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-13T02:34:56.284Z",
+  "generated_at": "2026-09-13T02:43:35.308Z",
   "dataset_snapshot": "2026-09-12",
   "data_source": "gudaoxuri/lottery_history (GitHub)",
   "data_range": {
@@ -15016,7 +15016,7 @@
     "disclaimer": "一/二等奖按历史近似平均值估算，非官方精算数据，仅用于示意长期负期望现象。"
   },
   "data_verification": {
-    "verified_at": "2026-09-13T02:34:52.776Z",
+    "verified_at": "2026-09-13T02:43:31.251Z",
     "data_file": "data/ssq.json",
     "data_fingerprint_sha256": "bcf2b4804e10934ded9bf35e68c3cf69fa5c60dd1649dce58b423dc4afa48fe4",
     "data_range": {
@@ -17822,5 +17822,152 @@
       "seed": 11,
       "note": "在 95% 水平上对 33 个号码分别检验，即使开奖完全随机，平均也会有 1.79 个号码落到区间之外（理论值 1.65 个）。所以看到一个或两个号码偏离理论期望，什么都不说明——这正是多重比较的经典陷阱。"
     }
+  },
+  "next_period_observation": {
+    "next_period": "26106",
+    "based_on_through": "26105",
+    "based_on_date": "2026-09-10",
+    "groups": [
+      {
+        "key": "hot",
+        "name": "热号规则",
+        "desc": "取最近 50 期出现频率最高的 6 个红球 + 出现频率最高的蓝球",
+        "numbers": {
+          "red": [
+            "04",
+            "05",
+            "14",
+            "16",
+            "24",
+            "30"
+          ],
+          "blue": "04"
+        },
+        "backtest": {
+          "periods_tested": 152,
+          "mean_hit": 1.2039,
+          "ci_95": [
+            1.0678,
+            1.3401
+          ],
+          "blue_hit_rate": 0.0461,
+          "vs_theoretical": 0.113,
+          "paired_diff_vs_random": 0.1447,
+          "p_value_raw": 0.1162,
+          "q_value_fdr": 0.1162,
+          "is_significant": false
+        },
+        "evidence": {
+          "level": "none",
+          "label": "无证据",
+          "reason": "该组号码在历史上共 152 期，样本均值 1.2039 的 95% 置信区间 [1.068, 1.340] 覆盖了理论期望 1.0909，没有观察到偏离。"
+        }
+      },
+      {
+        "key": "cold",
+        "name": "遗漏规则",
+        "desc": "取遗漏期数最长的 6 个红球 + 遗漏最长的蓝球（就是常说的「冷号」）",
+        "numbers": {
+          "red": [
+            "07",
+            "17",
+            "21",
+            "23",
+            "32",
+            "33"
+          ],
+          "blue": "14"
+        },
+        "backtest": {
+          "periods_tested": 152,
+          "mean_hit": 0.9803,
+          "ci_95": [
+            0.8477,
+            1.1128
+          ],
+          "blue_hit_rate": 0.0526,
+          "vs_theoretical": -0.1106,
+          "paired_diff_vs_random": -0.0789,
+          "p_value_raw": 0.3989,
+          "q_value_fdr": 0.3989,
+          "is_significant": false
+        },
+        "evidence": {
+          "level": "none",
+          "label": "无证据",
+          "reason": "该组号码在历史上共 152 期，样本均值 0.9803 的 95% 置信区间 [0.848, 1.113] 覆盖了理论期望 1.0909，没有观察到偏离。"
+        }
+      },
+      {
+        "key": "balanced",
+        "name": "均衡倾向规则",
+        "desc": "热号 40 / 遗漏 40 / 随机扰动 20 的加权打分（「我的策略」里可自行调这三项）",
+        "numbers": {
+          "red": [
+            "05",
+            "07",
+            "16",
+            "23",
+            "24",
+            "32"
+          ],
+          "blue": "05"
+        },
+        "backtest": {
+          "periods_tested": 152,
+          "mean_hit": 1,
+          "ci_95": [
+            0.8631,
+            1.1369
+          ],
+          "blue_hit_rate": 0.0592,
+          "vs_theoretical": -0.0909,
+          "paired_diff_vs_random": -0.0592,
+          "p_value_raw": 0.4869,
+          "q_value_fdr": 0.4869,
+          "is_significant": false
+        },
+        "evidence": {
+          "level": "none",
+          "label": "无证据",
+          "reason": "该组号码在历史上共 152 期，样本均值 1.0000 的 95% 置信区间 [0.863, 1.137] 覆盖了理论期望 1.0909，没有观察到偏离。"
+        }
+      },
+      {
+        "key": "random",
+        "name": "纯随机对照组",
+        "desc": "完全不看历史，均匀随机生成——用来证明上面三组并不特殊",
+        "numbers": {
+          "red": [
+            "05",
+            "12",
+            "16",
+            "21",
+            "26",
+            "31"
+          ],
+          "blue": "15"
+        },
+        "backtest": {
+          "periods_tested": 152,
+          "mean_hit": 1.0329,
+          "ci_95": [
+            0.9004,
+            1.1654
+          ],
+          "blue_hit_rate": 0.0724,
+          "vs_theoretical": -0.058,
+          "paired_diff_vs_random": -0.0263,
+          "p_value_raw": 0.7842,
+          "q_value_fdr": 0.7842,
+          "is_significant": false
+        },
+        "evidence": {
+          "level": "none",
+          "label": "无证据",
+          "reason": "该组号码在历史上共 152 期，样本均值 1.0329 的 95% 置信区间 [0.900, 1.165] 覆盖了理论期望 1.0909，没有观察到偏离。"
+        }
+      }
+    ]
   }
 }
