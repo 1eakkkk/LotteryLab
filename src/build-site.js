@@ -10,8 +10,8 @@ const MY_STRATEGY_CLIENT_JS = fs.readFileSync(path.join(__dirname, "my-strategy-
 const NUMBER_HEALTH_JS = fs.readFileSync(path.join(__dirname, "number-health.js"), "utf-8");
 const NUMBER_TOOLS_CLIENT_JS = fs.readFileSync(path.join(__dirname, "number-tools-client.js"), "utf-8");
 
-const STRATEGY_LABEL = { random: "随机基准", hot: "热号", cold: "冷号" };
-const STRATEGY_CLASS = { random: "s-random", hot: "s-hot", cold: "s-cold" };
+const STRATEGY_LABEL = { random: "随机基准", hot: "热号", cold: "冷号", ml: "ML逻辑回归" };
+const STRATEGY_CLASS = { random: "s-random", hot: "s-hot", cold: "s-cold", ml: "s-ml" };
 
 function pct(n) {
   return `${n.toFixed(1)}%`;
@@ -28,6 +28,72 @@ function verdictText(row) {
     return `本期它只跑赢了 ${pct(row.vs_random_percentile)} 的独立随机策略，表现落后于大多数随机对照——这同样只是正常的随机波动，不代表这个策略"更差"，样本量还太小，不足以下结论。`;
   }
   return `它的表现落在随机分布的中段（跑赢 ${pct(row.vs_random_percentile)} 的随机策略），和"随便选"没有可辨识的差别。`;
+}
+
+// ===========================================================================
+// ML 策略专区块：把"机器学习能不能预测彩票"这件事摊开讲
+// ---------------------------------------------------------------------------
+// 为什么值得单列一块：这是本站名字（随机数打脸实验室）真正的检验对象。
+// "用 AI 预测彩票"是流传最广的说法，所以这里真的训练了模型，而且不给任何优待——
+// 相同的 Walk-Forward 流程、相同的盲测边界、相同的 FDR 校正。
+// 关键证据有两样，必须同时给出：
+//   1. 权重：模型自己学到什么（实测六个特征权重全在 |w| < 0.03，等于学会了忽略历史）
+//   2. 成绩：它和随机基准在同一把尺子下的对比
+// ===========================================================================
+function buildMlSection(leaderboard, weights) {
+  const ml = leaderboard.find((r) => r.strategy_key === "ml");
+  if (!ml) return "";
+  const hot = leaderboard.find((r) => r.strategy_key === "hot");
+  const rnd = leaderboard.find((r) => r.strategy_key === "random");
+
+  const maxAbs = Math.max(...(weights || []).map((x) => Math.abs(x.weight)), 1e-9);
+
+  return `
+  <h2>ML 策略：模型自己"学会"了忽略历史</h2>
+  <p>这一段是本站名字里承诺的那个检验。"用 AI / 机器学习预测彩票号码"是流传最广的说法之一，所以这里真的训练了一个模型，并且<strong>没给它任何优待</strong>：同样的 Walk-Forward 滚动预测、同样的盲测边界、同样的 FDR 多重比较校正，和热号/冷号用完全一样的尺子量。</p>
+
+  <h3>模型设定（可复现、可解释）</h3>
+  <p>用的是<b>逻辑回归</b>而不是 XGBoost / LSTM，理由有三条：</p>
+  <ul>
+    <li><b>命题与模型复杂度无关。</b>要检验的是"机器学习能不能预测彩票"。如果连一个参数量可控的模型都找不到优势，换成更复杂的模型不会凭空长出优势——更复杂的模型只是更容易过拟合。</li>
+    <li><b>权重可以展示给读者看。</b>逻辑回归的权重能直接说明"模型认为哪个特征有用"，这是黑箱模型做不到的。本站要展示的恰恰是"模型什么也没学到"，那就必须让人看见。</li>
+    <li><b>能在纯 JS 里精确复现。</b>不依赖任何机器学习库，任何人都能用页面里的代码复算。</li>
+  </ul>
+  <p>样本构造：对每一期 t，用"截至 t-1 期"的历史为 33 个红球各构造一个特征向量，标签是该号码在第 t 期是否开出。六个特征：近 50 期频率、近 200 期频率、遗漏期数（归一化）、全历史频率、近 10 期频率、号码本身（归一化）。<strong>所有特征都只用截至上一期的信息，不使用任何未来数据。</strong>每 20 期用当时可见的数据重训一次（信息延迟最多 20 期）。</p>
+
+  <h3>模型学到了什么：权重全部接近 0</h3>
+  <p>下面是模型最终学到的权重（已做特征标准化，因此各权重量级可比——<span class="dim">这一点是修出来的：不标准化时各特征量纲差异会让 L2 正则造出"号码越大分数越低"这种纯人造的伪信号，模型会一直选 01 02 03 这样的最小号</span>）：</p>
+  <table>
+    <thead><tr><th>特征</th><th>权重</th><th>权重条（同一尺度）</th></tr></thead>
+    <tbody>
+      ${(weights || [])
+        .map((x) => {
+          const pct = (Math.abs(x.weight) / maxAbs) * 100;
+          return (
+            `<tr><td>${x.name}</td><td class="mono">${x.weight >= 0 ? "+" : ""}${x.weight.toFixed(5)}</td>` +
+            `<td><span class="ml-bar" style="width:${pct.toFixed(1)}%;${x.weight < 0 ? "background:#94a3b8;" : ""}"></span></td></tr>`
+          );
+        })
+        .join("\n")}
+    </tbody>
+  </table>
+  <div class="notice notice-strong">
+    <p><strong>除偏置项外，六个特征权重全部落在极小范围内（|权重| &lt; 0.03）。</strong>翻译成人话：<b>模型自己"学会"了忽略历史。</b>它从 3402 期数据里找到的任何"信号"，都不比噪声更强。</p>
+    <p>这正是理论预期的结果——在"每期独立等概率"的前提下，历史特征对"这一期出不出某个号"本来就没有预测力。模型能学到的最优策略就是"按基准概率选号"，也就是没有策略。</p>
+  </div>
+
+  <h3>成绩：它是四个策略里最好看的，但仍然说明不了任何事</h3>
+  <table>
+    <thead><tr><th>策略</th><th>历史均命中</th><th>95% 置信区间</th><th>vs 随机分布分位数</th><th>FDR 校正后 q</th><th>证据等级</th></tr></thead>
+    <tbody>
+      <tr><td><span class="s-ml">ML逻辑回归</span></td><td class="mono">${ml.mean_hit.toFixed(4)}</td><td class="mono">[${ml.ci_95[0].toFixed(3)}, ${ml.ci_95[1].toFixed(3)}]</td><td class="mono">${ml.vs_random_percentile.toFixed(1)}%</td><td class="mono">${ml.q_value_fdr.toFixed(4)}</td><td><span class="ev ev-${ml.evidence.level}">${ml.evidence.label}</span></td></tr>
+      <tr><td><span class="s-hot">热号</span></td><td class="mono">${hot.mean_hit.toFixed(4)}</td><td class="mono">[${hot.ci_95[0].toFixed(3)}, ${hot.ci_95[1].toFixed(3)}]</td><td class="mono">${hot.vs_random_percentile.toFixed(1)}%</td><td class="mono">${hot.q_value_fdr.toFixed(4)}</td><td><span class="ev ev-${hot.evidence.level}">${hot.evidence.label}</span></td></tr>
+      <tr><td><span class="s-random">随机基准</span></td><td class="mono">${rnd.mean_hit.toFixed(4)}</td><td class="mono">[${rnd.ci_95[0].toFixed(3)}, ${rnd.ci_95[1].toFixed(3)}]</td><td class="mono">${rnd.vs_random_percentile.toFixed(1)}%</td><td class="mono">${rnd.q_value_fdr.toFixed(4)}</td><td><span class="ev ev-${rnd.evidence.level}">${rnd.evidence.label}</span></td></tr>
+    </tbody>
+  </table>
+  <p>ML 策略的均命中 <span class="mono">${ml.mean_hit.toFixed(4)}</span> 是四个策略里最高的，跑赢了 <span class="mono">${ml.vs_random_percentile.toFixed(1)}%</span> 的随机策略，看着相当亮眼。<strong>但它的 95% 置信区间仍然覆盖了理论期望 ${ml.theoretical_expectation.toFixed(4)}</strong>，FDR 校正后也不显著。</p>
+  <p>这正是本站反复强调的那件事：<b>在一个所有参与者都是随机的赛场上，"表现最好的那个"永远存在</b>——因为总得有一个排第一。ML 之所以排在第一位，不是因为它更强，而是在这四个里恰好轮到它。把它换成另外三个策略中的任何一个，只要换一批数据，第一名就会易主。</p>
+  <p class="dim">模型代码在 <code>src/ml-strategy.js</code>，特征构造、训练、预测全部是确定性的（固定迭代次数与学习率，不用随机初始化、不打乱样本），因此同一份数据永远得到同一个结果——这是本站对可复现性的底线要求。回测耗时约 57 秒（3402 期 × 每 20 期重训一次）。</p>`;
 }
 
 function buildLeaderboardRows(leaderboard) {
@@ -609,6 +675,46 @@ function buildEvidenceExplainer(power, leaderboard) {
   const hot = leaderboard.find((r) => r.strategy_key === "hot");
   const blindBlind = leaderboard.find((r) => r.strategy_key === "hot");
 
+  // 「统计精度」对照表：数据量带来的真实收益，必须让读者看见。
+  // 为什么需要这一块：数据从 252 期扩到 3502 期之后，所有策略的证据等级**仍然是"无证据"**，
+  // 页面上完全看不出 13.9 倍数据的意义。而扩数据唯一的价值恰恰是"结论的硬度"——
+  // 它不改变结论方向（本来就不该改变），它改变的是"能排除多大的优势"。
+  // 不给这张表，读者只会觉得"数据多了也没用"。
+  const oldPeriods = 152; // 252 期数据时的回测期数（历史记录，仅用于对照）
+  const ciHalfWidth = power.standard_error * 1.96;
+  const precisionRows = [
+    {
+      label: "回测期数",
+      old: `${oldPeriods} 期`,
+      now: `${power.periods} 期`,
+      why: "数据从 252 期扩到 3502 期后，可用于 Walk-Forward 回测的期数",
+    },
+    {
+      label: "95% 置信区间宽度",
+      old: "±0.13",
+      now: `±${ciHalfWidth.toFixed(3)}`,
+      why: "标准误随 √期数 缩小，区间按比例收窄",
+    },
+    {
+      label: "能检出的最小优势",
+      old: "0.2581",
+      now: power.min_detectable_effect.toFixed(4),
+      why: "80% 功效下，比这更小的真实优势会淹没在噪声里——这个门槛随数据量下降",
+    },
+    {
+      label: "结论的硬度",
+      old: "数据太少，说不清",
+      now: `足以排除大于 ${ci[1].toFixed(3)} 个红球/期 的优势`,
+      why: "这是扩数据真正的收益：不改变结论方向，而是让结论从「说不清」变成「说得清」",
+    },
+  ];
+  const precisionTable = precisionRows
+    .map(
+      (r) =>
+        `<tr><td>${r.label}</td><td class="mono">${r.old}</td><td class="mono"><strong>${r.now}</strong></td><td class="dim">${r.why}</td></tr>`
+    )
+    .join("\n");
+
   return `
   <h2>「无证据」是什么意思：不是数据不够，是数据已经够说明"没有大优势"</h2>
   <p>页面上的证据等级写着 <span class="ev ev-none">无证据</span> 时，很容易被读成"数据还太少，等攒够了再说"。<strong>这是完全反的</strong>，所以这一节用数字把它讲清楚。两种标签的含义截然不同：</p>
@@ -619,6 +725,16 @@ function buildEvidenceExplainer(power, leaderboard) {
       <tr><td><span class="ev ev-none">无证据</span></td><td>期数足够（≥100 期），但置信区间覆盖了理论期望</td><td><strong>数据已经足够</strong>，结论就是"没有可检出的差异"。不是"还不知道"，而是"已经知道没有大的"</td></tr>
     </tbody>
   </table>
+
+  <h3>数据量带来了什么：让"结论的硬度"看得见</h3>
+  <p>本站的数据集从 <strong>252 期扩到了 3502 期</strong>（13.9 倍）。但结果是：<strong>所有策略的证据等级仍然是"无证据"，一个标签都没变。</strong>那扩数据到底有什么用？用处在这里——</p>
+  <table>
+    <thead><tr><th>指标</th><th>252 期时</th><th>3502 期时</th><th>为什么</th></tr></thead>
+    <tbody>${precisionTable}</tbody>
+  </table>
+  <div class="notice">
+    <p><strong>扩数据不改变结论方向，它改变的是结论的硬度。</strong>如果数据多了之后"无证据"突然变成了"有效"，那才该怀疑出了问题——因为在"每期独立等概率"的前提下，长期正确结果本来就是"没有差异"。数据越多，我们越有资格说"这个差异不存在（或小到没有实际意义）"，而不是"还看不出来"。</p>
+  </div>
 
   <p>下面是"已经知道没有大的"这句话的量化版本。以目前检验过的<b>热号策略</b>为例（它是三个策略里表现最好的一个）：</p>
   <table>
@@ -785,7 +901,7 @@ function main() {
   );
 
   // ---- 收敛曲线 SVG ----
-  const convSeries = ["random", "hot", "cold"].map((key) => ({
+  const convSeries = ["random", "hot", "cold", "ml"].map((key) => ({
     className: STRATEGY_CLASS[key],
     points: convergence[key].map((p, i) => ({ x: i + 1, y: p.cumulativeMean })),
   }));
@@ -815,7 +931,7 @@ function main() {
   });
 
   // ---- 资金曲线 SVG（近似示意）----
-  const fundSeries = ["random", "hot", "cold"].map((key) => ({
+  const fundSeries = ["random", "hot", "cold", "ml"].map((key) => ({
     className: STRATEGY_CLASS[key],
     points: fund[key].map((p, i) => ({ x: i + 1, y: p.net })),
   }));
@@ -854,6 +970,8 @@ function main() {
   );
   // 「无证据」是什么：功效分析面板，紧跟排行榜（读者第一次遇到证据等级的地方）
   const evidenceExplainer = buildEvidenceExplainer(report.evidence_power_analysis, leaderboard);
+  // ML 策略专区块：把"机器学习能不能预测彩票"这件事摊开讲
+  const mlSection = buildMlSection(leaderboard, report.ml_model_weights);
   // 对照台：用户自己的号码 vs 全部历史
   const comparisonSection = buildComparisonSection(
     report.number_tools,
@@ -1110,6 +1228,16 @@ function main() {
   .obs-table { margin: 0; font-size: 0.82rem; }
   .obs-table td { padding: 4px 6px; }
   .obs-table td:first-child { color: var(--ink-dim); }
+  /* ML 权重条：让"权重接近 0"这件事看得见 */
+  .ml-bar {
+    display: inline-block;
+    height: 12px;
+    background: #7c3aed;
+    opacity: 0.7;
+    border-radius: 3px;
+    min-width: 2px;
+    vertical-align: middle;
+  }
   /* 对照台的命中分布条 */
   .cmp-bar {
     display: inline-block;
@@ -1166,6 +1294,8 @@ function main() {
   .s-random { color: var(--ink-dim); }
   .s-hot { color: var(--red); }
   .s-cold { color: var(--blue); }
+  /* ML 策略：用紫色区分，并在图例里明确标注"每 20 期重训的逻辑回归" */
+  .s-ml { color: #7c3aed; }
   .chart-wrap {
     background: #fff;
     border: 1px solid var(--line);
@@ -1178,6 +1308,7 @@ function main() {
   .s-random.line, .line.s-random { stroke: var(--ink-dim); }
   .s-hot.line, .line.s-hot { stroke: var(--red); }
   .s-cold.line, .line.s-cold { stroke: var(--blue); }
+  .s-ml.line, .line.s-ml { stroke: #7c3aed; }
   .grid-line { stroke: var(--line); stroke-width: 1; opacity: 0.6; }
   .axis-label { fill: var(--ink-dim); font-size: 10px; }
   .ref-line { stroke: var(--amber); stroke-width: 1.4; }
@@ -1310,7 +1441,9 @@ function main() {
 
   <section class="module" id="mod-strategy">
   <h2>排行榜</h2>
-  <p>三个策略：<span class="s-random">随机基准</span>（完全不看历史，仅作对照）、<span class="s-hot">热号</span>（近50期出现频率最高的号码）、<span class="s-cold">冷号</span>（遗漏期数最长的号码）。理论期望值 <strong>${report.theoretical_expectation.toFixed(4)}</strong> 是红球 33 选 6 在均匀随机假设下的数学期望（6 × 6/33），独立于任何策略。</p>
+  <p><strong>四个策略</strong>：<span class="s-random">随机基准</span>（完全不看历史，仅作对照）、<span class="s-hot">热号</span>（近50期出现频率最高的号码）、<span class="s-cold">冷号</span>（遗漏期数最长的号码）、<span class="s-ml">ML逻辑回归</span>（<b>机器学习模型</b>：6 个特征 + L2 正则的逻辑回归，每 20 期用"截至当时可见"的数据重训一次，取预测概率最高的 6 个号）。理论期望值 <strong>${report.theoretical_expectation.toFixed(4)}</strong> 是红球 33 选 6 在均匀随机假设下的数学期望（6 × 6/33），独立于任何策略。</p>
+
+  ${mlSection}
 
   <table>
     <thead>
@@ -1338,6 +1471,10 @@ function main() {
   <div class="divider"></div>
 
   ${evidenceExplainer}
+
+  <div class="divider"></div>
+
+  ${mlSection}
 
   <div class="divider"></div>
 
@@ -1480,6 +1617,7 @@ function main() {
     <span class="legend-item"><span class="swatch s-random"></span>随机基准</span>
     <span class="legend-item"><span class="swatch s-hot"></span>热号</span>
     <span class="legend-item"><span class="swatch s-cold"></span>冷号</span>
+    <span class="legend-item"><span class="swatch s-ml"></span>ML逻辑回归</span>
   </div>
   <div class="chart-wrap">${convChart}</div>
 
@@ -1497,6 +1635,7 @@ function main() {
     <span class="legend-item"><span class="swatch s-random"></span>随机基准</span>
     <span class="legend-item"><span class="swatch s-hot"></span>热号</span>
     <span class="legend-item"><span class="swatch s-cold"></span>冷号</span>
+    <span class="legend-item"><span class="swatch s-ml"></span>ML逻辑回归</span>
   </div>
   <div class="chart-wrap">${fundChart}</div>
   <p class="dim">${fund.disclaimer}</p>

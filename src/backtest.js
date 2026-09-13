@@ -19,10 +19,14 @@ function sortAscending(rawHistory) {
 
 /**
  * @param {Array} rawHistory 原始历史数据（不保证顺序）
- * @param {Function} strategyPredictFn (trainData, targetPeriod) => { red: string[6], blue: string }
+ * @param {Function} strategyPredictFn (trainData, targetPeriod, ctx) => { red: string[6], blue: string }
  * @param {number} minTrainSize 至少要看过多少期历史才开始"预测"，避免样本太小时的策略毫无意义
+ * @param {Object} [strategyCtx] 跨期共享的上下文（例如 ML 策略的权重缓存）。
+ *        为什么需要它：像逻辑回归这种"每隔若干期重训一次"的策略需要一个跨期存活的对象
+ *        保存上次训练结果；否则每一期都要重新训练，3502 期回测会慢到不可用。
+ *        默认空对象，对确定性策略（热号/冷号/随机）完全没有影响。
  */
-function walkForwardBacktest(rawHistory, strategyPredictFn, minTrainSize = 100) {
+function walkForwardBacktest(rawHistory, strategyPredictFn, minTrainSize = 100, strategyCtx = {}) {
   const history = sortAscending(rawHistory);
 
   const records = [];
@@ -30,7 +34,7 @@ function walkForwardBacktest(rawHistory, strategyPredictFn, minTrainSize = 100) 
     const trainData = history.slice(0, t); // 只能看到前 t 期
     const actual = history[t]; // 真实第 t+1 期（0-indexed 下标 t）
 
-    const predicted = strategyPredictFn(trainData, actual.period);
+    const predicted = strategyPredictFn(trainData, actual.period, strategyCtx);
 
     const redHits = actual.red.filter((b) => predicted.red.includes(b)).length;
     const blueHit = actual.blue === predicted.blue;

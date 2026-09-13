@@ -1,5 +1,5 @@
 {
-  "verified_at": "2026-09-13T03:40:41.011Z",
+  "verified_at": "2026-09-13T04:11:47.336Z",
   "data_file": "data/ssq.json",
   "data_fingerprint_sha256": "4f69ddf4140f29a48b77ef680f2cf70d328581611d051ff60779e70c239f92d5",
   "data_range": {
@@ -122,7 +122,7 @@
     ]
   },
   "corroboration": {
-    "generated_at": "2026-09-13T03:39:33.966Z",
+    "generated_at": "2026-09-13T04:10:37.248Z",
     "sources": [
       {
         "key": "A",

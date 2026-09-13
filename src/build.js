@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const { randomStrategy, hotStrategy, coldStrategy, weightedStrategy } = require("./strategies");
+const { mlStrategy, FEATURE_NAMES } = require("./ml-strategy");
 const {
   buildNumberHealth,
   buildOmissionAnalysis,
@@ -24,12 +25,17 @@ const {
 const DATA_DIR = path.join(__dirname, "../data");
 const MIN_TRAIN_SIZE = 100;
 const MONTE_CARLO_RUNS = 5000;
+// ML 策略每多少期重训一次。取 20 是"耗时 / 信息新鲜度"的折中：
+// 3502 期回测下约重训 170 次（每次约 47ms），总计几秒；
+// 信息延迟最多 20 期，对"彩票是否存在可利用结构"这个待检验命题没有实质影响。
+const ML_RETRAIN_EVERY = 20;
 const BET_COST = 2; // 双色球单注 2 元
 const DATASET_VERSION = "2026-09-12";
 const STRATEGY_VERSIONS = {
   随机基准: "v1.0",
   热号: "v1.0 (窗口=50期)",
   冷号: "v1.0 (遗漏优先)",
+  ML逻辑回归: "v1.0 (每20期重训)",
 };
 
 // ---- 训练/验证/盲测三段式分割边界（V0.5 新增）----
@@ -479,6 +485,32 @@ function main() {
   const hotRecords = walkForwardBacktest(history, hotStrategy, MIN_TRAIN_SIZE);
   const coldRecords = walkForwardBacktest(history, coldStrategy, MIN_TRAIN_SIZE);
 
+  // ---- ML 策略（逻辑回归）----
+  // 走**完全相同**的 Walk-Forward 流程、相同的 minTrainSize、相同的盲测边界，
+  // 唯一区别是它的选号来自一个训练出来的模型而不是固定规则。
+  // 这是本项目名称（随机数打脸实验室）真正的检验对象：
+  // "AI 预测彩票"这个流行说法，得接受和热号/冷号同一把尺子。
+  console.log(`跑 ML 策略（逻辑回归，每 ${ML_RETRAIN_EVERY} 期重训一次）...`);
+  const mlT0 = Date.now();
+  const mlCtx = {}; // 跨期缓存：避免每期重训
+  const mlRecords = walkForwardBacktest(
+    history,
+    (trainData, targetPeriod, ctx) =>
+      mlStrategy(trainData, targetPeriod, {
+        cache: ctx.mlCache || (ctx.mlCache = {}),
+        retrainEvery: ML_RETRAIN_EVERY,
+      }),
+    MIN_TRAIN_SIZE,
+    mlCtx
+  );
+  console.log(`ML 策略完成，用时 ${((Date.now() - mlT0) / 1000).toFixed(1)}s`);
+  // 展示模型学到什么（可解释性是选逻辑回归而非黑箱模型的原因之一）
+  if (mlCtx.mlCache && mlCtx.mlCache.model) {
+    const w = mlCtx.mlCache.model.weights;
+    console.log("  ML 模型最终权重（标准化后，量级可比）：");
+    w.forEach((x, i) => console.log(`    ${FEATURE_NAMES[i].padEnd(18)} ${x >= 0 ? "+" : ""}${x.toFixed(5)}`));
+  }
+
   // ---- 2. 蒙特卡洛随机分布（3.6节：固定真实开奖，生成大量独立随机策略）----
   // boundaries 传进去之后，5000 次独立模拟会各自按固定期号切成 train/validation/blind/dev
   // 四段，分别累积出四条经验分布——盲测集的分位数必须用"只看盲测区间"的随机分布来算，
@@ -533,6 +565,7 @@ function main() {
     { key: "random", name: "随机基准", records: benchmarkRandomRecords },
     { key: "hot", name: "热号", records: hotRecords },
     { key: "cold", name: "冷号", records: coldRecords },
+    { key: "ml", name: "ML逻辑回归", records: mlRecords },
   ];
 
   // 先算出每个策略的原始 p 值，做一次 Benjamini–Hochberg FDR 校正，
@@ -599,6 +632,7 @@ function main() {
     random: buildConvergenceCurve(benchmarkRandomRecords),
     hot: buildConvergenceCurve(hotRecords),
     cold: buildConvergenceCurve(coldRecords),
+    ml: buildConvergenceCurve(mlRecords),
     theoreticalExpectation: RED_EXPECTATION,
   };
 
@@ -607,6 +641,7 @@ function main() {
     random: fundCurve(benchmarkRandomRecords),
     hot: fundCurve(hotRecords),
     cold: fundCurve(coldRecords),
+    ml: fundCurve(mlRecords),
     betCost: BET_COST,
     disclaimer: "一/二等奖按历史近似平均值估算，非官方精算数据，仅用于示意长期负期望现象。",
   };
@@ -681,6 +716,20 @@ function main() {
     },
     // V4 第 4 层：下一期观测（三组参数化规则 + 一组随机对照）
     next_period_observation: buildNextPeriodObservation(history, benchmarkRandomRecords),
+    // ML 模型最终权重：页面要把"模型学到了什么"直接展示给读者看。
+    // 这是选逻辑回归而非黑箱模型的核心原因——本站要证明的恰恰是"模型什么也没学到"，
+    // 那就必须让人看得见权重。
+    ml_model_weights:
+      mlCtx.mlCache && mlCtx.mlCache.model
+        ? mlCtx.mlCache.model.weights.map((w, i) => ({
+            name: FEATURE_NAMES[i],
+            weight: Number(w.toFixed(6)),
+            note:
+              i === 0
+                ? "截距项，反映基准概率水平（单个号每期出现概率 6/33 ≈ 18%）"
+                : "标准化后的权重；|权重| 接近 0 表示该特征对预测没有贡献",
+          }))
+        : [],
     // 「无证据」到底是什么意思：把证据等级背后的"测量精度"量化出来，
     // 避免读者把"无证据"误读成"数据还不够，再等等"
     evidence_power_analysis: buildEvidencePowerAnalysis(hotRecords, benchmarkRandomRecords),

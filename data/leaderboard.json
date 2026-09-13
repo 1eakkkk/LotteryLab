@@ -97,44 +97,44 @@
     "strategy_version": "v1.0 (窗口=50期)",
     "dataset_snapshot": "2026-09-12",
     "periods_tested": 3402,
-    "mean_hit": 1.1035,
+    "mean_hit": 1.1067,
     "theoretical_expectation": 1.0909,
     "ci_95": [
-      1.0736,
-      1.1334
+      1.077,
+      1.1364
     ],
-    "blue_hit_rate": 0.0694,
+    "blue_hit_rate": 0.0591,
     "blue_theoretical": 0.0625,
     "distribution": [
-      925,
-      1439,
-      823,
-      191,
-      24,
+      909,
+      1457,
+      825,
+      186,
+      25,
       0,
       0
     ],
     "extreme_events": {
-      "ge4": 24,
+      "ge4": 25,
       "ge5": 0,
       "all6": 0,
-      "prizeCount": 259
+      "prizeCount": 224
     },
-    "vs_random_percentile": 80.1,
-    "paired_diff_vs_random": 0.025,
-    "p_value_raw": 0.2508,
-    "q_value_fdr": 0.4266,
+    "vs_random_percentile": 85.6,
+    "paired_diff_vs_random": 0.0282,
+    "p_value_raw": 0.1815,
+    "q_value_fdr": 0.3631,
     "is_significant": false,
     "is_significant_raw_uncorrected": false,
     "evidence": {
       "level": "none",
       "label": "无证据",
-      "reason": "整体回测区间共 3402 期，样本均值 1.1035 的 95% 置信区间 [1.074, 1.133] 覆盖了理论期望 1.0909，没有观察到偏离。"
+      "reason": "整体回测区间共 3402 期，样本均值 1.1067 的 95% 置信区间 [1.077, 1.136] 覆盖了理论期望 1.0909，没有观察到偏离。"
     },
     "recent": {
-      "last10": 1.3,
-      "last30": 1.2667,
-      "last100": 1.25
+      "last10": 1.1,
+      "last30": 1.1333,
+      "last100": 1.03
     },
     "segments": {
       "dev": {
@@ -143,20 +143,20 @@
           "from": "04012",
           "to": "26074"
         },
-        "mean_hit": 1.1018,
+        "mean_hit": 1.1068,
         "ci_95": [
-          1.0717,
-          1.1318
+          1.0769,
+          1.1366
         ],
-        "blue_hit_rate": 0.0694,
-        "vs_random_percentile": 76.6,
-        "paired_diff_vs_random": 0.0222,
-        "p_value_raw": 0.3092,
+        "blue_hit_rate": 0.0587,
+        "vs_random_percentile": 85.9,
+        "paired_diff_vs_random": 0.0273,
+        "p_value_raw": 0.1983,
         "is_significant_raw": false,
         "evidence": {
           "level": "none",
           "label": "无证据",
-          "reason": "开发集共 3371 期，样本均值 1.1018 的 95% 置信区间 [1.072, 1.132] 覆盖了理论期望 1.0909，没有观察到偏离。"
+          "reason": "开发集共 3371 期，样本均值 1.1068 的 95% 置信区间 [1.077, 1.137] 覆盖了理论期望 1.0909，没有观察到偏离。"
         }
       },
       "blind": {
@@ -165,15 +165,15 @@
           "from": "26075",
           "to": "26105"
         },
-        "mean_hit": 1.2903,
+        "mean_hit": 1.0968,
         "ci_95": [
-          1.0147,
-          1.5659
+          0.7524,
+          1.4411
         ],
-        "blue_hit_rate": 0.0645,
-        "vs_random_percentile": 91.1,
-        "paired_diff_vs_random": 0.3226,
-        "p_value_raw": 0.1048,
+        "blue_hit_rate": 0.0968,
+        "vs_random_percentile": 55.2,
+        "paired_diff_vs_random": 0.129,
+        "p_value_raw": 0.568,
         "is_significant_raw": false,
         "evidence": {
           "level": "insufficient",
@@ -215,7 +215,7 @@
     "vs_random_percentile": 74.3,
     "paired_diff_vs_random": 0.0223,
     "p_value_raw": 0.2844,
-    "q_value_fdr": 0.4266,
+    "q_value_fdr": 0.3792,
     "is_significant": false,
     "is_significant_raw_uncorrected": false,
     "evidence": {
@@ -266,6 +266,98 @@
         "vs_random_percentile": 63.3,
         "paired_diff_vs_random": 0.1613,
         "p_value_raw": 0.4378,
+        "is_significant_raw": false,
+        "evidence": {
+          "level": "insufficient",
+          "label": "样本量不足",
+          "reason": "盲测集只有 31 期，低于 100 期的样本量下限，任何结论（无论好看还是难看）统计上都不可靠，因此不标注任何显著性等级。"
+        }
+      }
+    }
+  },
+  {
+    "strategy": "ML逻辑回归",
+    "strategy_key": "ml",
+    "strategy_version": "v1.0 (每20期重训)",
+    "dataset_snapshot": "2026-09-12",
+    "periods_tested": 3402,
+    "mean_hit": 1.1108,
+    "theoretical_expectation": 1.0909,
+    "ci_95": [
+      1.0816,
+      1.14
+    ],
+    "blue_hit_rate": 0.0694,
+    "blue_theoretical": 0.0625,
+    "distribution": [
+      866,
+      1518,
+      816,
+      179,
+      23,
+      0,
+      0
+    ],
+    "extreme_events": {
+      "ge4": 23,
+      "ge5": 0,
+      "all6": 0,
+      "prizeCount": 258
+    },
+    "vs_random_percentile": 91.1,
+    "paired_diff_vs_random": 0.0323,
+    "p_value_raw": 0.129,
+    "q_value_fdr": 0.3631,
+    "is_significant": false,
+    "is_significant_raw_uncorrected": false,
+    "evidence": {
+      "level": "none",
+      "label": "无证据",
+      "reason": "整体回测区间共 3402 期，样本均值 1.1108 的 95% 置信区间 [1.082, 1.140] 覆盖了理论期望 1.0909，没有观察到偏离。"
+    },
+    "recent": {
+      "last10": 0.9,
+      "last30": 1,
+      "last100": 1.08
+    },
+    "segments": {
+      "dev": {
+        "periods_tested": 3371,
+        "period_range": {
+          "from": "04012",
+          "to": "26074"
+        },
+        "mean_hit": 1.1118,
+        "ci_95": [
+          1.0825,
+          1.1412
+        ],
+        "blue_hit_rate": 0.0694,
+        "vs_random_percentile": 91.7,
+        "paired_diff_vs_random": 0.0323,
+        "p_value_raw": 0.1312,
+        "is_significant_raw": false,
+        "evidence": {
+          "level": "none",
+          "label": "无证据",
+          "reason": "开发集共 3371 期，样本均值 1.1118 的 95% 置信区间 [1.083, 1.141] 覆盖了理论期望 1.0909，没有观察到偏离。"
+        }
+      },
+      "blind": {
+        "periods_tested": 31,
+        "period_range": {
+          "from": "26075",
+          "to": "26105"
+        },
+        "mean_hit": 1,
+        "ci_95": [
+          0.7126,
+          1.2874
+        ],
+        "blue_hit_rate": 0.0645,
+        "vs_random_percentile": 32,
+        "paired_diff_vs_random": 0.0323,
+        "p_value_raw": 0.8679,
         "is_significant_raw": false,
         "evidence": {
           "level": "insufficient",
