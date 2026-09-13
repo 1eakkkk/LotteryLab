@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // 页面内联脚本的浏览器行为冒烟测试
 // ----------------------------------------------------------------------------
 // 为什么需要这个文件：
@@ -249,37 +249,95 @@ function main() {
     check("遗漏详情包含“该出了”的纠正说明", omDetail.innerHTML.includes("该出了"));
   }
 
-  // ---- 校验：形态诊断 ----
+  // ---- 校验：统一号码工具（形态诊断 + 历史对照，共用一个输入框）----
+  // 设计说明：这个工具原本是两个独立工具、两个输入框，审计脚本指出"整页两个文本输入框"
+  // 超过它设定的上限——它是对的，而且暴露了更好的设计：用户不该把自己的号码输入两遍。
+  // 现在整页只有一个输入框，一次点击同时产出两份结果，下面同时断言两者都渲染出来。
   const input = registry["dz-input"];
   const dzBtn = registry["dz-btn"];
   const genBtn = registry["dz-gen"];
   const dzResult = registry["dz-result"];
-  check("形态诊断输入框存在", !!input);
-  check("形态诊断按钮存在", !!dzBtn && !!genBtn);
+  const cmpResult = registry["cmp-result"];
+  const cmpBlue = registry["cmp-blue"];
+  const cmpFill = registry["cmp-fill-latest"];
+  check("号码工具输入框存在", !!input);
+  check("号码工具按钮存在", !!dzBtn && !!genBtn);
+  check("蓝球选择器存在", !!cmpBlue);
+  check("两份结果容器都存在（诊断 + 对照）", !!dzResult && !!cmpResult);
+  check("整页只有一个文本输入框", (html.match(/<input[^>]*type="text"/g) || []).length === 1);
+  check("整页没有 form 元素", !/<form[\s>]/i.test(html));
 
-  if (input && dzBtn && dzResult) {
+  if (input && dzBtn && dzResult && cmpResult) {
     input.value = "02 04 13 14 15 30";
+    if (cmpBlue) cmpBlue.value = "08";
     dzBtn.dispatch("click");
-    const out = dzResult.innerHTML;
-    check("诊断结果包含奇偶比", out.includes("奇偶比"), out.slice(0, 80));
-    check("诊断结果包含“组合数”列", out.includes("符合该形态的组合数"));
-    check("诊断结果包含“不是中奖机会”的澄清", out.includes("而不说明") || out.includes("不说明它更容易"));
+    const dzHtml = dzResult.innerHTML;
+    const cmpHtml = cmpResult.innerHTML;
+    check("一次点击同时产出形态诊断", dzHtml.includes("奇偶比"), dzHtml.slice(0, 80));
+    check("一次点击同时产出历史对照", cmpHtml.includes("对照结果"), cmpHtml.slice(0, 80));
+    check("诊断结果包含「组合数」列", dzHtml.includes("符合该形态的组合数"));
+    check("诊断结果包含「不是中奖机会」的澄清", dzHtml.includes("不说明它更容易") || dzHtml.includes("而不说明"));
+    check("对照结果包含逐期命中分布", cmpHtml.includes("逐期红球命中分布"));
+    check("对照结果包含各奖级中出期数", cmpHtml.includes("各奖级中出期数"));
+
+    // 真正的恒等式（第一版这里我写错了断言，值得记下来）：
+    //   ✗ 错的写法：固定 6 个号的均命中应当恒等于 6×6/33 = 1.0909
+    //     1.0909 是"对随机号码集取平均"的期望值，**不是**某一个具体号码集的取值。
+    //     具体号码集的均命中 = 这 6 个号各自出现次数之和 ÷ 期数，
+    //     完全由这些号在历史上被开出过多少次决定（本例 314/252 = 1.246）。
+    //   ✓ 对的写法：用"数字体检"里每个号的出现次数反推应得值，再与对照结果比对。
+    //     这条断言才能真正抓出"命中统计或期数口径写错"的 bug。
+    const testSet = ["02", "04", "13", "14", "15", "30"];
+    const m = cmpHtml.match(/平均每期命中红球<\/td><td class="mono">([\d.]+)</);
+    const meanHit = m ? Number(m[1]) : NaN;
+    const expectedTotalHits = testSet.reduce((s, b) => {
+      const item = nt.health.red.find((x) => x.number === b);
+      return s + (item ? item.count : 0);
+    }, 0);
+    const expectedMean = expectedTotalHits / nt.health.periods;
+    check(
+      "对照均命中 = 各号码出现次数之和 ÷ 期数（可独立复算的恒等式）",
+      !Number.isNaN(meanHit) && Math.abs(meanHit - expectedMean) < 0.0002,
+      `对照算得 ${meanHit}，由数字体检反推应为 ${expectedMean.toFixed(4)}（${expectedTotalHits} 次 / ${nt.health.periods} 期）`
+    );
+    check("对照结果同时给出理论期望 1.0909 作参照", cmpHtml.includes("1.0909"));
+    check("对照结果含蓝球命中率与理论值", cmpHtml.includes("理论值 6.25%"));
+    const distNums = [...cmpHtml.matchAll(/<td class="mono">(\d+) 期<\/td><td class="mono">[\d.]+%<\/td>/g)].map((x) => Number(x[1]));
+    check(
+      "对照命中分布之和等于总期数",
+      distNums.reduce((a, b) => a + b, 0) === nt.health.periods,
+      `各档合计 ${distNums.reduce((a, b) => a + b, 0)}，期望 ${nt.health.periods}`
+    );
+    check("对照结果明确区分「重合」与「号码有多好」", cmpHtml.includes("重合") && cmpHtml.includes("不是"));
   }
 
-  if (input && genBtn && dzResult) {
+  // 生成演示号码 / 填入最近一期：两条快捷路径都应同时触发两份结果
+  if (input && genBtn && dzResult && cmpResult) {
     genBtn.dispatch("click");
-    const picked = input.value.split(" ").filter((x) => x !== "");
+    const picked = input.value.split(/\s+/).filter(Boolean);
     check("生成演示号码得到 6 个号码", picked.length === 6, `实际 ${picked.length}`);
-    check("生成的号码都在 1~33 且不重复", picked.length === 6 && new Set(picked).size === 6 && picked.every((n) => +n >= 1 && +n <= 33));
-    check("生成后自动完成了诊断", dzResult.innerHTML.includes("形态诊断"));
-    // 可复现性：同一个计数器序列不会用到 Math.random
-    check("演示号码生成不依赖 Math.random", true);
+    check("生成的号码都在 1~33 且不重复", new Set(picked).size === 6 && picked.every((n) => +n >= 1 && +n <= 33));
+    check("生成后同时完成诊断与对照", dzResult.innerHTML.includes("形态诊断") && cmpResult.innerHTML.includes("对照结果"));
+  }
+  if (cmpFill && input && cmpResult) {
+    cmpFill.dispatch("click");
+    const filled = input.value.split(/\s+/).filter(Boolean);
+    const last = lab && lab.history ? lab.history[lab.history.length - 1] : null;
+    check("填入最近一期后得到 6 个号码", filled.length === 6, input.value);
+    if (last) {
+      check(
+        "填入的确实是最近一期的开奖号码",
+        last.red.slice().sort().join(" ") === filled.slice().sort().join(" "),
+        `填入 ${filled.join(" ")} / 最近一期 ${last.red.join(" ")}`
+      );
+    }
+    check("填入后自动完成对照", cmpResult.innerHTML.includes("对照结果"));
   }
 
   console.log("");
   console.log("-".repeat(78));
   if (failures === 0) {
-    console.log("冒烟测试全部通过：页面上的三个交互工具在模拟浏览器环境下可正常工作。");
+    console.log("冒烟测试全部通过：页面上的交互工具在模拟浏览器环境下可正常工作。");
     console.log("（注意：这只验证逻辑与渲染，不验证视觉样式。）");
   } else {
     console.log(`冒烟测试失败 ${failures} 项 —— 页面交互很可能在真实浏览器里也是坏的。`);

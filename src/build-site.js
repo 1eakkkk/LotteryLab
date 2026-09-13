@@ -448,17 +448,8 @@ function buildNumberToolsSection(numberTools) {
   <div class="divider"></div>
 
   <h2>形态诊断：看看你的号码落在多大的一堆里</h2>
-  <p>输入任意 6 个红球（或点"生成一组演示号码"），下面会给出它的奇偶比、大小比、三区分布、连号情况和和值，并且——<strong>关键是最后一列</strong>——告诉你有多少组号码和它"长得一样"。</p>
-  <div class="nh-panel">
-    <label class="nh-label" for="dz-input">输入 6 个红球号码（1~33，用空格或逗号分隔）</label>
-    <div class="dz-row">
-      <input type="text" id="dz-input" class="dz-input" placeholder="例如：02 04 13 14 15 30" />
-      <button type="button" class="btn" id="dz-btn">诊断这组号码</button>
-      <button type="button" class="btn btn-ghost" id="dz-gen">生成一组演示号码</button>
-    </div>
-    <p class="dz-error" id="dz-error"></p>
-  </div>
-  <div id="dz-result" class="nh-detail"><p class="dim">还没诊断。输入一组号码，或点"生成一组演示号码"。</p></div>
+  <p>这一节的输入框已经<b>合并到下方「号码工具」</b>了——整页只留一个输入框，一次输入同时给出形态诊断与历史对照两份结果。这里先说明它背后的算法与读法。</p>
+  <p>给定任意 6 个红球，它会给出奇偶比、大小比、三区分布、连号情况和和值，并且——<strong>关键是最后一列</strong>——告诉你有多少组号码和它"长得一样"。这一列的数值由 <code>C(33,6)</code> 全部枚举算出来（${numberTools.pattern_table.total_combinations.toLocaleString("en-US")} 组），不是查表抄来的。</p>
 
   <div class="notice">
     <p><strong>把这一层读对，只需要看懂最后一列。</strong>它的意思是"全部 ${numberTools.pattern_table.total_combinations.toLocaleString("en-US")} 组红球里，有多少组和这组长得一样"——<strong>不是</strong>"这组号码中奖的机会有多大"。这两个数字完全不是一回事。</p>
@@ -628,6 +619,66 @@ function buildEvidenceExplainer(power, leaderboard) {
   <p class="dim">以上数字全部是解析解（不依赖模拟）：标准误 = 配对差值标准差 ÷ √期数；最小可检出效应 = (1.96 + 0.84) × 标准误（80% 功效、双侧 5%）；所需期数 = ((1.96 + 0.84) × 标准差 ÷ 观测差异)²；金额换算用精确超几何概率（<b>不是</b>二项近似——第一版用近似时把 P(≥4红) 算高了 2.45 倍，已修正为精确值）。计算过程写在 <code>src/build.js</code> 的 <code>buildEvidencePowerAnalysis</code> 里。</p>`;
 }
 
+// ===========================================================================
+// 对照台：把"你的号码"放到全部历史期上逐期对照
+// ---------------------------------------------------------------------------
+// 这是用户主动要的交互，也是本站少有的强参与点。三条约束写在下面，改动前请先读：
+//   1. 一律叫「对照」，不叫"命中回顾/战果/成绩单"——那是预测网站的成瘾机制；
+//   2. 结果里必须同时出现"总期数"和"理论期望"，让单个亮眼数字无法被孤立解读；
+//   3. 不给任何"下期你该调整成什么"的建议，否则就等于变成了选号器。
+// 另外用最近一期真实开奖号码做一个"填入"按钮：这让用户能立刻看到
+// "一组真实开出的号码，放回历史里表现如何"——这比抽象说明有说服力得多。
+// ===========================================================================
+function buildComparisonSection(numberTools, history, baseline) {
+  const blueOptions = (() => {
+    const arr = [];
+    for (let i = 1; i <= 16; i++) {
+      const v = String(i).padStart(2, "0");
+      arr.push(`<option value="${v}">${v}</option>`);
+    }
+    return arr.join("");
+  })();
+
+  const latest = history[history.length - 1];
+  const maxOmission = numberTools
+    ? numberTools.omission.red.reduce((a, b) => (b.current > a.current ? b : a), numberTools.omission.red[0])
+    : null;
+
+  return `
+  <h2>号码工具：输入你的号码，一次给出形态诊断与历史对照</h2>
+  <p>这里是<strong>整页唯一需要你输入的地方</strong>。输入你自己的 6 个红球（可以填 7~10 个做复式）和 1 个蓝球，它会同时给出两份结果：</p>
+  <ul>
+    <li><b>形态诊断</b>——这组号码的奇偶比、大小比、三区分布、连号、和值，以及<strong>有多少组号码和它"长得一样"</strong>；</li>
+    <li><b>历史对照</b>——把它放到<strong>全部 ${history.length} 期真实开奖</strong>上逐期对照：平均命中几个红球、蓝球命中率、逐期命中分布、各奖级中出过几次。</li>
+  </ul>
+  <p>它回答的是一个很自然的问题：<b>"我平时选的这组号码，在这批数据里会是什么样？"</b>——而不是"我该怎么选"。这两件事的区别，就是本页和选号网站的区别。输入只在本机浏览器里计算，不提交、不上传。</p>
+
+  <div class="nh-panel">
+    <label class="nh-label" for="dz-input">红球号码（6 个为单式；7~10 个按复式处理）</label>
+    <div class="dz-row">
+      <input type="text" id="dz-input" class="dz-input" placeholder="例如：02 04 13 14 15 30" />
+      <label class="nh-label" for="cmp-blue" style="margin:0;">蓝球</label>
+      <select id="cmp-blue" class="dz-input" style="flex:0 0 90px;min-width:90px;">${blueOptions}</select>
+    </div>
+    <div class="dz-row" style="margin-top:10px;">
+      <button type="button" class="btn" id="dz-btn">诊断 + 对照这组号码</button>
+      <button type="button" class="btn btn-ghost" id="dz-gen">生成一组演示号码</button>
+      <button type="button" class="btn btn-ghost" id="cmp-fill-latest">填入最近一期（第 ${latest.period} 期）的开奖号码</button>
+    </div>
+    <p class="dz-error" id="dz-error"></p>
+    <p class="dim" style="margin:10px 0 0;">「填入最近一期」会把第 ${latest.period} 期（${latest.date}）实际开出的号码填进去——<b>这是为了让你看到"一组真实开出过的号码，放回历史里表现如何"</b>，不是下期号码。</p>
+  </div>
+  <div id="dz-result" class="nh-detail"><p class="dim">还没有结果。输入一组号码后点上面的按钮。</p></div>
+  <div id="cmp-result" class="nh-detail"><p class="dim">历史对照结果会显示在这里。</p></div>
+
+  <div class="notice">
+    <p><strong>怎么读对照结果。</strong>你看到的每个数字，衡量的都是<strong>"你的号码与已开出的号码有多少重合"</strong>，而不是<strong>"你的号码有多好"</strong>。全部 ${(numberTools ? numberTools.pattern_table.total_combinations : 1107568).toLocaleString("en-US")} 组红球里，每一组被开出来的概率完全相同。</p>
+    ${baseline ? `<p><strong>那为什么不同号码算出来的数字不一样？</strong>因为"历史均命中"取决于<strong>你选的这几个号自己在历史上出现过多少次</strong>。我们对全号码空间抽样 ${baseline.samples.toLocaleString("en-US")} 组做了统计：均值 ${baseline.mean}（与理论期望 1.0909 一致）、标准差 <span class="mono">${baseline.sd}</span>，<strong>95% 的号码集都落在 ${baseline.percentile_2_5} ~ ${baseline.percentile_97_5} 之间</strong>。所以你的号码算出高于或低于 1.0909 都正常——偏离在这个范围内，说明不了任何事。</p>` : ""}
+    ${maxOmission ? `<p>如果你输入的号码里有那个"很久没出"的号（例如当前遗漏最长的 <span class="mono">${maxOmission.number}</span>，已 ${maxOmission.current} 期未出），对照结果不会因为它"该出了"而变好——上面「遗漏分布」那一节已经算过：这么长的遗漏在整份数据里本来就会出现约 ${maxOmission.expected_occurrences} 次。</p>` : ""}
+    <p class="dim">本站刻意<b>不</b>给"累计盈亏"这样单独一个数字：那个数字会被读成"我这个号码行不行"，而它其实只由几注固定奖级的末等奖决定，波动极大。所以这里给的是完整的命中分布与奖级分布，让"绝大多数期数一分钱不中"这件事直接看得见。</p>
+  </div>`;
+}
+
 // ---- V1 新增：我的策略权重滑块，需要给浏览器端嵌入一份精简历史数据 ----
 function buildLabData(history, split_boundaries, monte_carlo, min_train_size, report_number_tools, next_period) {
   const compactHistory = history.map((d) => ({ period: d.period, red: d.red, blue: d.blue }));
@@ -736,6 +787,8 @@ function main() {
   );
   // 「无证据」是什么：功效分析面板，紧跟排行榜（读者第一次遇到证据等级的地方）
   const evidenceExplainer = buildEvidenceExplainer(report.evidence_power_analysis, leaderboard);
+  // 对照台：用户自己的号码 vs 全部历史
+  const comparisonSection = buildComparisonSection(report.number_tools, history, report.number_space_baseline);
 
   const html = `<!doctype html>
 <html lang="zh-CN">
@@ -981,6 +1034,16 @@ function main() {
   .obs-table { margin: 0; font-size: 0.82rem; }
   .obs-table td { padding: 4px 6px; }
   .obs-table td:first-child { color: var(--ink-dim); }
+  /* 对照台的命中分布条 */
+  .cmp-bar {
+    display: inline-block;
+    height: 10px;
+    background: var(--red);
+    opacity: 0.55;
+    border-radius: 3px;
+    min-width: 1px;
+    vertical-align: middle;
+  }
   .strategy-name { font-weight: 600; }
   .s-random { color: var(--ink-dim); }
   .s-hot { color: var(--red); }
@@ -1093,6 +1156,10 @@ function main() {
   <div class="divider"></div>
 
   ${numberToolsSection}
+
+  <div class="divider"></div>
+
+  ${comparisonSection}
 
   <div class="divider"></div>
 

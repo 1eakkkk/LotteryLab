@@ -383,6 +383,69 @@ function valueOfEdge(edgeInHits) {
   };
 }
 
+/**
+ * 全号码空间里"历史均命中"的分布（用于对照台的正确解读基准）。
+ *
+ * 为什么必须有这个：对照台会显示"你这组号码在历史上平均命中 X 个红球"。
+ * 如果不给出基准，读者会拿 X 和 1.0909 比，并得出"我的号码比期望高/低"这种结论。
+ * 但 1.0909 是**对全部组合取平均**的期望值，任何一组具体号码都会偏离它——
+ * 偏离多少完全由"这几个号自己在历史上出现得多不多"决定。
+ *
+ * 实测（本数据集 252 期）：均命中的标准差约 0.065，95% 的号码集落在 ~0.97~1.21；
+ * 本次展示的那组 1.2460 落在第 99.3 百分位——**看着很突出，但仍在正常波动内**。
+ * 把分布和百分位一起给出来，"我的号码比较特别"这个念头才会被正确安放。
+ *
+ * 用确定性种子抽样（可复现原则）：同一份数据每次构建得到同一个分布。
+ */
+function buildNumberSpaceBaseline(history, samples) {
+  const n = history.length;
+  const count = {};
+  for (let i = 1; i <= 33; i++) count[String(i).padStart(2, "0")] = 0;
+  history.forEach((d) => d.red.forEach((b) => (count[b] += 1)));
+
+  const all = [];
+  for (let i = 1; i <= 33; i++) all.push(String(i).padStart(2, "0"));
+
+  let seed = 42; // 固定种子：可复现
+  const rnd = () => {
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+    return seed / 0x7fffffff;
+  };
+
+  const means = [];
+  for (let i = 0; i < samples; i++) {
+    const pool = all.slice();
+    let total = 0;
+    for (let k = 0; k < 6; k++) {
+      const idx = Math.floor(rnd() * pool.length);
+      total += count[pool[idx]];
+      pool.splice(idx, 1);
+    }
+    means.push(total / n);
+  }
+  means.sort((a, b) => a - b);
+
+  const mean = means.reduce((a, b) => a + b, 0) / means.length;
+  const sd = Math.sqrt(means.reduce((s, v) => s + (v - mean) ** 2, 0) / (means.length - 1));
+  const pct = (p) => means[Math.min(means.length - 1, Math.floor(p * means.length))];
+
+  return {
+    samples,
+    periods: n,
+    mean: Number(mean.toFixed(4)),
+    sd: Number(sd.toFixed(4)),
+    min: Number(means[0].toFixed(4)),
+    max: Number(means[means.length - 1].toFixed(4)),
+    percentile_2_5: Number(pct(0.025).toFixed(4)),
+    percentile_97_5: Number(pct(0.975).toFixed(4)),
+    note:
+      `在全部 C(33,6) 组红球里随机抽样 ${samples} 组，统计每组在 ${n} 期历史上的平均命中：` +
+      `均值 ${mean.toFixed(4)}（与理论期望 1.0909 一致）、标准差 ${sd.toFixed(4)}，` +
+      `95% 的号码集落在 ${pct(0.025).toFixed(3)} ~ ${pct(0.975).toFixed(3)} 之间。` +
+      `换句话说：**随便哪一组号码的"历史均命中"都会偏离 1.0909 约 ±0.13，这属于正常波动，不代表号码更好或更差。**`,
+  };
+}
+
 function main() {
   const history = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "ssq.json"), "utf-8"));
 
@@ -621,6 +684,8 @@ function main() {
     // 「无证据」到底是什么意思：把证据等级背后的"测量精度"量化出来，
     // 避免读者把"无证据"误读成"数据还不够，再等等"
     evidence_power_analysis: buildEvidencePowerAnalysis(hotRecords, benchmarkRandomRecords),
+    // 对照台的解读基准：全号码空间里"历史均命中"的自然波动范围
+    number_space_baseline: buildNumberSpaceBaseline(history, 20000),
   };
 
   fs.writeFileSync(path.join(DATA_DIR, "leaderboard.json"), JSON.stringify(leaderboard, null, 2));
