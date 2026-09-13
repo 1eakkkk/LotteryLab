@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // 页面内联脚本的浏览器行为冒烟测试
 // ----------------------------------------------------------------------------
 // 为什么需要这个文件：
@@ -30,6 +30,9 @@ function check(name, cond, detail) {
 }
 
 // ---------------------------------------------------------------- 极简 DOM 桩
+// 说明：模块化标签页用到了 classList / location / history / window.scrollTo，
+// 所以桩里必须提供这些，否则"标签页脚本一跑就抛错"，
+// 而真实浏览器里是好的——这种"测试环境缺件导致的假失败"会掩盖真问题。
 function makeElement(id, tagName) {
   const el = {
     id: id,
@@ -42,6 +45,7 @@ function makeElement(id, tagName) {
     children: [],
     _listeners: {},
     _attrs: {},
+    _classes: new Set(),
     className: "",
     addEventListener(type, fn) {
       (this._listeners[type] = this._listeners[type] || []).push(fn);
@@ -56,15 +60,41 @@ function makeElement(id, tagName) {
     getAttribute(k) {
       return this._attrs[k];
     },
+    focus() {
+      this._focused = true;
+    },
+    classList: {
+      add(c) {
+        el._classes.add(c);
+      },
+      remove(c) {
+        el._classes.delete(c);
+      },
+      contains(c) {
+        return el._classes.has(c);
+      },
+      toggle(c, force) {
+        const want = force === undefined ? !el._classes.has(c) : !!force;
+        if (want) el._classes.add(c);
+        else el._classes.delete(c);
+        return want;
+      },
+    },
     closest(sel) {
-      // 只支持 ".class" 这一种选择器，够用
       if (sel.startsWith(".")) {
         const cls = sel.slice(1);
-        if ((this.className || "").split(/\s+/).includes(cls)) return this;
+        if (el._classes.has(cls) || (el.className || "").split(/\s+/).includes(cls)) return el;
       }
       return null;
     },
-    querySelectorAll() {
+    querySelector(sel) {
+      if (sel === ".tab.is-active") {
+        return (el._tabs || []).find((t) => t._classes.has("is-active")) || null;
+      }
+      return null;
+    },
+    querySelectorAll(sel) {
+      if (sel === ".tab") return el._tabs || [];
       return [];
     },
     appendChild(c) {
@@ -118,6 +148,26 @@ function setupDom(html) {
     });
   });
 
+  // 从 HTML 里解析出标签导航的按钮（模块化标签页需要它们才能被测试）
+  const navMatch = html.match(/<nav class="tabs"[^>]*>([\s\S]*?)<\/nav>/);
+  const tabs = [];
+  if (navMatch) {
+    const btnRe = /<button([^>]*)>([\s\S]*?)<\/button>/g;
+    let bm;
+    while ((bm = btnRe.exec(navMatch[1])) !== null) {
+      const attrs = bm[1];
+      const target = (attrs.match(/data-target="([^"]+)"/) || [])[1];
+      if (!target) continue;
+      const tab = makeElement("", "button");
+      tab.className = "tab" + (/is-active/.test(attrs) ? " is-active" : "");
+      if (/is-active/.test(attrs)) tab._classes.add("is-active");
+      tab.dataset.target = target;
+      tab.dataset.label = bm[2].trim();
+      tabs.push(tab);
+    }
+  }
+  if (registry["main-tabs"]) registry["main-tabs"]._tabs = tabs;
+
   const document = {
     readyState: "complete",
     getElementById(id) {
@@ -129,7 +179,7 @@ function setupDom(html) {
     },
   };
 
-  return { document, registry };
+  return { document, registry, tabs };
 }
 
 // ---------------------------------------------------------------- 主流程
@@ -152,7 +202,16 @@ function main() {
   console.log(`\n共抽出 ${scripts.length} 段内联脚本`);
   check("内联脚本段数 ≥ 3（数据 + 计算模块 + 交互 + 我的策略）", scripts.length >= 3, `实际 ${scripts.length}`);
 
-  const { document, registry } = setupDom(html);
+  const { document, registry, tabs } = setupDom(html);
+  // location / history / scrollTo：模块化标签页会用到它们。
+  // 桩里必须提供，否则标签页脚本一执行就抛错——而真实浏览器里是好的。
+  // 这种"测试环境缺件导致的假失败"比真失败更糟：它会掩盖真正的问题。
+  const fakeLocation = { hash: "" };
+  const fakeHistory = {
+    replaceState(_a, _b, url) {
+      if (typeof url === "string" && url.startsWith("#")) fakeLocation.hash = url;
+    },
+  };
   const sandbox = {
     document: document,
     window: {},
@@ -165,8 +224,12 @@ function main() {
     Object: Object,
     Set: Set,
     isNaN: isNaN,
+    location: fakeLocation,
+    history: fakeHistory,
   };
   sandbox.window.document = document;
+  sandbox.window.scrollTo = () => {};
+  sandbox.window.addEventListener = () => {};
   sandbox.globalThis = sandbox;
 
   // 逐段执行
@@ -333,6 +396,48 @@ function main() {
     }
     check("填入后自动完成对照", cmpResult.innerHTML.includes("对照结果"));
   }
+
+  // ---- 校验：模块化标签页（V4.5 结构重构）----
+  // 页面内容太多（21 个区块），改成模块 + 标签导航。这里断言切换真的有效，
+  // 而不是"模板里有 nav 就算通过"——藏起来的模块必须能被点开。
+  check("存在标签导航", !!registry["main-tabs"]);
+  check("解析出至少 4 个标签", tabs.length >= 4, `实际 ${tabs.length}`);
+  const moduleIds = [...html.matchAll(/<section class="module[^"]*" id="([^"]+)">/g)].map((m) => m[1]);
+  check("页面中存在 5 个模块", moduleIds.length === 5, moduleIds.join(", "));
+  check(
+    "每个标签都指向一个真实存在的模块",
+    tabs.every((t) => moduleIds.includes(t.dataset.target)),
+    tabs.map((t) => t.dataset.target).join(", ") + " vs " + moduleIds.join(", ")
+  );
+  check(
+    "初始恰好一个模块处于激活态",
+    moduleIds.filter((id) => registry[id] && registry[id]._classes.has("is-active")).length === 1,
+    moduleIds.map((id) => id + ":" + (registry[id] && registry[id]._classes.has("is-active"))).join(" ")
+  );
+
+  // 逐个点击每个标签，验证"点到哪个就只有哪个是激活的"
+  let switchOk = true;
+  const switchDetail = [];
+  tabs.forEach((t) => {
+    t.dispatch("click");
+    const activeModules = moduleIds.filter((id) => registry[id] && registry[id]._classes.has("is-active"));
+    const activeTabs = tabs.filter((x) => x._classes.has("is-active"));
+    const ok = activeModules.length === 1 && activeModules[0] === t.dataset.target && activeTabs.length === 1;
+    if (!ok) {
+      switchOk = false;
+      switchDetail.push(`${t.dataset.label}→[${activeModules.join(",")}]`);
+    }
+  });
+  check("点击任一标签都能正确切换（且只有一个模块可见）", switchOk, switchDetail.join("; "));
+  check("切换后 URL hash 同步更新（可分享/可刷新保持）", fakeLocation.hash.startsWith("#mod-"), fakeLocation.hash);
+  check(
+    "标签文案与模块内容对得上（号码 / 概率 / 策略 / 数据）",
+    tabs.some((t) => /号码/.test(t.dataset.label)) &&
+      tabs.some((t) => /概率/.test(t.dataset.label)) &&
+      tabs.some((t) => /策略/.test(t.dataset.label)) &&
+      tabs.some((t) => /数据/.test(t.dataset.label)),
+    tabs.map((t) => t.dataset.label).join(" | ")
+  );
 
   console.log("");
   console.log("-".repeat(78));

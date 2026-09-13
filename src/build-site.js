@@ -1044,6 +1044,48 @@ function main() {
     min-width: 1px;
     vertical-align: middle;
   }
+  /* ===== 模块化标签页（V4.5）=====
+     页面内容太多（20+ 区块），线性排下来"看着太杂"。
+     改成六个模块 + 顶部标签导航：一次只看一块，但所有内容仍在同一个自包含文件里
+     （不拆成多个页面，是为了保持"双击即可打开、零依赖"这个项目底线）。 */
+  .site-head { margin-bottom: 8px; }
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 16px 0 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    z-index: 10;
+    padding-top: 8px;
+  }
+  .tab {
+    font-family: inherit;
+    font-size: 0.88rem;
+    padding: 7px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink-dim);
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .tab:hover { border-color: var(--ink-dim); color: inherit; }
+  .tab.is-active {
+    background: var(--ink, #1a1a1a);
+    color: #fff;
+    border-color: var(--ink, #1a1a1a);
+  }
+  .module { display: none; }
+  .module.is-active { display: block; }
+  /* 模块内的第一个标题不要留多余上边距 */
+  .module > h2:first-child, .module > section > h2:first-child { margin-top: 0; }
+  @media (max-width: 640px) {
+    .tab { font-size: 0.8rem; padding: 6px 10px; }
+  }
   .strategy-name { font-weight: 600; }
   .s-random { color: var(--ink-dim); }
   .s-hot { color: var(--red); }
@@ -1137,36 +1179,41 @@ function main() {
 <body>
 <div class="wrap">
 
-  <h1>任何策略，在没有通过盲测之前，都不准自称"有效"。</h1>
-  <p class="lede">这是一个用真实开奖数据持续检验"选号策略是否真的比随机数强"的公开实验平台——不是预测工具，是概率科普实验。</p>
+  <header class="site-head">
+    <h1>随机数打脸实验室</h1>
+    <p class="lede">用 ${report.data_range.count} 期真实开奖数据（第 ${report.data_range.from}~${report.data_range.to} 期），检验"选号策略是否真的比随机数强"。<b>不是预测工具，是概率科普实验。</b></p>
+    <div class="badge-row">
+      <span class="badge">数据集截至 ${report.dataset_snapshot}</span>
+      <span class="badge">回测期数 ${totalPeriods}</span>
+      <span class="badge">蒙特卡洛 ${monte_carlo.runs} 次</span>
+      <span class="badge">盲测集 ${split_boundaries.blind_periods_count} 期（封存于第${split_boundaries.blind_test_start_period}期）</span>
+    </div>
+    <div class="notice notice-strong">
+      <p>本项目为统计与算法科普实验，<strong>不提供售彩、代购、充值、返利等任何服务</strong>；页面上出现的任何号码都只用于回测展示，不构成购彩建议。彩票开奖是独立随机事件，历史数据不影响未来结果——这句话本身就是本实验想反复验证、而不是想反驳的前提。</p>
+    </div>
+  </header>
 
-  <div class="badge-row">
-    <span class="badge">数据集截至 ${report.dataset_snapshot}</span>
-    <span class="badge">回测区间 第${report.data_range.from}~${report.data_range.to}期</span>
-    <span class="badge">共${report.data_range.count}期</span>
-    <span class="badge">Walk-Forward 回测期数 ${totalPeriods}</span>
-    <span class="badge">蒙特卡洛 ${monte_carlo.runs} 次独立模拟</span>
-    <span class="badge">盲测集封存于第${split_boundaries.blind_test_start_period}期起（当前${split_boundaries.blind_periods_count}期）</span>
-  </div>
+  <nav class="tabs" id="main-tabs" role="tablist">
+    <button type="button" class="tab is-active" data-target="mod-observe" role="tab">① 号码</button>
+    <button type="button" class="tab" data-target="mod-probability" role="tab">② 概率真相</button>
+    <button type="button" class="tab" data-target="mod-strategy" role="tab">③ 策略擂台</button>
+    <button type="button" class="tab" data-target="mod-data" role="tab">④ 数据与版本</button>
+    <button type="button" class="tab" data-target="mod-guide" role="tab">怎么读</button>
+  </nav>
 
-  <div class="divider"></div>
+  <section class="module is-active" id="mod-observe">
+    ${observationSection}
+    <div class="divider"></div>
+    ${comparisonSection}
+    <div class="divider"></div>
+    ${numberToolsSection}
+  </section>
 
-  ${observationSection}
+  <section class="module" id="mod-probability">
+    ${predictionSection}
+  </section>
 
-  <div class="divider"></div>
-
-  ${numberToolsSection}
-
-  <div class="divider"></div>
-
-  ${comparisonSection}
-
-  <div class="divider"></div>
-
-  ${predictionSection}
-
-  <div class="divider"></div>
-
+  <section class="module" id="mod-guide">
   <h2>怎么读这一页</h2>
   <p>上面的号码区块是这一页最显眼的部分，也是最容易被误读的部分，所以这里给出读它的顺序：</p>
   <ul>
@@ -1176,12 +1223,6 @@ function main() {
     <li><b>最后看排行榜和盲测集</b>：那里有我们检验过的全部策略，以及它们能不能算"有效"的诚实回答——目前答案是"一个都不能"。</li>
   </ul>
 
-  <div class="tagline">用 ${report.data_range.count} 期真实开奖数据，让选号玄学、统计策略接受同一个残酷的对手：大数定律。</div>
-
-  <div class="notice">
-    <p>本项目为统计与算法科普实验，<strong>不提供售彩、代购、充值、返利等任何服务</strong>；页面上出现的任何号码都只用于回测展示，不构成购彩建议。彩票开奖是独立随机事件，历史数据不影响未来结果——这句话本身就是本实验想反复验证、而不是想反驳的前提。</p>
-  </div>
-
   <div class="divider"></div>
 
   <h2>数据与方法</h2>
@@ -1189,8 +1230,9 @@ function main() {
   <p>回测采用 <strong>Walk-Forward 滚动预测</strong>：预测第 t+1 期时，策略只能看到第 1~t 期的数据，绝不使用未来信息。本版本 <code>minTrainSize = ${report.min_train_size}</code>，即前 ${report.min_train_size} 期只作为初始训练数据，从第 ${report.min_train_size + 1} 期开始才正式计入回测成绩，实际参与评分的有 ${totalPeriods} 期。</p>
   <p>随机基准和蒙特卡洛模拟都使用「期号 + 策略名」做种子的伪随机数，保证同一份数据永远得到同一份排行榜——回测模式下完全不使用 <code>Math.random()</code>。</p>
 
-  <div class="divider"></div>
+  </section>
 
+  <section class="module" id="mod-strategy">
   <h2>排行榜</h2>
   <p>三个策略：<span class="s-random">随机基准</span>（完全不看历史，仅作对照）、<span class="s-hot">热号</span>（近50期出现频率最高的号码）、<span class="s-cold">冷号</span>（遗漏期数最长的号码）。理论期望值 <strong>${report.theoretical_expectation.toFixed(4)}</strong> 是红球 33 选 6 在均匀随机假设下的数学期望（6 × 6/33），独立于任何策略。</p>
 
@@ -1383,9 +1425,10 @@ function main() {
   <div class="chart-wrap">${fundChart}</div>
   <p class="dim">${fund.disclaimer}</p>
 
-  <div class="divider"></div>
+  </section>
 
-  ${dataSection}
+  <section class="module" id="mod-data">
+    ${dataSection}
 
   <div class="divider"></div>
 
@@ -1406,7 +1449,76 @@ function main() {
     <p>本页面所有数字均由公开算法对上方真实历史数据现算得出，同一份数据重新运行会得到完全相同的结果。不构成任何购彩建议，请理性对待彩票——它是被设计为长期负期望的娱乐消费，不是投资。</p>
   </footer>
 
+  </section>
 </div>
+<script>
+// ===== 模块切换（V4.5）=====
+// 页面内容太多，改成模块化标签页：一次只看一块。
+// 三件事必须一起做到，否则还不如不做：
+//   1. **不能用 display:none 把内容藏起来就算完**——本页所有模块的内容仍然完整存在于 HTML 中，
+//      搜索引擎与"查看源代码"都看得到（这是刻意的：藏起来的只是视觉，不是信息）；
+//   2. 支持 URL hash（#mod-strategy 之类），刷新后停在同一个模块，也可以把链接直接发给别人；
+//   3. 键盘可用（左右方向键切换），并对屏幕阅读器维护 aria-selected。
+(function () {
+  var nav = document.getElementById("main-tabs");
+  if (!nav) return;
+  var tabs = Array.prototype.slice.call(nav.querySelectorAll(".tab"));
+  var modules = tabs
+    .map(function (t) {
+      return document.getElementById(t.dataset.target);
+    })
+    .filter(Boolean);
+
+  function activate(id, pushHash) {
+    var found = false;
+    tabs.forEach(function (t) {
+      var on = t.dataset.target === id;
+      t.classList.toggle("is-active", on);
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      if (on) found = true;
+    });
+    if (!found) return false;
+    modules.forEach(function (m) {
+      m.classList.toggle("is-active", m.id === id);
+    });
+    if (pushHash && location.hash !== "#" + id) {
+      history.replaceState(null, "", "#" + id);
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return true;
+  }
+
+  tabs.forEach(function (t) {
+    t.addEventListener("click", function () {
+      activate(t.dataset.target, true);
+    });
+  });
+
+  // 左右方向键切换（无障碍）
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    var i = tabs.findIndex(function (t) {
+      return t.classList.contains("is-active");
+    });
+    if (i < 0) return;
+    var next = (i + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+    tabs[next].focus();
+    activate(tabs[next].dataset.target, true);
+    e.preventDefault();
+  });
+
+  // 初始化：优先用 URL hash；没有 hash 时用模板里标了 is-active 的那个模块
+  var initial = (location.hash || "").replace(/^#/, "");
+  if (!initial || !activate(initial, false)) {
+    var pre = nav.querySelector(".tab.is-active") || tabs[0];
+    if (pre) activate(pre.dataset.target, false);
+  }
+  // 浏览器前进/后退
+  window.addEventListener("hashchange", function () {
+    activate((location.hash || "").replace(/^#/, ""), false);
+  });
+})();
+</script>
 <script>
   // V1 新增："我的策略"权重滑块需要的精简历史数据 + 蒙特卡洛开发集/盲测集分布，
   // 全部在构建期写死进页面里，浏览器端 JS 直接计算，不需要任何网络请求。
