@@ -1,0 +1,27 @@
+{
+  "name": "actionlint",
+  "version": "2.0.6",
+  "license": "MIT",
+  "sideEffects": false,
+  "scripts": {
+    "test": "tape test.mjs | tap-spec"
+  },
+  "main": "./node.cjs",
+  "types": "./types.d.ts",
+  "exports": {
+    "types": "./types.d.ts",
+    "node": {
+      "import": "./node.mjs",
+      "require": "./node.cjs"
+    },
+    "browser": "./browser.mjs"
+  },
+  "devDependencies": {
+    "@types/golang-wasm-exec": "^1.15.0",
+    "@types/node": "^18.0.0",
+    "@types/tape": "^4.13.2",
+    "tap-spec": "^5.0.0",
+    "tape": "^5.5.2",
+    "typescript": "^4.6.2"
+  }
+}

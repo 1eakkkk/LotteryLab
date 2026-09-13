@@ -1,0 +1,14 @@
+{
+  "name": "lottery-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "随机数打脸实验室 —— 彩票概率实验室（静态站点，无运行时依赖；package.json 仅用于开发期工具）",
+  "scripts": {
+    "update": "node scripts/fetch-data.js --apply && node scripts/prepare-data.js && node scripts/verify-data.js && node src/build.js && node src/build-site.js && node scripts/smoke-test-client.js && node scripts/audit-safety.js",
+    "lint": "node scripts/lint-workflows.js",
+    "test": "node scripts/smoke-test-client.js"
+  },
+  "devDependencies": {
+    "actionlint": "^2.0.6"
+  }
+}
