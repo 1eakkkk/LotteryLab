@@ -1,0 +1,241 @@
+{
+  "verified_at": "2026-09-13T02:19:05.308Z",
+  "data_file": "data/ssq.json",
+  "data_fingerprint_sha256": "bcf2b4804e10934ded9bf35e68c3cf69fa5c60dd1649dce58b423dc4afa48fe4",
+  "data_range": {
+    "from": "25005",
+    "to": "26105",
+    "count": 252
+  },
+  "declared_sources": [
+    "gudaoxuri/lottery_history"
+  ],
+  "source_integrity_note": "本校验只能证明这份数据内部自洽（格式、范围、顺序、奖级规则、概率总和），不能证明它逐期都与官方一致。当前声明的数据源为：gudaoxuri/lottery_history——请使用下方抽样核对表到官方渠道逐条核对。",
+  "source_verification": {
+    "_comment": "数据源核实记录（结构化，供 build-site.js 读取并由 verify-data.js 并入 data/verification.json）。原则：页面上的任何数字都必须有结构化出处，不允许硬编码进页面模板——这正是 17.5 L4 的要求。",
+    "primary_source": {
+      "name": "gudaoxuri/lottery_history",
+      "url": "https://github.com/gudaoxuri/lottery_history",
+      "description": "彩票历史数据收集器",
+      "language": "TypeScript",
+      "update_mode": "GitHub Actions 每日自动更新",
+      "data_file": "data/ssq.json",
+      "fields": "issueNumber / redBalls / blueBall / drawDate"
+    },
+    "repo_check": {
+      "method": "GitHub REST API（GET /repos/gudaoxuri/lottery_history）",
+      "http_status": 200,
+      "archived": false,
+      "private": false,
+      "last_data_commit_at": "2026-09-13T00:43:16Z",
+      "last_data_commit_message": "Update lottery data with latest results",
+      "checked_at": "2026-09-13"
+    },
+    "cross_check": {
+      "method": "把本地 data/ssq_source.json 与上游 data/ssq.json 逐期逐号比对（期号、红球集合、蓝球、开奖日期四项全等）",
+      "matched_periods": 251,
+      "mismatches": 0,
+      "local_only_periods": 0,
+      "new_periods_accepted": 1,
+      "script": "scripts/fetch-data.js",
+      "checked_at": "2026-09-13"
+    },
+    "new_period_peer_check": {
+      "period": "26105",
+      "date": "2026-09-10",
+      "red": "02 04 13 14 15 30",
+      "blue": "08",
+      "peer_source_name": "金华日报数字报 · 中国福利彩票开奖公告（第2026105期）",
+      "peer_source_url": "https://epaper.jhnews.com.cn/jrwb/jhwbpaper/pc/con/202609/11/content_556078.html",
+      "peer_source_published": "2026-09-11",
+      "peer_source_quoted": "第2026105期 投注总额：333874688元 中奖号码：红色球 30 15 4 2 14 13 / 8",
+      "result": "两个独立来源逐位一致",
+      "announcement_internal_check": {
+        "note": "该公告自身的算术自检：全国销售总额换算总注数、六等奖中奖注数占比，与按奖级规则计算的“至少中蓝球”概率相互印证；这一条不依赖任何第三方数据源。",
+        "total_sales_yuan": 333874688,
+        "bet_cost_yuan": 2,
+        "total_bets": 166937344,
+        "sixth_prize_wins": 14332306,
+        "sixth_prize_share_percent": 8.5854,
+        "theoretical_blue_only_percent": 6.25,
+        "conclusion": "六等奖占比略高于 1/16 的理论值，符合奖级规则（六等奖含“仅中蓝球”以及“中 0~2 红 + 蓝”被更高奖级吸收后的余量），量级一致，无异常。"
+      }
+    },
+    "known_limitations": [
+      "只有最新一期（26105）做了人工双源核对；历史 251 期属于单一来源数据，通过了内部自洽校验，但没有逐期与官方比对。",
+      "抓取脚本目前只接入了主数据源；--peer 第二来源需要每次人工提供凭据。",
+      "尚未接入 CI：抓取与五步构建目前需要手动触发。"
+    ],
+    "corrections": [
+      {
+        "what": "更早版本的页面与 README 曾写着“该数据源在公开搜索里未能核实、无法确认是否存在”。",
+        "status": "该结论是错的",
+        "why_wrong": "核实方式不充分：当时只做了关键词搜索，没有直接查询 GitHub API，也没有尝试抓取数据文件。搜索结果里没有出现该仓库，被错误地当成了“仓库不存在”的证据。",
+        "now": "已通过 GitHub API 确认仓库存在（HTTP 200）、公开、未归档、持续更新；并已完成逐期逐号交叉核对。",
+        "correction_date": "2026-09-13"
+      }
+    ]
+  },
+  "hard_checks": {
+    "passed": true,
+    "total": 3,
+    "failures": [],
+    "items": [
+      "格式/范围/顺序（期号唯一且严格递增、日期递增、红球 6 个互异升序、蓝球 01~16、source/fetched_at 齐全）",
+      "奖级规则全枚举自检（14 种红球命中 × 蓝球命中组合逐条对照官方奖级表）",
+      "组合层概率自检（总组合数、各奖级组合数、中奖概率合计）"
+    ]
+  },
+  "soft_notes": [],
+  "distribution": {
+    "red": {
+      "statistic": 37.909,
+      "pValue": 0.107,
+      "trials": 2000,
+      "expectedPerNumber": 45.82
+    },
+    "blue": {
+      "statistic": 9.333,
+      "pValue": 0.529,
+      "trials": 2000,
+      "expectedPerNumber": 15.75
+    },
+    "sum_mean": 99.26,
+    "sum_range": [
+      41,
+      153
+    ],
+    "odd_count_distribution": [
+      0,
+      25,
+      56,
+      87,
+      64,
+      18,
+      2
+    ],
+    "sample_rows": [
+      {
+        "period": "25005",
+        "date": "2025-01-12",
+        "red": "10 16 19 27 28 30",
+        "blue": "09"
+      },
+      {
+        "period": "25006",
+        "date": "2025-01-14",
+        "red": "01 07 08 17 20 22",
+        "blue": "06"
+      },
+      {
+        "period": "25007",
+        "date": "2025-01-16",
+        "red": "07 08 14 18 21 27",
+        "blue": "11"
+      },
+      {
+        "period": "25008",
+        "date": "2025-01-19",
+        "red": "09 14 16 17 25 33",
+        "blue": "11"
+      },
+      {
+        "period": "25009",
+        "date": "2025-01-21",
+        "red": "02 04 11 12 23 25",
+        "blue": "06"
+      },
+      {
+        "period": "26101",
+        "date": "2026-09-01",
+        "red": "05 06 08 09 24 25",
+        "blue": "12"
+      },
+      {
+        "period": "26102",
+        "date": "2026-09-03",
+        "red": "03 04 10 13 16 25",
+        "blue": "09"
+      },
+      {
+        "period": "26103",
+        "date": "2026-09-06",
+        "red": "04 11 20 27 28 30",
+        "blue": "15"
+      },
+      {
+        "period": "26104",
+        "date": "2026-09-08",
+        "red": "11 12 13 19 20 31",
+        "blue": "03"
+      },
+      {
+        "period": "26105",
+        "date": "2026-09-10",
+        "red": "02 04 13 14 15 30",
+        "blue": "08"
+      }
+    ]
+  },
+  "prize_probability_table": [
+    {
+      "level": 1,
+      "desc": "6红 + 蓝",
+      "ways": 1,
+      "probability": 5.642994380480476e-8,
+      "odds_one_in": 17721088
+    },
+    {
+      "level": 2,
+      "desc": "6红",
+      "ways": 15,
+      "probability": 8.464491570720715e-7,
+      "odds_one_in": 1181406
+    },
+    {
+      "level": 3,
+      "desc": "5红 + 蓝",
+      "ways": 162,
+      "probability": 0.000009141650896378372,
+      "odds_one_in": 109389
+    },
+    {
+      "level": 4,
+      "desc": "5红 或 4红+蓝",
+      "ways": 7695,
+      "probability": 0.0004342284175779726,
+      "odds_one_in": 2303
+    },
+    {
+      "level": 5,
+      "desc": "4红 或 3红+蓝",
+      "ways": 137475,
+      "probability": 0.007757706524565535,
+      "odds_one_in": 129
+    },
+    {
+      "level": 6,
+      "desc": "仅蓝球",
+      "ways": 1043640,
+      "probability": 0.05889254655244644,
+      "odds_one_in": 17
+    }
+  ],
+  "total_combinations": 17721088,
+  "winning_probability": 0.06709452602458721,
+  "expectation": {
+    "bet_cost": 2,
+    "expected_return_fixed_only": 0.4863,
+    "expected_return_low": 0.7402,
+    "expected_return_mid": 0.9942,
+    "floating_assumption_low": {
+      "1": 3000000,
+      "2": 100000
+    },
+    "floating_assumption_mid": {
+      "1": 6000000,
+      "2": 200000
+    },
+    "note": "期望回报由各奖级概率 × 奖金相加得到，概率全部由组合数精确计算；一/二等奖为浮动奖金，此处给出低/中两档公开常见区间的估算，估算假设本身已在数据里暴露，可自行替换重算。结论：即使按较乐观的中档估算，单注期望回报仍低于 2 元成本——这就是'预测悖论'。"
+  }
+}

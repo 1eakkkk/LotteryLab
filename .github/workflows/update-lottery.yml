@@ -1,0 +1,168 @@
+name: 开奖后自动更新（抓数据 → 校验 → 重算 → 审计）
+
+# ============================================================================
+# 这个工作流的作用：把「每次开奖后更新」这件事，从"记得手动跑一下"变成"机器自己跑"。
+#
+# 双色球固定在周二 / 周四 / 周日开奖（可用数据里最近 40 期的星期分布验证：13/14/13）。
+# 开奖时间约 21:15（北京时间），号码公布约 21:30 之后。
+#
+# 时间安排（UTC，中国无夏令时 = 北京时间 -8）：
+#   - 13:40 UTC = 北京 21:40  当天开奖号码公布后
+#   - 16:00 UTC = 北京 次日 00:00  上游仓库的写入时间实测在北京时间 08:36 左右，
+#                                  所以真正拿到新数据通常靠下面这个窗口
+#   - 00:40 UTC = 北京 08:40  上游刚写完，兜底一次
+#
+# 周三 / 周五 / 周六也各排一次：多余的空跑只会得出"没有新期，退出"，
+# 成本几乎为零，但能覆盖临时加奖、数据补录、上游延迟等情况。
+# 宁可多跑几次空转，也不要漏掉一期——漏掉一期意味着排行榜和盲测集少一条记录。
+#
+# 关键约束：任一门禁失败 → 直接失败，不提交、不发布（方案 17.5）。
+# ============================================================================
+
+on:
+  schedule:
+    - cron: "40 13 * * 2,4,7"   # 开奖当晚 21:40（北京）
+    - cron: "0 16 * * 1,3,5"    # 次日 00:00（北京），对应开奖日的周二/周四/周日
+    - cron: "40 0 * * 1,3,5"    # 次日 08:40（北京），上游刚更新完的兜底
+  workflow_dispatch:            # 也可以在 Actions 页面手动点一次
+
+permissions:
+  contents: write               # 需要写回数据与重建产物
+
+concurrency:
+  group: lottery-update
+  cancel-in-progress: false     # 不取消正在跑的更新，避免半途而废
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: 记录更新前的最新期号
+        id: before
+        run: |
+          PERIOD=$(node -e "const d=require('./data/ssq.json');console.log(d[d.length-1].period)")
+          echo "period=$PERIOD" >> "$GITHUB_OUTPUT"
+          echo "本仓库当前最新期号：$PERIOD"
+
+      # ---- 门禁 0：抓取 + 逐期逐号交叉核对 ----
+      # 默认不写入，先看有没有新期、有没有冲突。
+      # 注意：这里**不传 --peer**。第二来源目前需要人工提供凭据（历史上 26105 期
+      # 就是用官方开奖公告人工复核的）。自动化不假装自己有第二个来源——
+      # 有新增期时会明确标记为「单一来源」，页面文案也据此表述。
+      - name: 抓取上游数据并与本地逐期交叉核对
+        id: check
+        shell: bash
+        run: |
+          # pipefail 是必需的：默认情况下 bash 管道只返回最后一个命令（tee）的退出码，
+          # 那样 fetch-data.js 抓取失败会被吞掉，工作流会带着"看似成功"继续往下走。
+          set -o pipefail
+          node scripts/fetch-data.js | tee /tmp/fetch.log
+          if grep -q "上游没有新期" /tmp/fetch.log; then
+            echo "has_new=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_new=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 没有新期则结束
+        if: steps.check.outputs.has_new != 'true'
+        run: |
+          echo "上游没有新期，本次不做任何改动（空跑是正常的，不算失败）。"
+
+      # ---- 防御：核对通过但没有新期、而数据文件却变了，说明有异常，停下 ----
+      - name: 防御检查（无新期时数据文件不应发生变化）
+        if: steps.check.outputs.has_new != 'true'
+        run: |
+          if ! git diff --quiet -- data/ssq_source.json; then
+            echo "::error::没有新期，但 data/ssq_source.json 发生了变化——这不该发生"
+            git diff --stat
+            exit 1
+          fi
+          echo "数据文件未被改动，符合预期。"
+
+      - name: 写入新数据（附自动备份）
+        if: steps.check.outputs.has_new == 'true'
+        run: node scripts/fetch-data.js --apply
+
+      # ---- 门禁 1：数据硬校验（格式/奖级全枚举/组合概率/分布/指纹）----
+      - name: 数据硬校验（失败即停线）
+        if: steps.check.outputs.has_new == 'true'
+        run: node scripts/verify-data.js
+
+      # ---- 门禁 2：重算回测 ----
+      - name: 重跑 Walk-Forward 回测与蒙特卡洛
+        if: steps.check.outputs.has_new == 'true'
+        run: node src/build.js
+
+      # ---- 门禁 3：重新生成页面 ----
+      - name: 重新生成页面
+        if: steps.check.outputs.has_new == 'true'
+        run: |
+          node src/build-site.js
+          # 根目录 index.html 与 public/index.html 必须一致（GitHub Pages root 模式）
+          cp public/index.html index.html
+
+      # ---- 门禁 4：页面交互冒烟测试（模拟浏览器点击三个交互工具）----
+      # 这一步补的是"构建通过 ≠ 功能可用"这个缺口：
+      # 页面里的交互代码是内联进 HTML 的，平时没有任何东西会执行它，
+      # 写错一个变量名也会构建全绿——这个缺口已经被真实踩到过一次
+      # （window.LotteryTools 没挂上，三个工具全部静默失效）。
+      - name: 页面内联脚本冒烟测试
+        if: steps.check.outputs.has_new == 'true'
+        run: node scripts/smoke-test-client.js
+
+      # ---- 门禁 5：合规审计（失败即视为页面未产出）----
+      - name: 合规红线审计（失败即不发布）
+        if: steps.check.outputs.has_new == 'true'
+        run: node scripts/audit-safety.js
+
+      # ---- 自检：新期号确实进了数据 ----
+      - name: 确认新期已入库
+        if: steps.check.outputs.has_new == 'true'
+        run: |
+          AFTER=$(node -e "const d=require('./data/ssq.json');console.log(d[d.length-1].period)")
+          BEFORE="${{ steps.before.outputs.period }}"
+          echo "更新前：$BEFORE → 更新后：$AFTER"
+          if [ "$BEFORE" = "$AFTER" ]; then
+            echo "::error::抓取流程跑完了，但最新期号没变——说明数据没有真正更新"
+            exit 1
+          fi
+          echo "NEW_PERIOD=$AFTER" >> "$GITHUB_ENV"
+
+      - name: 提交并推送
+        if: steps.check.outputs.has_new == 'true'
+        run: |
+          git config user.name "lottery-lab-bot"
+          git config user.email "lottery-lab-bot@users.noreply.github.com"
+
+          # 备份文件是本地审计留痕，不进版本库
+          git add data/ index.html public/index.html
+          git reset --quiet -- 'data/*.bak-*.json' 2>/dev/null || true
+
+          if git diff --cached --quiet; then
+            echo "没有任何改动需要提交。"
+            exit 0
+          fi
+
+          git commit -m "自动更新：第 ${NEW_PERIOD} 期开奖数据（抓取 → 硬校验 → 重算 → 审计 全部通过）"
+          git push
+
+      - name: 汇总
+        if: always()
+        run: |
+          echo "### 开奖后自动更新" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.check.outputs.has_new }}" = "true" ]; then
+            echo "- 发现新期并已通过全部四道门禁，已提交。" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- 上游没有新期，本次为空跑（正常）。" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "- 详细输出见上方各步骤日志。" >> "$GITHUB_STEP_SUMMARY"

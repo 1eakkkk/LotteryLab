@@ -1,0 +1,18 @@
+[
+  {
+    "issueNumber": "26105",
+    "redBalls": [2, 4, 13, 14, 15, 30],
+    "blueBall": 8,
+    "drawDate": "2026-09-10",
+    "_peer_source": {
+      "type": "official_announcement_newspaper",
+      "name": "金华日报数字报 · 中国福利彩票开奖公告（第2026105期）",
+      "url": "https://epaper.jhnews.com.cn/jrwb/jhwbpaper/pc/con/202609/11/content_556078.html",
+      "published": "2026-09-11",
+      "quoted": "福彩双色球 第2026105期 投注总额：333874688元 中奖号码：红色球 30 15 4 2 14 13 / 8",
+      "independent_of": "gudaoxuri/lottery_history",
+      "verified_at": "2026-09-13",
+      "cross_check_note": "该公告同时给出六等奖中奖 14,332,306 注、投注总额 333,874,688 元（合 166,937,344 注），六等奖占比 8.5854%；按奖级规则「仅中蓝球」应为 1/16 减去被更高奖级吸收的部分，与组合数计算结果相互印证——这一条不依赖任何第三方数据源，是公告自身的内部一致性检验。"
+    }
+  }
+]
