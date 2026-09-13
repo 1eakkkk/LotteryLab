@@ -57,11 +57,11 @@ Write-Host "工作目录：$root"
 
 if (-not $NoFetch) {
   if ($Peer) {
-    Invoke-Step "1/8 抓取上游数据 + 逐期交叉核对 + 第二来源复核（$Peer）+ 写入" {
+    Invoke-Step "1/9 抓取上游数据 + 逐期交叉核对 + 第二来源复核（$Peer）+ 写入" {
       node scripts/fetch-data.js --peer $Peer --apply
     }
   } else {
-    Invoke-Step "1/8 抓取上游数据 + 逐期交叉核对 + 写入" {
+    Invoke-Step "1/9 抓取上游数据 + 逐期交叉核对 + 写入" {
       node scripts/fetch-data.js --apply
     }
   }
@@ -70,18 +70,19 @@ if (-not $NoFetch) {
   Write-Host "（-NoFetch：跳过抓取，直接用本地已有数据重算）" -ForegroundColor Yellow
 }
 
-Invoke-Step "2/8 清洗数据（原始 → 标准格式）" { node scripts/prepare-data.js }
-Invoke-Step "3/8 数据硬校验（格式 / 奖级全枚举 / 组合概率 / 分布 / 指纹）" { node scripts/verify-data.js }
-Invoke-Step "4/8 重跑 Walk-Forward 回测与蒙特卡洛" { node src/build.js }
-Invoke-Step "5/8 重新生成页面" {
+Invoke-Step "2/9 清洗数据（原始 → 标准格式）" { node scripts/prepare-data.js }
+Invoke-Step "3/9 数据硬校验（格式 / 奖级全枚举 / 组合概率 / 分布 / 指纹）" { node scripts/verify-data.js }
+Invoke-Step "4/9 重跑 Walk-Forward 回测与蒙特卡洛" { node src/build.js }
+Invoke-Step "5/9 重新生成页面" {
   node src/build-site.js
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
   Copy-Item public/index.html index.html -Force
   Write-Host "已同步 public/index.html → index.html（GitHub Pages root 模式需要）"
 }
-Invoke-Step "6/8 页面内联脚本冒烟测试（模拟浏览器点击三个交互工具）" { node scripts/smoke-test-client.js }
-Invoke-Step "7/8 工作流规则级校验（GitHub 专属规则，防非法 cron）" { node scripts/lint-workflows.js }
-Invoke-Step "8/8 合规红线审计" { node scripts/audit-safety.js }
+Invoke-Step "6/9 页面内联脚本冒烟测试（模拟浏览器点击三个交互工具）" { node scripts/smoke-test-client.js }
+Invoke-Step "7/9 工作流规则级校验（GitHub 专属规则，防非法 cron）" { node scripts/lint-workflows.js }
+Invoke-Step "8/9 排程语义校验真实性测试（注入错误，确认校验真的会红）" { node scripts/test-schedule-lint.js }
+Invoke-Step "9/9 合规红线审计" { node scripts/audit-safety.js }
 
 Write-Host ""
 Write-Host ("=" * 70) -ForegroundColor DarkGray

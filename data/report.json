@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-13T02:29:25.357Z",
+  "generated_at": "2026-09-13T02:34:56.284Z",
   "dataset_snapshot": "2026-09-12",
   "data_source": "gudaoxuri/lottery_history (GitHub)",
   "data_range": {
@@ -15016,7 +15016,7 @@
     "disclaimer": "一/二等奖按历史近似平均值估算，非官方精算数据，仅用于示意长期负期望现象。"
   },
   "data_verification": {
-    "verified_at": "2026-09-13T02:29:21.808Z",
+    "verified_at": "2026-09-13T02:34:52.776Z",
     "data_file": "data/ssq.json",
     "data_fingerprint_sha256": "bcf2b4804e10934ded9bf35e68c3cf69fa5c60dd1649dce58b423dc4afa48fe4",
     "data_range": {

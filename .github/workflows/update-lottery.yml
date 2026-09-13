@@ -47,14 +47,19 @@ on:
   push:
     paths:
       - ".github/workflows/update-lottery.yml"
-      - ".github/workflows/ci-selftest.yml"
       - "scripts/fetch-data.js"
       - "scripts/prepare-data.js"
       - "scripts/verify-data.js"
       - "scripts/smoke-test-client.js"
       - "scripts/audit-safety.js"
+      - "scripts/lint-workflows.js"
       - "src/build.js"
       - "src/build-site.js"
+      - "src/number-health.js"
+      - "src/number-tools-client.js"
+      - "src/my-strategy-client.js"
+      - "src/strategies.js"
+      - "src/backtest.js"
 
 permissions:
   contents: write               # 需要写回数据与重建产物

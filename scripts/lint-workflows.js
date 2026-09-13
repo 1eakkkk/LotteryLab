@@ -51,6 +51,130 @@ async function tryLoadActionlint() {
   return null;
 }
 
+// ---------------------------------------------------------------------------
+// 语义校验：cron 表达式必须真的对准开奖日
+// ---------------------------------------------------------------------------
+// actionlint 只能证明 cron「合法」；它证明不了 cron「对不对」。
+// 上次的故障里其实藏了两个独立的错，而 actionlint 只抓得到第一个：
+//   · 第一个：星期写成 7 —— 非法，GitHub 直接拒绝整份文件（actionlint 抓到）
+//   · 第二个：次日窗口写成周一/三/五 —— 完全合法，但开奖日是周二/周四/周日，
+//             次日应该是周三/周五/周一，整个窗口错开了一天（actionlint 抓不到）
+// 如果只修第一个，定时任务会在错误的日子醒来，而且不会有任何报错。
+//
+// 所以这里把「开奖日 → 应当什么时候跑」这个**业务约定**也写成断言。
+// 它防的是：以后有人改排程时改错了某一位，而所有工具都说"没问题"。
+const DRAW_DAYS = [0, 2, 4]; // 双色球开奖：周日(0) / 周二(2) / 周四(4)
+
+// 期望的排程表。这里写成**完整清单**而不是"至少有一个对得上"，
+// 因为后者有漏洞：本次真实性测试里，只把 00:00 那个窗口的星期改错，校验仍然是绿的——
+// 因为另一个 08:40 窗口的星期刚好也对得上，把错误掩盖过去了。
+// （教训：断言"存在一个正确的"几乎总是太弱，要断言"全部都正确"。）
+// 改排程时同步改这张表；如果是有意调整，下面的注释会提醒你在文档里写清原因。
+const EXPECTED_SCHEDULE = [
+  { expr: "40 13 * * 2,4,0", purpose: "开奖当天 21:40（北京）—— 号码公布后" },
+  { expr: "0 16 * * 3,5,1", purpose: "开奖日的次日 00:00（北京）—— 上游通常在这个窗口写入新数据" },
+  { expr: "40 0 * * 3,5,1", purpose: "开奖日的次日 08:40（北京）—— 上游刚更新完的兜底" },
+];
+
+function parseCron(expr) {
+  const parts = String(expr).trim().split(/\s+/);
+  if (parts.length !== 5) return null;
+  const [minute, hour, dom, month, dow] = parts;
+  return {
+    minute: Number(minute),
+    hour: Number(hour),
+    dom,
+    month,
+    dows: dow.split(",").map(Number),
+  };
+}
+
+function checkScheduleSemantics(files) {
+  const problems = [];
+  let checkedAny = false;
+
+  for (const file of files) {
+    const rel = path.relative(ROOT, file).replace(/\\/g, "/");
+    // 只对抓取更新工作流做这条业务断言（其他工作流不涉及开奖日）
+    if (!rel.includes("update-lottery")) continue;
+    const src = fs.readFileSync(file, "utf-8");
+
+    const cronRe = /-\s*cron:\s*["']([^"']+)["']/g;
+    const crons = [];
+    let m;
+    while ((m = cronRe.exec(src)) !== null) {
+      crons.push({ expr: m[1].trim(), line: src.slice(0, m.index).split("\n").length });
+    }
+    if (crons.length === 0) continue;
+    checkedAny = true;
+
+    const nextDayOf = (d) => (d + 1) % 7;
+    const expectSameNight = [...DRAW_DAYS].sort((a, b) => a - b);
+    const expectNextDay = DRAW_DAYS.map(nextDayOf).sort((a, b) => a - b);
+    const eqSet = (a, b) => JSON.stringify([...a].sort((x, y) => x - y)) === JSON.stringify([...b].sort((x, y) => x - y));
+    const dowName = (d) => "周" + "日一二三四五六"[d];
+
+    // ---- 第一层：每个 cron 自身是否合法 ----
+    for (const c of crons) {
+      const p = parseCron(c.expr);
+      if (!p) {
+        problems.push(`${rel}:${c.line} cron "${c.expr}" 不是 5 段格式`);
+        continue;
+      }
+      const badDow = p.dows.filter((d) => !Number.isInteger(d) || d < 0 || d > 6);
+      if (badDow.length) {
+        problems.push(`${rel}:${c.line} cron "${c.expr}" 星期含非法值 ${badDow.join(",")}（合法域 0~6，0=周日；注意没有 7）`);
+      }
+      if (!(p.hour >= 0 && p.hour <= 23)) problems.push(`${rel}:${c.line} cron "${c.expr}" 小时越界`);
+      if (!(p.minute >= 0 && p.minute <= 59)) problems.push(`${rel}:${c.line} cron "${c.expr}" 分钟越界`);
+    }
+
+    // ---- 第二层：期望排程必须逐条存在 ----
+    const actualSet = new Set(crons.map((c) => c.expr));
+    for (const exp of EXPECTED_SCHEDULE) {
+      if (!actualSet.has(exp.expr)) {
+        problems.push(
+          `${rel}: 缺少预期排程 "${exp.expr}"（${exp.purpose}）。` +
+            `若是有意调整排程，请同步更新 scripts/lint-workflows.js 里的 EXPECTED_SCHEDULE，并在方案/README 写清原因。`
+        );
+      }
+    }
+
+    // ---- 第三层：每个 cron 的星期必须落在两个合法窗口之一 ----
+    // 这一层防的是"多写了一个日子错的开奖窗口"——上面两层都查不出来。
+    for (const c of crons) {
+      const p = parseCron(c.expr);
+      if (!p) continue;
+      const isSameNight = eqSet(p.dows, expectSameNight);
+      const isNextDay = eqSet(p.dows, expectNextDay);
+      if (!isSameNight && !isNextDay) {
+        problems.push(
+          `${rel}:${c.line} cron "${c.expr}" 的星期 [${p.dows.map(dowName).join("/")}] 既不是开奖当天` +
+            `（${expectSameNight.map(dowName).join("/")}）也不是其次日（${expectNextDay.map(dowName).join("/")}）——排错日子了`
+        );
+      }
+    }
+
+    // ---- 第四层：两个窗口都必须有（防"整类窗口被删掉"）----
+    const hasSameNight = crons.some((c) => {
+      const p = parseCron(c.expr);
+      return p && eqSet(p.dows, expectSameNight);
+    });
+    const hasNextDay = crons.some((c) => {
+      const p = parseCron(c.expr);
+      return p && eqSet(p.dows, expectNextDay);
+    });
+    if (!hasSameNight) {
+      problems.push(`${rel}: 没有任何 cron 落在「开奖当天」（${expectSameNight.map(dowName).join("/")}）——当晚的更新窗口缺失`);
+    }
+    if (!hasNextDay) {
+      problems.push(`${rel}: 没有任何 cron 落在「开奖日的次日」（${expectNextDay.map(dowName).join("/")}）——次日补跑窗口缺失`);
+    }
+  }
+
+  return { problems, checkedAny };
+}
+
 async function main() {
   const files = listWorkflows();
   console.log("=".repeat(78));
@@ -63,6 +187,7 @@ async function main() {
     return;
   }
 
+  // ---- 第一层：actionlint（GitHub 语法与规则）----
   const lint = await tryLoadActionlint();
   if (!lint) {
     console.log("");
@@ -73,30 +198,45 @@ async function main() {
     console.log("");
     console.log("  ⚠ 这不是可以长期忽略的提示：缺了这道校验，一个非法 cron 表达式");
     console.log("    就能让整个定时任务静默失效，而且症状完全不像 cron 的问题。");
-    return;
   }
 
   let problems = 0;
-  for (const file of files) {
-    const rel = path.relative(ROOT, file).replace(/\\/g, "/");
-    const src = fs.readFileSync(file, "utf-8");
-    let results;
-    try {
-      results = lint(src, rel);
-    } catch (e) {
-      problems++;
-      console.log(`  [FAIL] ${rel} 校验过程抛错：${e.message}`);
-      continue;
+  if (lint) {
+    for (const file of files) {
+      const rel = path.relative(ROOT, file).replace(/\\/g, "/");
+      const src = fs.readFileSync(file, "utf-8");
+      let results;
+      try {
+        results = lint(src, rel);
+      } catch (e) {
+        problems++;
+        console.log(`  [FAIL] ${rel} 校验过程抛错：${e.message}`);
+        continue;
+      }
+      if (!results || results.length === 0) {
+        console.log(`  [pass] ${rel}  （GitHub 规则级校验）`);
+      } else {
+        problems += results.length;
+        console.log(`  [FAIL] ${rel} —— ${results.length} 处问题：`);
+        results.forEach((r) => {
+          console.log(`         · 第 ${r.line} 行 第 ${r.column} 列 [${r.kind}] ${r.message}`);
+        });
+      }
     }
-    if (!results || results.length === 0) {
-      console.log(`  [pass] ${rel}`);
-    } else {
-      problems += results.length;
-      console.log(`  [FAIL] ${rel} —— ${results.length} 处问题：`);
-      results.forEach((r) => {
-        console.log(`         · 第 ${r.line} 行 第 ${r.column} 列 [${r.kind}] ${r.message}`);
-      });
-    }
+  }
+
+  // ---- 第二层：语义校验（cron 是否真的对准开奖日）----
+  console.log("");
+  console.log("-".repeat(78));
+  console.log("语义校验：cron 是否对准开奖日（actionlint 查不出这一类问题）");
+  const sem = checkScheduleSemantics(files);
+  if (!sem.checkedAny) {
+    console.log("  [warn] 没有找到需要做语义校验的更新工作流，跳过");
+  } else if (sem.problems.length === 0) {
+    console.log(`  [pass] 开奖当天窗口与次日窗口的星期均与开奖日(${DRAW_DAYS.map((d) => "周" + "日一二三四五六"[d]).join("/")})对齐`);
+  } else {
+    problems += sem.problems.length;
+    sem.problems.forEach((p) => console.log(`  [FAIL] ${p}`));
   }
 
   console.log("");
@@ -108,7 +248,7 @@ async function main() {
     process.exit(1);
   }
   console.log("=".repeat(78));
-  console.log("全部工作流通过 GitHub 规则级校验。");
+  console.log("全部工作流通过 GitHub 规则级校验与开奖日语义校验。");
   console.log("=".repeat(78));
 }
 
