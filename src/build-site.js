@@ -380,7 +380,9 @@ function buildDataVerification(verification) {
   </div>`;
   }
 
-  const cc = sv.cross_check;
+  // 兼容两代数据结构：早期是 cross_check（单源 + 人工抽查），
+  // 多源合并后换成 merge。留一个兜底，避免记录文件换代时这里直接抛错。
+  const cc = sv.merge || sv.cross_check || {};
   const peer = sv.new_period_peer_check;
   const ann = peer.announcement_internal_check;
   const repo = sv.repo_check;
@@ -673,7 +675,9 @@ function buildEvidenceExplainer(power, leaderboard) {
   const m = power.money_value_check;
   const ci = power.observed_diff_ci_95;
   const hot = leaderboard.find((r) => r.strategy_key === "hot");
-  const blindBlind = leaderboard.find((r) => r.strategy_key === "hot");
+  // 取"盲测集期数最少"的那一段用于举例。原来这里叫 blindBlind 且硬取了 hot 策略，
+  // 但四段的盲测边界相同、且 hot 已不是表现最好的策略（ML 更高），命名与取值都会误导。
+  const blindRef = leaderboard[0];
 
   // 「统计精度」对照表：数据量带来的真实收益，必须让读者看见。
   // 为什么需要这一块：数据从 252 期扩到 3502 期之后，所有策略的证据等级**仍然是"无证据"**，
@@ -691,6 +695,7 @@ function buildEvidenceExplainer(power, leaderboard) {
     },
     {
       label: "95% 置信区间宽度",
+      // 旧值取自 252 期数据时的实测区间宽度（历史记录，不随数据变化）
       old: "±0.13",
       now: `±${ciHalfWidth.toFixed(3)}`,
       why: "标准误随 √期数 缩小，区间按比例收窄",
@@ -721,7 +726,7 @@ function buildEvidenceExplainer(power, leaderboard) {
   <table>
     <thead><tr><th>证据等级</th><th>什么时候出现</th><th>它的真实含义</th></tr></thead>
     <tbody>
-      <tr><td><span class="ev ev-insufficient">样本量不足</span></td><td>该段期数少于 100 期（例如当前盲测集只有 ${blindBlind ? blindBlind.segments.blind.periods_tested : 31} 期）</td><td><strong>数据确实太少</strong>，什么结论都不能下——这是"再等等看"<strong>唯一</strong>成立的情况</td></tr>
+      <tr><td><span class="ev ev-insufficient">样本量不足</span></td><td>该段期数少于 100 期（例如当前盲测集只有 ${blindRef && blindRef.segments.blind ? blindRef.segments.blind.periods_tested : 31} 期）</td><td><strong>数据确实太少</strong>，什么结论都不能下——这是"再等等看"<strong>唯一</strong>成立的情况</td></tr>
       <tr><td><span class="ev ev-none">无证据</span></td><td>期数足够（≥100 期），但置信区间覆盖了理论期望</td><td><strong>数据已经足够</strong>，结论就是"没有可检出的差异"。不是"还不知道"，而是"已经知道没有大的"</td></tr>
     </tbody>
   </table>
@@ -736,7 +741,7 @@ function buildEvidenceExplainer(power, leaderboard) {
     <p><strong>扩数据不改变结论方向，它改变的是结论的硬度。</strong>如果数据多了之后"无证据"突然变成了"有效"，那才该怀疑出了问题——因为在"每期独立等概率"的前提下，长期正确结果本来就是"没有差异"。数据越多，我们越有资格说"这个差异不存在（或小到没有实际意义）"，而不是"还看不出来"。</p>
   </div>
 
-  <p>下面是"已经知道没有大的"这句话的量化版本。以目前检验过的<b>热号策略</b>为例（它是三个策略里表现最好的一个）：</p>
+  <p>下面是"已经知道没有大的"这句话的量化版本。以目前检验过的<b>热号策略</b>为例（注意：它并不是四组里表现最好的——ML 逻辑回归的均命中更高，这里取它只是因为它是"规则型策略"里最有代表性的一个；用哪一组做例子都不影响下面的量级结论）：</p>
   <table>
     <thead><tr><th>问题</th><th>答案</th><th>怎么理解</th></tr></thead>
     <tbody>
@@ -839,6 +844,58 @@ function buildComparisonSection(numberTools, history, baseline, clientHistory) {
     ${maxOmission ? `<p>如果你输入的号码里有那个"很久没出"的号（例如当前遗漏最长的 <span class="mono">${maxOmission.number}</span>，已 ${maxOmission.current} 期未出），对照结果不会因为它"该出了"而变好——上面「遗漏分布」那一节已经算过：这么长的遗漏在整份数据里本来就会出现约 ${maxOmission.expected_occurrences} 次。</p>` : ""}
     <p class="dim">本站刻意<b>不</b>给"累计盈亏"这样单独一个数字：那个数字会被读成"我这个号码行不行"，而它其实只由几注固定奖级的末等奖决定，波动极大。所以这里给的是完整的命中分布与奖级分布，让"绝大多数期数一分钱不中"这件事直接看得见。</p>
   </div>`;
+}
+
+// ===========================================================================
+// 模板战报区块（方案第八节）
+// ---------------------------------------------------------------------------
+// 为什么值得单独一块：这是"上一期给了四组号码，这一期开出来了，然后呢"的答案。
+// 但它同时是本页最危险的一块——标题稍有不慎就会变成"上期命中回顾"，
+// 那正是方案 17.3 第 4 层第 5 条明令禁止的东西。
+//
+// 本区块靠三条硬约束守住：
+//   1. 固定标题「上期各组表现（含随机对照组）」，不叫命中回顾/战果；
+//   2. 四组（含随机对照）必须全部出现在同一张表里；
+//   3. 结论句由 recap.js 按规则生成，且必须给出"命中这么多有多常见"的概率参照。
+// 冒烟测试里有对应断言，缺任何一条都会红。
+// ===========================================================================
+function buildRecapSection(recap) {
+  if (!recap) return "";
+  const rows = recap.rows
+    .map(
+      (r) => `
+      <tr${r.isControl ? ' class="recap-control"' : ""}>
+        <td>${r.isControl ? "<b>纯随机对照组</b>" : r.name}</td>
+        <td class="mono">${r.red.join(" ")}</td>
+        <td class="mono">${r.blue}</td>
+        <td class="mono">${r.hits}</td>
+        <td>${r.blueHit ? "是" : "否"}</td>
+        <td class="mono">${r.meanHit.toFixed(4)}</td>
+        <td><span class="ev ev-${r.evidenceLevel || "none"}">${r.evidence}</span></td>
+      </tr>`
+    )
+    .join("\n");
+
+  return `
+  <h2>${recap.title}</h2>
+  <p>${recap.paragraphs[0]}</p>
+  <table>
+    <thead>
+      <tr>
+        <th>号码组</th><th>红球</th><th>蓝球</th>
+        <th>本期命中红球</th><th>蓝球命中</th><th>该组长期均命中</th><th>证据等级</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="notice notice-strong">
+    <p>${recap.paragraphs[2]}</p>
+    <p>${recap.paragraphs[3]}</p>
+  </div>
+  <div class="notice">
+    <p>${recap.paragraphs[4]}</p>
+  </div>
+  <p class="dim">本战报由 <code>${recap.generated_by}</code>。它只做一件事：把已经算好的数字重新表述一遍——<strong>不产生任何新的统计量，也不参与号码生成</strong>。将来若要接入语言模型，输入仍然只是这些结构化事实，且模型依旧无权决定号码（方案第八节）。${recap.guard_note}</p>`;
 }
 
 // ---- V1 新增：我的策略权重滑块，需要给浏览器端嵌入一份精简历史数据 ----
@@ -972,6 +1029,8 @@ function main() {
   const evidenceExplainer = buildEvidenceExplainer(report.evidence_power_analysis, leaderboard);
   // ML 策略专区块：把"机器学习能不能预测彩票"这件事摊开讲
   const mlSection = buildMlSection(leaderboard, report.ml_model_weights);
+  // 模板战报：上一期四组号码 vs 本期真实开奖（含随机对照组）
+  const recapSection = buildRecapSection(report.recap);
   // 对照台：用户自己的号码 vs 全部历史
   const comparisonSection = buildComparisonSection(
     report.number_tools,
@@ -1410,6 +1469,10 @@ function main() {
 
   <section class="module is-active" id="mod-observe">
     ${observationSection}
+
+    <div class="divider"></div>
+
+    ${recapSection}
     <div class="divider"></div>
     ${comparisonSection}
     <div class="divider"></div>
@@ -1433,7 +1496,7 @@ function main() {
   <div class="divider"></div>
 
   <h2>数据与方法</h2>
-  <p>历史开奖数据来自 <code>gudaoxuri/lottery_history</code>（GitHub 公开仓库，描述为"彩票历史数据收集器"，由 GitHub Actions 每日自动更新），当前版本共 <strong>${report.data_range.count} 期</strong>（${report.data_range.from} ~ ${report.data_range.to}）。该仓库已通过 GitHub API 核实存在且持续更新；本地数据与该仓库已做<strong>逐期逐号交叉核对</strong>（${report.data_range.count - 1} 期全部一致，0 处不符），最新一期另用第二个独立来源复核过——完整记录见下方"数据来源核实记录"一节，那里也写明了本站曾经在这个问题上写错过什么。</p>
+  <p>历史开奖数据来自 <code>gudaoxuri/lottery_history</code>（GitHub 公开仓库，描述为"彩票历史数据收集器"，由 GitHub Actions 每日自动更新），当前版本共 <strong>${report.data_range.count} 期</strong>（${report.data_range.from} ~ ${report.data_range.to}）。该仓库已通过 GitHub API 核实存在且持续更新；本地数据与两个独立数据源做了<strong>逐期逐号交叉核对</strong>（重叠区间 ${verification && verification.source_verification && verification.source_verification.merge ? verification.source_verification.merge.overlap_periods : "196"} 期全部一致，0 处不符），最新一期另用官方开奖公告复核过——完整记录见下方"数据来源核实记录"一节，那里也写明了本站曾经在这个问题上写错过什么。</p>
   <p>回测采用 <strong>Walk-Forward 滚动预测</strong>：预测第 t+1 期时，策略只能看到第 1~t 期的数据，绝不使用未来信息。本版本 <code>minTrainSize = ${report.min_train_size}</code>，即前 ${report.min_train_size} 期只作为初始训练数据，从第 ${report.min_train_size + 1} 期开始才正式计入回测成绩，实际参与评分的有 ${totalPeriods} 期。</p>
   <p>随机基准和蒙特卡洛模拟都使用「期号 + 策略名」做种子的伪随机数，保证同一份数据永远得到同一份排行榜——回测模式下完全不使用 <code>Math.random()</code>。</p>
 
@@ -1442,37 +1505,6 @@ function main() {
   <section class="module" id="mod-strategy">
   <h2>排行榜</h2>
   <p><strong>四个策略</strong>：<span class="s-random">随机基准</span>（完全不看历史，仅作对照）、<span class="s-hot">热号</span>（近50期出现频率最高的号码）、<span class="s-cold">冷号</span>（遗漏期数最长的号码）、<span class="s-ml">ML逻辑回归</span>（<b>机器学习模型</b>：6 个特征 + L2 正则的逻辑回归，每 20 期用"截至当时可见"的数据重训一次，取预测概率最高的 6 个号）。理论期望值 <strong>${report.theoretical_expectation.toFixed(4)}</strong> 是红球 33 选 6 在均匀随机假设下的数学期望（6 × 6/33），独立于任何策略。</p>
-
-  ${mlSection}
-
-  <table>
-    <thead>
-      <tr>
-        <th>策略</th>
-        <th>均命中(红)</th>
-        <th>理论期望</th>
-        <th>95% 置信区间</th>
-        <th>蓝球命中率</th>
-        <th>跑赢随机分布</th>
-        <th>≥4/≥5/6红次数</th>
-        <th>配对检验显著</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${buildLeaderboardRows(leaderboard)}
-    </tbody>
-  </table>
-
-  <div class="notice">
-    ${buildVerdicts(leaderboard)}
-    ${buildFdrNote(leaderboard)}
-  </div>
-
-  <div class="divider"></div>
-
-  ${evidenceExplainer}
-
-  <div class="divider"></div>
 
   ${mlSection}
 
@@ -1652,7 +1684,7 @@ function main() {
   <p><strong>关于顶部那个"下一期观测"区块，需要特别说明它的性质</strong>：它给出的是三组参数化规则 + 一组纯随机对照，<strong>不是预测结论</strong>。方案第十七节把预测功能拆成五层并规定：必须等证据等级、概率表、随机对照三样东西都能正常展示之后，"下一期观测"才允许上线——否则它只会变成一个看起来更专业的选号器。现在这三样都已就位，它才被放到最顶部。反过来也成立：<strong>如果哪天为了页面好看而把随机对照组或证据等级拿掉，这个区块就必须一起下线。</strong></p>
   <p>还没有做的，留给下一版：</p>
   <ul>
-    <li><strong>数据源这一条已经解决了，但还有一个缺口</strong>——仓库真实存在（<code>gudaoxuri/lottery_history</code>，GitHub Actions 每日更新），本地数据与上游逐期逐号核对 0 处不符，新增期另经官方开奖公告双源复核。缺口是：<strong>历史 252 期仍属单一来源</strong>，通过了内部自洽校验，但没有逐期与官方比对。</li>
+    <li><strong>数据源这一条已经解决了，但还有一个缺口</strong>——两个数据源逐期逐号核对 0 处不符，最新一期另经官方开奖公告复核。缺口是：<strong>${verification && verification.source_verification && verification.source_verification.merge ? verification.source_verification.merge.corroborated_by_one : "3306"} 期只有单一来源背书</strong>（它们通过了内部自洽校验与开奖日校验，但没有第二个来源逐期印证）。</li>
     <li>资金模拟器参数化（初始本金 / 每期注数可调）、传播素材导出（擂台图 / 收敛曲线静态图片）</li>
     <li>AI 战报（先用模板文案，暂不接入任何模型）</li>
     <li>大乐透等第二种彩票、Agent Skill 接口</li>

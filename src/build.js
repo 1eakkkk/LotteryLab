@@ -1,8 +1,10 @@
-const fs = require("fs");
+﻿const fs = require("fs");
 const path = require("path");
 
 const { randomStrategy, hotStrategy, coldStrategy, weightedStrategy } = require("./strategies");
 const { mlStrategy, FEATURE_NAMES } = require("./ml-strategy");
+const { seededRandom } = require("./rng");
+const { buildTemplateRecap } = require("./recap");
 const {
   buildNumberHealth,
   buildOmissionAnalysis,
@@ -29,6 +31,9 @@ const MONTE_CARLO_RUNS = 5000;
 // 3502 期回测下约重训 170 次（每次约 47ms），总计几秒；
 // 信息延迟最多 20 期，对"彩票是否存在可利用结构"这个待检验命题没有实质影响。
 const ML_RETRAIN_EVERY = 20;
+// 热号策略的回看窗口（期）。这个值出现在页面文案里，所以必须显式命名、单点定义，
+// 不允许再出现"代码里是 A、文案里写 B"的情况。
+const HOT_WINDOW = 50;
 const BET_COST = 2; // 双色球单注 2 元
 const DATASET_VERSION = "2026-09-12";
 const STRATEGY_VERSIONS = {
@@ -412,11 +417,10 @@ function buildNumberSpaceBaseline(history, samples) {
   const all = [];
   for (let i = 1; i <= 33; i++) all.push(String(i).padStart(2, "0"));
 
-  let seed = 42; // 固定种子：可复现
-  const rnd = () => {
-    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
-    return seed / 0x7fffffff;
-  };
+  // 用项目统一的 Mulberry32（src/rng.js）。
+  // 这里曾经是一段手写 LCG，因浮点精度丢失而分布有偏（详见 src/rng.js 与
+  // number-health.js 里同一条注释）。基线生成器本身不随机，就没资格当基线。
+  const rnd = seededRandom(42);
 
   const means = [];
   for (let i = 0; i < samples; i++) {
@@ -482,8 +486,13 @@ function main() {
     (trainData, targetPeriod) => randomStrategy(trainData, targetPeriod, "benchmark-random"),
     MIN_TRAIN_SIZE
   );
-  const hotRecords = walkForwardBacktest(history, hotStrategy, MIN_TRAIN_SIZE);
-  const coldRecords = walkForwardBacktest(history, coldStrategy, MIN_TRAIN_SIZE);
+  // 【重要】策略函数必须用箭头函数包一层再传进来。
+  // 曾经直接把 hotStrategy 当回调传给 walkForwardBacktest，结果回测传入的第三个参数（ctx 对象）
+  // 落到了 hotStrategy 的第三形参 windowSize 上 → slice(-{}) → slice(-NaN) → 返回整个历史，
+  // 于是"近 50 期热号"实际跑成了"全历史热号"，而页面文案、排行榜、功效分析全部按"近50期"解读。
+  // 这个错误不会报错、不会让任何门禁变红，只能靠下面这种显式包装 + 冒烟测试来防。
+  const hotRecords = walkForwardBacktest(history, (train, period) => hotStrategy(train, period, HOT_WINDOW), MIN_TRAIN_SIZE);
+  const coldRecords = walkForwardBacktest(history, (train, period) => coldStrategy(train, period), MIN_TRAIN_SIZE);
 
   // ---- ML 策略（逻辑回归）----
   // 走**完全相同**的 Walk-Forward 流程、相同的 minTrainSize、相同的盲测边界，
@@ -526,8 +535,7 @@ function main() {
   const mcStd = Math.sqrt(sampleVariance(mcDistribution, mcMean));
 
   // ---- 2.5 训练/验证/盲测三段式分割（V0.5 新增）----
-  const benchmarkSegments = splitByPeriodBoundaries(benchmarkRandomRecords, boundaries);
-  const periodRangeOf = (segRecords) =>
+  const benchmarkSegments = splitByPeriodBoundaries(benchmarkRandomRecords, boundaries);  const periodRangeOf = (segRecords) =>
     segRecords.length === 0 ? null : { from: segRecords[0].period, to: segRecords[segRecords.length - 1].period };
 
   function summarizeSegment(segRecords, benchmarkSegRecords, mcSegDistribution, scopeLabel) {
@@ -670,6 +678,24 @@ function main() {
   };
 
   // ---- 7. 写出所有产物 ----
+  // 下一期观测组：它既进报告（页面展示），也是模板战报的输入，所以先算好复用一次。
+  const nextPeriodObservation = buildNextPeriodObservation(history, benchmarkRandomRecords);
+
+  // ---- 时间顺序自检（防止"用看过答案的号码预测答案"这类数据泄漏）----
+  // 这类错误不会报错、不会让任何门禁变红，只会把假战绩写进页面，所以必须显式断言。
+  const recap = buildTemplateRecap(history, leaderboard);
+  if (recap) {
+    if (!(Number(recap.based_on_through_period) < Number(recap.period))) {
+      throw new Error(
+        `战报时间顺序错误：号码基于第 ${recap.based_on_through_period} 期之前的数据重放，` +
+          `却被用来对照第 ${recap.period} 期——这是数据泄漏。`
+      );
+    }
+    console.log(
+      `战报时间顺序自检通过：号码基于截至第 ${recap.based_on_through_period} 期重放，对照第 ${recap.period} 期`
+    );
+  }
+
   const report = {
     generated_at: new Date().toISOString(),
     dataset_snapshot: DATASET_VERSION,
@@ -715,7 +741,11 @@ function main() {
       multiple_comparison_baseline: estimateMultipleComparisonBaseline(history.length),
     },
     // V4 第 4 层：下一期观测（三组参数化规则 + 一组随机对照）
-    next_period_observation: buildNextPeriodObservation(history, benchmarkRandomRecords),
+    next_period_observation: nextPeriodObservation,
+    // 模板战报（方案第八节）：**历史重放**——用"截至上一期"的数据重建当期会发布的四组号码，
+    // 再与当期真实开奖对照。绝不能直接拿 next_period_observation（那是为下一期生成的，
+    // 用它去对照上一期等于用看过答案的号码去预测答案）。约束见 src/recap.js 顶部注释。
+    recap,
     // ML 模型最终权重：页面要把"模型学到了什么"直接展示给读者看。
     // 这是选逻辑回归而非黑箱模型的核心原因——本站要证明的恰恰是"模型什么也没学到"，
     // 那就必须让人看得见权重。

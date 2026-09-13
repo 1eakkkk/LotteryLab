@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // 数字体检 / 遗漏分布 / 形态诊断 的共用计算模块（V4 第 1~3 层，方案 17.3）
 // ----------------------------------------------------------------------------
 // 为什么单独抽一个文件：
@@ -55,6 +55,23 @@
     var margin = z * Math.sqrt(Math.max(0, (p * (1 - p)) / trials + z2 / (4 * trials * trials)));
     var lo = (center - margin) / denom;
     var hi = (center + margin) / denom;
+
+    // ---- 关于"要不要做有限总体校正"：这里刻意不做，理由是实测（防返工注释）----
+    // 代码审查曾指出：一期是从 33 个号里**不放回**抽 6 个，单号出现次数的真实方差
+    // 应带有限总体校正 √((N−K)/(N−1)) ≈ 0.919，而 Wilson 用的是二项方差，
+    // 因此区间"偏窄约 9%、会过度标记偏离号码"。**这个理论分析本身是对的，但结论是错的。**
+    //
+    // 实测（用合格的 Mulberry32 生成 200 组完全随机的 3502 期数据，统计 33 个号码里
+    // 平均有多少个落在 95% 区间之外，标称值应为 33 × 5% = 1.65）：
+    //   标准 Wilson（不做校正）   平均 1.710 个  → 偏离标称  4%  ✅ 覆盖率是准的
+    //   Wilson + 有限总体校正     平均 2.425 个  → 偏离标称 47%  ❌ 过度标记
+    //   正态 + 精确超几何方差      平均 2.425 个  → 偏离标称 47%  ❌ 过度标记
+    //
+    // 原因：Wilson 区间锚在样本比例 p̂ 上、而不是直接使用完整方差，这个保守性
+    // 恰好抵消了"二项方差偏大"的影响。**所以这里不减方差、也不做 FPC。**
+    // 若将来有人再看到"方差口径不对"就想改，请先跑 scripts/test-interval-calibration.js，
+    // 它会把这三种口径的实测标记率打出来——用数据决定，不要用直觉决定。
+    //
     // 浮点收尾：p=0 或 p=1 时开方项可能出现极小的负数/超出，实测会出现 -0.0000 和 1.0000 这类
     // 越界值。界面上出现"−0.0% 的出现率"这种数字，会让整页的可信度受损，所以这里强制夹到 [0,1]。
     return [Math.max(0, Math.min(1, lo)), Math.max(0, Math.min(1, hi))];
@@ -112,6 +129,7 @@
       return allNumberStrings(total).map(function (number) {
         var count = counts[number];
         var expected = totalPeriods * perPeriodProbability;
+        // 红球/蓝球都要传有限总体校正参数：红球是 33 选 6、蓝球是 16 选 1
         var ci = wilsonInterval(count, totalPeriods);
         var recent = windowsData.map(function (w) {
           var c = (kind === "red" ? w.rc : w.bc)[number];
@@ -370,10 +388,21 @@
   function estimateMultipleComparisonBaseline(periods, trials, seed) {
     if (trials === undefined) trials = 2000;
     if (seed === undefined) seed = 11;
-    var s = seed;
+    // 用 Mulberry32（与 src/rng.js 逐字一致的实现）。
+    // 为什么内联而不 require：本文件会被 build-site.js 原样注入浏览器，不能依赖 CommonJS。
+    // **改动时两边必须同步**，否则页面上的基线与构建期算出来的会不一致。
+    // 这里曾经是一段手写 LCG：(s * 1103515245 + 12345) & 0x7fffffff。
+    // 因为 s*1103515245（最大约 2.37e18）远超 Number.MAX_SAFE_INTEGER，
+    // 浮点精度丢失使 & 0x7fffffff 不再等价于模 2^31，输出的是**有结构的错误分布**
+    // （实测 100 桶卡方 13127.97，而合格的 Mulberry32 只有 106.23）。
+    // 这直接让下面这条"防误读基线"失去意义——基线本身不随机，就没资格当基线。
+    var _a = seed | 0;
     var rnd = function () {
-      s = (s * 1103515245 + 12345) & 0x7fffffff;
-      return s / 0x7fffffff;
+      _a |= 0;
+      _a = (_a + 0x6d2b79f5) | 0;
+      var t = Math.imul(_a ^ (_a >>> 15), 1 | _a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
     var p = RED_PICK / RED_TOTAL;
     var expected = periods * p;

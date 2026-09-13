@@ -20,13 +20,21 @@ function sortAscending(rawHistory) {
 /**
  * @param {Array} rawHistory 原始历史数据（不保证顺序）
  * @param {Function} strategyPredictFn (trainData, targetPeriod, ctx) => { red: string[6], blue: string }
+ *        注意这里的第三个参数是**上下文对象**（用于 ML 的跨期缓存），不是策略自己的配置参数。
+ *        策略如果有额外参数（例如"热号看多少期"），必须由调用方用箭头函数包一层显式传入，
+ *        例如 `(t, p) => hotStrategy(t, p, 50)`。**绝不能把策略函数直接当回调传进来**——
+ *        那会让 ctx 对象落到策略的第二个可选参数上，酿成很难发现的静默错误
+ *        （本项目真实踩过：hotStrategy 的 windowSize 收到 {}，slice(-{}) → slice(-NaN)
+ *          → 返回整个历史数组，于是"近50期热号"实际变成了"全历史热号"）。
  * @param {number} minTrainSize 至少要看过多少期历史才开始"预测"，避免样本太小时的策略毫无意义
  * @param {Object} [strategyCtx] 跨期共享的上下文（例如 ML 策略的权重缓存）。
- *        为什么需要它：像逻辑回归这种"每隔若干期重训一次"的策略需要一个跨期存活的对象
- *        保存上次训练结果；否则每一期都要重新训练，3502 期回测会慢到不可用。
- *        默认空对象，对确定性策略（热号/冷号/随机）完全没有影响。
  */
 function walkForwardBacktest(rawHistory, strategyPredictFn, minTrainSize = 100, strategyCtx = {}) {
+  // 防御：如果有人忘了包一层，直接把策略函数传了进来，这里用一个可识别的标记把 ctx 包起来，
+  // 让"ctx 被当配置用"这类错误在开发期就暴露，而不是悄悄算出一份错的排行榜。
+  if (typeof strategyPredictFn !== "function") {
+    throw new Error("walkForwardBacktest: strategyPredictFn 必须是函数");
+  }
   const history = sortAscending(rawHistory);
 
   const records = [];

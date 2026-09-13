@@ -412,6 +412,48 @@ function main() {
     check("填入后自动完成对照", cmpResult.innerHTML.includes("对照结果"));
   }
 
+  // ---- 校验：策略回测的参数没有被静默丢弃（防 S1 类回归）----
+  // 背景：本项目真实发生过一次严重事故——build.js 把 hotStrategy **直接**当回调传给
+  // walkForwardBacktest，于是回测传入的第三个参数（ctx 对象）落到了 hotStrategy 的
+  // 第三形参 windowSize 上，`slice(-{})` → `slice(-NaN)` → 返回整个历史数组。
+  // 结果："近 50 期热号"实际跑成了"全历史热号"，页面文案、排行榜、功效分析全部按
+  // "近50期"解读，而代码从来没这么做过——**不报错、不让任何门禁变红、3402 期里
+  // 选出的号码与原意没有一期相同**。
+  // 这类"参数被静默吞掉"的错误只能靠断言守住，所以这里直接测"窗口是否真的生效"。
+  {
+    const { hotStrategy } = require("../src/strategies.js");
+    const hist = lab && lab.historyCompact
+      ? lab.historyCompact.split("\n").map((l) => {
+          const p = l.split("|");
+          return { period: p[0], red: p[1].split(" "), blue: p[2] };
+        })
+      : null;
+    if (hist && hist.length > 120) {
+      const withWindow = hotStrategy(hist, "99999", 50).red.join(" ");
+      const withObject = hotStrategy(hist, "99999", {}).red.join(" ");
+      check(
+        "hotStrategy 的窗口参数真的生效（传入对象与传入 50 结果必须不同）",
+        withWindow !== withObject,
+        `window=50 → [${withWindow}]，window={} → [${withObject}]`
+      );
+      // 更直接：传 50 与传 全量长度 必须不同（否则说明窗口被忽略）
+      const withFull = hotStrategy(hist, "99999", hist.length).red.join(" ");
+      check(
+        "hotStrategy 传 50 与传全量历史结果不同（确认没有退化成全历史）",
+        withWindow !== withFull,
+        `window=50 → [${withWindow}]，window=全量 → [${withFull}]`
+      );
+    } else {
+      check("hotStrategy 窗口回归测试", false, "拿不到历史数据，无法测试");
+    }
+    // 顺带断言：页面文案里的窗口数字与代码里的 HOT_WINDOW 一致
+    check(
+      "页面文案声明的热号窗口与代码一致（近50期）",
+      html.includes("近50期") || html.includes("近 50 期"),
+      "页面没有出现「近50期」字样"
+    );
+  }
+
   // ---- 校验：ML 策略区块（V4.5 新增，项目名称承诺的那个检验）----
   // 这一块的价值全在"模型自己学会了忽略历史"这个证据上，而证据由两样东西组成：
   //   权重（全接近 0）+ 成绩（覆盖理论期望、FDR 后不显著）

@@ -21,6 +21,7 @@ const path = require("path");
 const crypto = require("crypto");
 
 const { calculatePrize, bonusOf } = require("../src/backtest");
+const { seededRandom } = require("../src/rng");
 
 const ROOT = path.join(__dirname, "..");
 const target = process.argv[2] ? path.resolve(process.argv[2]) : path.join(ROOT, "data", "ssq.json");
@@ -227,17 +228,19 @@ function chiSquareMC(observedCounts, expectedCount, trials = 2000) {
   const observed = stat(observedCounts);
   const k = observedCounts.length;
   let ge = 0;
-  // 用确定性的种子随机，保证同一份数据、同一个种子，每次跑出完全一样的 p 值。
-  // 种子取一个小常数即可：LCG 的输出质量与种子大小无关，取大数字反而会被
-  // "数字出处检查"当成一个来路不明的硬编码数字。
-  // 顺序是"先推进状态、再取输出"——如果先取输出，第一次调用会直接返回种子本身，
-  // 整个序列也就跟着种子平移（改种子会连带改掉全部 p 值，虽然不影响可复现性，
-  // 但会让"为什么数字变了"变得难以解释）。
-  let seed = 7;
-  const rand = () => {
-    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
-    return seed / 0x7fffffff;
-  };
+  // 用项目统一的 Mulberry32（src/rng.js）+ 固定种子，保证同一份数据每次跑出完全一样的 p 值。
+  //
+  // 【这里曾经是一段手写 LCG，是个严重问题】原文是
+  //     seed = (seed * 1103515245 + 12345) & 0x7fffffff
+  // 而 seed * 1103515245 最大约 2.37e18，远超 Number.MAX_SAFE_INTEGER (9.007e15)，
+  // 每次迭代丢 1~57 位有效数字，于是 & 0x7fffffff 不再等价于模 2^31——
+  // 输出的不是"质量差一点的随机数"，而是**有结构的错误分布**
+  // （实测 100 桶卡方 = 13127.97，df=99、5% 临界值才 123.2；合格的 Mulberry32 是 106.23）。
+  //
+  // 而这一段是**一道门禁的零分布**：下面卡方检验的 p 值就是拿它标定的。
+  // 生成器不随机，门禁的标定就是错的——它还会带着一条"可复现性自检"通过，
+  // 因为那条只能证明"可复现"，证明不了"正确"。
+  const rand = seededRandom(7);
   const draws = Math.round(expectedCount * k / RED_PICK); // 反推期数：每期 6 个红球
   for (let t = 0; t < trials; t++) {
     const counts = new Array(k).fill(0);
@@ -253,6 +256,103 @@ function chiSquareMC(observedCounts, expectedCount, trials = 2000) {
     if (stat(counts) >= observed) ge++;
   }
   return { statistic: observed, pValue: ge / trials, trials, draws };
+}
+
+/**
+ * 休市规律校验（本条是"这份数据是真的"最有力的内部证据）
+ *
+ * 为什么这条特别有价值：它不依赖任何外部数据源，只依赖"双色球每年春节、国庆休市"这个公开常识。
+ * 实测结果（3502 期）：
+ *   · 2004~2026 年每年一次 9~14 天的春节长间隔，全部落在 1~2 月
+ *   · **2020 年出现 51 天长间隔（2020-01-21 → 2020-03-12）**，正是疫情全国停售
+ *   · 2019/2022/2023/2024 各有一次 7 天间隔落在 9 月底→10 月初（国庆休市）
+ * 要伪造这些，必须同时伪造二十多年的春节日期、国庆安排，以及 2020 年疫情停售——
+ * 这基本不可能。所以它比"形状校验通过"有力得多：
+ * 形状校验只能证明数据自洽，而休市规律能证明数据来自真实的开奖历史。
+ *
+ * 同时它也解释了那 4 期"开奖日不在周二/四/日"的异常：
+ * 它们是休市结束后首期的改期（例如 05017 前面正好是 10 天春节休市），不是抓取错误。
+ */
+function checkHolidayPattern(rows) {
+  const dayGap = (a, b) => Math.round((new Date(b) - new Date(a)) / 86400000);
+  const gaps = [];
+  for (let i = 1; i < rows.length; i++) {
+    gaps.push({ from: rows[i - 1], to: rows[i], days: dayGap(rows[i - 1].date, rows[i].date) });
+  }
+  const longGaps = gaps.filter((g) => g.days >= 7);
+  const byYear = {};
+  longGaps.forEach((g) => {
+    const y = g.to.period.slice(0, 2);
+    byYear[y] = byYear[y] || [];
+    byYear[y].push(g);
+  });
+
+  // 春节休市：落在 1~2 月，**或者**是超长停售（≥30 天）。
+  // 为什么把超长停售也算进来：2020 年疫情停售从 2020-01-21 一直停到 2020-03-12（51 天），
+  // 按"恢复日在 1~2 月"过滤会把它漏掉，从而误报"2020 年没有春节休市"——
+  // 这是第一版真实踩到的假警报（数据本身没问题，是判定条件写窄了）。
+  const springFestival = longGaps.filter((g) => {
+    const m = Number(g.to.date.slice(5, 7));
+    return m === 1 || m === 2 || g.days >= 30;
+  });
+  // 国庆休市：落在 9 月底 → 10 月初
+  const nationalDay = longGaps.filter((g) => {
+    const mFrom = Number(g.from.date.slice(5, 7));
+    const mTo = Number(g.to.date.slice(5, 7));
+    return (mFrom === 9 && mTo === 10) || (mFrom === 10 && mTo === 10);
+  });
+  const covid = longGaps.filter((g) => g.days >= 30);
+
+  const yearsCovered = new Set(rows.map((r) => r.period.slice(0, 2)));
+  // 2020 年当年停售过，2020 那一年只有一次春节长间隔；用年份数粗略校验覆盖率
+  const expectedSpring = yearsCovered.size;
+
+  console.log(
+    `  [info] 休市规律：共 ${longGaps.length} 次 ≥7 天的长间隔；` +
+      `其中春节（1~2 月）${springFestival.length} 次、国庆（9 月底→10 月初）${nationalDay.length} 次` +
+      (covid.length ? `、超长停售（≥30 天）${covid.length} 次` : "")
+  );
+  if (covid.length) {
+    covid.forEach((g) => {
+      console.log(
+        `         最长停售：${g.from.period}→${g.to.period}，${g.from.date} → ${g.to.date}（${g.days} 天）` +
+          `——与 2020 年疫情全国停售的时间线一致`
+      );
+    });
+  }
+
+  const problems = [];
+  // 2020 年之后应每年都有春节休市；缺失说明数据可能被裁剪或有缺口
+  const yearsWithSpring = new Set(springFestival.map((g) => g.to.period.slice(0, 2)));
+  const modernYears = [...yearsCovered].filter((y) => Number(y) >= 4 && Number(y) <= 26);
+  const missingSpring = modernYears.filter((y) => !yearsWithSpring.has(y) && Number(y) !== Number(rows[rows.length - 1].period.slice(0, 2)));
+  if (missingSpring.length > 0) {
+    problems.push(
+      `以下年份没有出现春节长间隔，可能是数据缺口（也可能该年确实未休市，需人工确认）：${missingSpring.join(", ")}`
+    );
+  }
+
+  return {
+    long_gaps_total: longGaps.length,
+    spring_festival_gaps: springFestival.length,
+    national_day_gaps: nationalDay.length,
+    longest_gap:
+      longGaps.length > 0
+        ? {
+            from: longGaps.reduce((a, b) => (b.days > a.days ? b : a)).from.period,
+            to: longGaps.reduce((a, b) => (b.days > a.days ? b : a)).to.period,
+            days: Math.max(...longGaps.map((g) => g.days)),
+          }
+        : null,
+    gaps_by_year: Object.fromEntries(
+      Object.entries(byYear).map(([y, list]) => [y, list.map((g) => `${g.from.period}→${g.to.period}(${g.days}天)`)])
+    ),
+    problems,
+    note:
+      "春节/国庆休市留下的长间隔是「数据来自真实开奖历史」的强证据：要伪造它们，" +
+      "必须同时伪造二十多年的春节日期、国庆安排，以及 2020 年疫情停售。" +
+      "这也解释了少数几期开奖日不在周二/四/日——它们多为休市结束后的首期改期。",
+  };
 }
 
 function checkDistributions(rows) {
@@ -393,6 +493,14 @@ function main() {
 
   console.log("");
   console.log("【软校验】输出报告，不阻断构建");
+  let holiday = null;
+  try {
+    holiday = checkHolidayPattern(rows);
+  } catch (e) {
+    softNote(`休市规律校验执行失败：${e.message}`);
+  }
+  if (holiday && holiday.problems.length > 0) holiday.problems.forEach((p) => softNote(p));
+
   let dist = null;
   try {
     dist = checkDistributions(rows);
@@ -444,9 +552,17 @@ function main() {
   if (fs.existsSync(sourceVerificationPath)) {
     try {
       sourceVerification = JSON.parse(fs.readFileSync(sourceVerificationPath, "utf-8"));
+      // 注意：数据结构从"单源 + 人工抽查"升级为"多源合并"之后，
+      // 字段从 cross_check 变成了 merge。这里做兼容读取，避免因为记录文件换代就把
+      // 整段并入逻辑静默跳过（第一版就是直接读了 cross_check，结果报"解析失败"的假警报）。
+      const sv = sourceVerification;
+      const overlap = sv.merge ? sv.merge.overlap_periods : sv.cross_check ? sv.cross_check.matched_periods : "?";
+      const mismatch = sv.merge ? sv.merge.overlap_mismatches : sv.cross_check ? sv.cross_check.mismatches : "?";
+      const merged = sv.merge ? sv.merge.merged_total_periods : "?";
       console.log(
-        `  [info] 已并入数据源核实记录：主源 ${sourceVerification.primary_source.name}，` +
-          `交叉核对 ${sourceVerification.cross_check.matched_periods} 期 / ${sourceVerification.cross_check.mismatches} 处不符`
+        `  [info] 已并入数据源核实记录：主源 ${sv.primary_source.name}` +
+          (sv.secondary_source ? ` + 第二源 ${sv.secondary_source.name}` : "") +
+          `，重叠区间核对 ${overlap} 期 / ${mismatch} 处不符，合并后 ${merged} 期`
       );
     } catch (e) {
       softNote(`数据源核实记录解析失败（不影响硬校验）：${e.message}`);
@@ -479,6 +595,7 @@ function main() {
     },
     soft_notes: soft,
     distribution: dist,
+    holiday_pattern: holiday,
     prize_probability_table: table.map((r) => ({
       level: r.level,
       desc: r.desc,
