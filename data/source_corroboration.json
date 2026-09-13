@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-09-13T03:39:33.966Z",
+  "sources": [
+    {
+      "key": "A",
+      "name": "gudaoxuri/lottery_history",
+      "periods": 252
+    },
+    {
+      "key": "C",
+      "name": "samuai0410/lottery",
+      "periods": 3446
+    }
+  ],
+  "total_periods": 3502,
+  "period_range": {
+    "from": "03001",
+    "to": "26105",
+    "count": 3502
+  },
+  "corroborated_by_two_or_more": 196,
+  "corroborated_by_one": 3306,
+  "single_source_breakdown": {
+    "samuai0410/lottery": 3250,
+    "gudaoxuri/lottery_history": 56
+  },
+  "conflicts": 0,
+  "method": "两个独立数据源逐期逐号比对（期号、红球集合、蓝球、开奖日期四项全等）。两源一致的期标记为已交叉印证；只有单一来源的期如实标记，不作为'已核对'对待。任何一期两源不一致即停线报警，不做少数服从多数（只有两个源，没有多数可言）。",
+  "single_source_note": "其中 3306 期只有单一来源背书：samuai0410/lottery 3250 期、gudaoxuri/lottery_history 56 期。这部分数据通过了内部自洽校验，但没有第二个来源交叉印证——页面与 README 必须如实说明。"
+}

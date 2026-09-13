@@ -346,31 +346,46 @@ function main() {
     // 真正的恒等式（第一版这里我写错了断言，值得记下来）：
     //   ✗ 错的写法：固定 6 个号的均命中应当恒等于 6×6/33 = 1.0909
     //     1.0909 是"对随机号码集取平均"的期望值，**不是**某一个具体号码集的取值。
-    //     具体号码集的均命中 = 这 6 个号各自出现次数之和 ÷ 期数，
-    //     完全由这些号在历史上被开出过多少次决定（本例 314/252 = 1.246）。
-    //   ✓ 对的写法：用"数字体检"里每个号的出现次数反推应得值，再与对照结果比对。
-    //     这条断言才能真正抓出"命中统计或期数口径写错"的 bug。
-    const testSet = ["02", "04", "13", "14", "15", "30"];
-    const m = cmpHtml.match(/平均每期命中红球<\/td><td class="mono">([\d.]+)</);
-    const meanHit = m ? Number(m[1]) : NaN;
-    const expectedTotalHits = testSet.reduce((s, b) => {
-      const item = nt.health.red.find((x) => x.number === b);
-      return s + (item ? item.count : 0);
-    }, 0);
-    const expectedMean = expectedTotalHits / nt.health.periods;
-    check(
-      "对照均命中 = 各号码出现次数之和 ÷ 期数（可独立复算的恒等式）",
-      !Number.isNaN(meanHit) && Math.abs(meanHit - expectedMean) < 0.0002,
-      `对照算得 ${meanHit}，由数字体检反推应为 ${expectedMean.toFixed(4)}（${expectedTotalHits} 次 / ${nt.health.periods} 期）`
-    );
+    //   ✓ 对的写法：均命中 = 这 6 个号在**同一段历史**里出现次数之和 ÷ 该段期数。
+    //
+    // V4.5 补充：浏览器端只内嵌最近 CLIENT_HISTORY_PERIODS 期（目前 600 期），
+    // 所以"出现次数"必须用嵌入区间内的次数来反推，不能用全量 3502 期的数字体检结果。
+    // 这条断言因此要自己算一遍嵌入区间内的频次——这反而更严格：
+    // 它同时验证了"编码/解码没错"和"命中统计口径没错"。
+    const embedded = (() => {
+      const raw = lab && lab.historyCompact;
+      if (!raw) return null;
+      return raw.split("\n").map((line) => {
+        const p = line.split("|");
+        return { period: p[0], red: p[1].split(" "), blue: p[2] };
+      });
+    })();
+    check("labData 提供紧凑编码的历史数据", !!embedded && embedded.length > 0, embedded ? embedded.length + " 期" : "缺失");
+
+    if (embedded) {
+      const testSet = ["02", "04", "13", "14", "15", "30"];
+      const expectedTotalHits = embedded.reduce(
+        (s, d) => s + d.red.filter((b) => testSet.includes(b)).length,
+        0
+      );
+      const expectedMean = expectedTotalHits / embedded.length;
+      const m = cmpHtml.match(/平均每期命中红球<\/td><td class="mono">([\d.]+)</);
+      const meanHit = m ? Number(m[1]) : NaN;
+      check(
+        "对照均命中 = 各号码在嵌入区间内的出现次数之和 ÷ 该区间期数",
+        !Number.isNaN(meanHit) && Math.abs(meanHit - expectedMean) < 0.0002,
+        `对照算得 ${meanHit}，由嵌入区间的频次反推应为 ${expectedMean.toFixed(4)}（${expectedTotalHits} 次 / ${embedded.length} 期）`
+      );
+      const distNums = [...cmpHtml.matchAll(/<td class="mono">(\d+) 期<\/td><td class="mono">[\d.]+%<\/td>/g)].map((x) => Number(x[1]));
+      check(
+        "对照命中分布之和等于嵌入区间期数",
+        distNums.reduce((a, b) => a + b, 0) === embedded.length,
+        `各档合计 ${distNums.reduce((a, b) => a + b, 0)}，期望 ${embedded.length}`
+      );
+    }
+
     check("对照结果同时给出理论期望 1.0909 作参照", cmpHtml.includes("1.0909"));
     check("对照结果含蓝球命中率与理论值", cmpHtml.includes("理论值 6.25%"));
-    const distNums = [...cmpHtml.matchAll(/<td class="mono">(\d+) 期<\/td><td class="mono">[\d.]+%<\/td>/g)].map((x) => Number(x[1]));
-    check(
-      "对照命中分布之和等于总期数",
-      distNums.reduce((a, b) => a + b, 0) === nt.health.periods,
-      `各档合计 ${distNums.reduce((a, b) => a + b, 0)}，期望 ${nt.health.periods}`
-    );
     check("对照结果明确区分「重合」与「号码有多好」", cmpHtml.includes("重合") && cmpHtml.includes("不是"));
   }
 

@@ -25,6 +25,17 @@
   var LT = window.LotteryTools;
   if (!LT) return;
 
+  // V4.5：历史数据以紧凑字符串内嵌（每期一行 "期号|红球|蓝球"），这里解码后统一使用，
+  // 与 my-strategy-client.js 用同一套格式。见 buildLabData 的注释。
+  var HISTORY = (function () {
+    var raw = DATA.historyCompact;
+    if (!raw) return DATA.history || [];
+    return raw.split("\n").map(function (line) {
+      var p = line.split("|");
+      return { period: p[0], red: p[1].split(" "), blue: p[2] };
+    });
+  })();
+
   function $(id) {
     return document.getElementById(id);
   }
@@ -260,7 +271,7 @@
     // 「再来一组」用的种子包含一个递增计数器，所以每点一次得到不同的一组；
     // 但同一组永远可复现（种子由期号 + 计数器决定，不依赖 Math.random）。
     demoCounter += 1;
-    var nextPeriod = DATA.nextPeriod || DATA.history[DATA.history.length - 1].period;
+    var nextPeriod = DATA.nextPeriod || HISTORY[HISTORY.length - 1].period;
     var rng = seededRandom(hashSeed("demo-set-" + nextPeriod + "-" + demoCounter));
     var pool = [];
     for (var i = 1; i <= 33; i++) pool.push(pad2(i));
@@ -391,7 +402,7 @@
       fillBtn.addEventListener("click", function () {
         // 用最近一期真实开奖号码填进去，方便直接看到"一组真实开出过的号码，放回历史里表现如何"。
         // 这是给对照用的样本，不是"下期号码"——按钮文案与结果里都写明了这一点。
-        var latest = DATA.history[DATA.history.length - 1];
+        var latest = HISTORY[HISTORY.length - 1];
         input.value = latest.red.join(" ");
         if (blueSel) blueSel.value = String(Number(latest.blue));
         var err = $("dz-error");
@@ -432,7 +443,7 @@
    * 而这一块的目的不是鼓励多买，所以刻意只支持红球复式。
    */
   function runComparison(redPicks, blue) {
-    var history = DATA.history;
+    var history = HISTORY;
     var redCount = redPicks.length;
     var betsPerPeriod = LT.comb(redCount, 6);
 

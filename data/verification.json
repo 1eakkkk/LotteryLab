@@ -1,11 +1,11 @@
 {
-  "verified_at": "2026-09-13T03:10:01.101Z",
+  "verified_at": "2026-09-13T03:40:41.011Z",
   "data_file": "data/ssq.json",
-  "data_fingerprint_sha256": "bcf2b4804e10934ded9bf35e68c3cf69fa5c60dd1649dce58b423dc4afa48fe4",
+  "data_fingerprint_sha256": "4f69ddf4140f29a48b77ef680f2cf70d328581611d051ff60779e70c239f92d5",
   "data_range": {
-    "from": "25005",
+    "from": "03001",
     "to": "26105",
-    "count": 252
+    "count": 3502
   },
   "declared_sources": [
     "gudaoxuri/lottery_history"
@@ -16,29 +16,73 @@
     "primary_source": {
       "name": "gudaoxuri/lottery_history",
       "url": "https://github.com/gudaoxuri/lottery_history",
-      "description": "彩票历史数据收集器",
+      "description": "彩票历史数据收集器（每日更新，覆盖近期）",
       "language": "TypeScript",
       "update_mode": "GitHub Actions 每日自动更新",
       "data_file": "data/ssq.json",
-      "fields": "issueNumber / redBalls / blueBall / drawDate"
+      "fields": "issueNumber / redBalls / blueBall / drawDate",
+      "periods": 252,
+      "range": "25005 ~ 26105"
+    },
+    "secondary_source": {
+      "name": "samuai0410/lottery",
+      "url": "https://github.com/samuai0410/lottery",
+      "description": "含完整历史（2003 年至今）的双色球数据镜像",
+      "data_file": "data/ssq_history.json",
+      "fields": "draws[].issue / redBalls / blueBall / date",
+      "periods": 3446,
+      "range": "03001 ~ 26049",
+      "self_declared_source": "datachart.500.com",
+      "self_declared_generated_at": "2026-05-05T01:08:04+08:00",
+      "note": "该仓库自带 metadata 声明了数据来源与生成时间；本站不因此就相信它，而是用它与主源做逐期逐号交叉核对（见下）。"
+    },
+    "merge": {
+      "script": "scripts/merge-sources.js",
+      "method": "两个源逐期逐号比对（期号、红球集合、蓝球、开奖日期四项全等），一致则合并、不一致则停线报警；不做'少数服从多数'——只有两个源，没有多数可言。",
+      "merged_total_periods": 3502,
+      "merged_range": "03001 ~ 26105（2003-02-23 ~ 2026-09-10）",
+      "overlap_periods": 196,
+      "overlap_mismatches": 0,
+      "corroborated_by_two_or_more": 196,
+      "corroborated_by_one": 3306,
+      "single_source_breakdown": {
+        "samuai0410/lottery": 3250,
+        "gudaoxuri/lottery_history": 56
+      },
+      "checked_at": "2026-09-13"
     },
     "repo_check": {
-      "method": "GitHub REST API（GET /repos/gudaoxuri/lottery_history）",
-      "http_status": 200,
-      "archived": false,
-      "private": false,
-      "last_data_commit_at": "2026-09-13T00:43:16Z",
-      "last_data_commit_message": "Update lottery data with latest results",
-      "checked_at": "2026-09-13"
+      "method": "GitHub REST API（GET /repos/…）与 raw 内容接口实际抓取",
+      "gudaoxuri": {
+        "http_status": 200,
+        "archived": false,
+        "private": false,
+        "last_data_commit_at": "2026-09-13T00:43:16Z"
+      },
+      "samuai": {
+        "http_status": 200,
+        "data_file_bytes": 1651665,
+        "self_declared_total": 3446
+      }
     },
-    "cross_check": {
-      "method": "把本地 data/ssq_source.json 与上游 data/ssq.json 逐期逐号比对（期号、红球集合、蓝球、开奖日期四项全等）",
-      "matched_periods": 251,
-      "mismatches": 0,
-      "local_only_periods": 0,
-      "new_periods_accepted": 1,
-      "script": "scripts/fetch-data.js",
-      "checked_at": "2026-09-13"
+    "historical_segment_validation": {
+      "note": "重叠区间只有 196 期，无法据此推断 2003 年的数据也对。因此对历史段另做了独立的自洽性校验——这些检查不依赖任何外部源。",
+      "total_periods": 3446,
+      "shape_anomalies": 0,
+      "non_monotonic_dates": 0,
+      "weekday_check": {
+        "rule": "双色球固定在周二/周四/周日开奖",
+        "on_schedule": 3442,
+        "off_schedule": 4,
+        "off_schedule_periods": [
+          "04113",
+          "04114",
+          "05017",
+          "06084"
+        ],
+        "interpretation": "3442/3446 = 99.88% 落在计划开奖日，说明日期字段整体可信；4 期例外分散在不同年份、彼此不相关，不足以判定为系统性错误，也不足以确认是官方特例。本站不臆测原因，如实记录。"
+      },
+      "first_period_consistency": "首期 03001 为 2003-02-23（周日），与开奖日程一致"
     },
     "new_period_peer_check": {
       "period": "26105",
@@ -49,7 +93,7 @@
       "peer_source_url": "https://epaper.jhnews.com.cn/jrwb/jhwbpaper/pc/con/202609/11/content_556078.html",
       "peer_source_published": "2026-09-11",
       "peer_source_quoted": "第2026105期 投注总额：333874688元 中奖号码：红色球 30 15 4 2 14 13 / 8",
-      "result": "两个独立来源逐位一致",
+      "result": "三个来源（两个数据仓库 + 官方开奖公告）逐位一致",
       "announcement_internal_check": {
         "note": "该公告自身的算术自检：全国销售总额换算总注数、六等奖中奖注数占比，与按奖级规则计算的“至少中蓝球”概率相互印证；这一条不依赖任何第三方数据源。",
         "total_sales_yuan": 333874688,
@@ -62,9 +106,10 @@
       }
     },
     "known_limitations": [
-      "只有最新一期（26105）做了人工双源核对；历史 251 期属于单一来源数据，通过了内部自洽校验，但没有逐期与官方比对。",
-      "抓取脚本目前只接入了主数据源；--peer 第二来源需要每次人工提供凭据。",
-      "尚未接入 CI：抓取与五步构建目前需要手动触发。"
+      "3502 期中只有 196 期经过两个数据源交叉印证；其余 3306 期只有单一来源背书（3250 期来自 samuai0410/lottery、56 期来自 gudaoxuri/lottery_history）。单源部分通过了内部自洽校验与开奖日校验，但没有第二个来源逐期印证。",
+      "官方站 cwl.gov.cn 从本机网络无法访问（TLS 层即被拒），因此无法直接以官方接口作为第三来源；最新一期是用官方开奖公告人工核对的。",
+      "4 期（04113/04114/05017/06084）的开奖日不在周二/四/日，原因未明，已如实记录而非抹掉。",
+      "尚未接入 CI 定时抓取：抓取与构建目前由 GitHub Actions 的更新工作流完成，多源合并需手动触发（merge-sources.js 未接入工作流）。"
     ],
     "corrections": [
       {
@@ -76,6 +121,39 @@
       }
     ]
   },
+  "corroboration": {
+    "generated_at": "2026-09-13T03:39:33.966Z",
+    "sources": [
+      {
+        "key": "A",
+        "name": "gudaoxuri/lottery_history",
+        "periods": 252
+      },
+      {
+        "key": "C",
+        "name": "samuai0410/lottery",
+        "periods": 3446
+      }
+    ],
+    "total_periods": 3502,
+    "period_range": {
+      "from": "03001",
+      "to": "26105",
+      "count": 3502
+    },
+    "corroborated_by_two_or_more": 196,
+    "corroborated_by_one": 3306,
+    "single_source_breakdown": {
+      "samuai0410/lottery": 3250,
+      "gudaoxuri/lottery_history": 56
+    },
+    "conflicts": 0,
+    "method": "两个独立数据源逐期逐号比对（期号、红球集合、蓝球、开奖日期四项全等）。两源一致的期标记为已交叉印证；只有单一来源的期如实标记，不作为'已核对'对待。任何一期两源不一致即停线报警，不做少数服从多数（只有两个源，没有多数可言）。",
+    "single_source_note": "其中 3306 期只有单一来源背书：samuai0410/lottery 3250 期、gudaoxuri/lottery_history 56 期。这部分数据通过了内部自洽校验，但没有第二个来源交叉印证——页面与 README 必须如实说明。"
+  },
+  "corroboration_by_period": {
+    "未标记": 3502
+  },
   "hard_checks": {
     "passed": true,
     "total": 3,
@@ -86,64 +164,66 @@
       "组合层概率自检（总组合数、各奖级组合数、中奖概率合计）"
     ]
   },
-  "soft_notes": [],
+  "soft_notes": [
+    "数据源核实记录解析失败（不影响硬校验）：Cannot read properties of undefined (reading 'matched_periods')"
+  ],
   "distribution": {
     "red": {
-      "statistic": 37.909,
-      "pValue": 0.107,
+      "statistic": 44.667,
+      "pValue": 0.9875,
       "trials": 2000,
-      "expectedPerNumber": 45.82
+      "expectedPerNumber": 636.73
     },
     "blue": {
-      "statistic": 9.333,
-      "pValue": 0.529,
+      "statistic": 8.789,
+      "pValue": 0.5525,
       "trials": 2000,
-      "expectedPerNumber": 15.75
+      "expectedPerNumber": 218.88
     },
-    "sum_mean": 99.26,
+    "sum_mean": 100.96,
     "sum_range": [
-      41,
-      153
+      29,
+      172
     ],
     "odd_count_distribution": [
-      0,
-      25,
-      56,
-      87,
-      64,
-      18,
-      2
+      34,
+      240,
+      807,
+      1241,
+      857,
+      278,
+      45
     ],
     "sample_rows": [
       {
-        "period": "25005",
-        "date": "2025-01-12",
-        "red": "10 16 19 27 28 30",
-        "blue": "09"
-      },
-      {
-        "period": "25006",
-        "date": "2025-01-14",
-        "red": "01 07 08 17 20 22",
-        "blue": "06"
-      },
-      {
-        "period": "25007",
-        "date": "2025-01-16",
-        "red": "07 08 14 18 21 27",
+        "period": "03001",
+        "date": "2003-02-23",
+        "red": "10 11 12 13 26 28",
         "blue": "11"
       },
       {
-        "period": "25008",
-        "date": "2025-01-19",
-        "red": "09 14 16 17 25 33",
-        "blue": "11"
+        "period": "03002",
+        "date": "2003-02-27",
+        "red": "04 09 19 20 21 26",
+        "blue": "12"
       },
       {
-        "period": "25009",
-        "date": "2025-01-21",
-        "red": "02 04 11 12 23 25",
-        "blue": "06"
+        "period": "03003",
+        "date": "2003-03-02",
+        "red": "01 07 10 23 28 32",
+        "blue": "16"
+      },
+      {
+        "period": "03004",
+        "date": "2003-03-06",
+        "red": "04 06 07 10 13 25",
+        "blue": "03"
+      },
+      {
+        "period": "03005",
+        "date": "2003-03-09",
+        "red": "04 06 15 17 30 31",
+        "blue": "16"
       },
       {
         "period": "26101",

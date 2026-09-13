@@ -21,7 +21,17 @@
   var DATA = window.__LAB_DATA__;
   if (!DATA) return;
 
-  var history = DATA.history; // 已按期号升序：[{period, red:[...], blue}]
+  // V4.5：历史数据改成紧凑字符串编码内嵌（每期一行 "期号|红球|蓝球"）。
+  // 原因：数据从 252 期涨到 3502 期后，原来的对象数组会让页面多出 344 KB。
+  // 这里解码成与原来完全相同的结构，后面的逻辑一行都不用改。
+  var history = (function () {
+    var raw = DATA.historyCompact;
+    if (!raw) return DATA.history || []; // 兼容旧格式
+    return raw.split("\n").map(function (line) {
+      var p = line.split("|");
+      return { period: p[0], red: p[1].split(" "), blue: p[2] };
+    });
+  })();
   var minTrainSize = DATA.minTrainSize;
   var blindStartPeriod = Number(DATA.boundaries.blindStart);
   var devDistribution = DATA.mcDevDistribution || [];

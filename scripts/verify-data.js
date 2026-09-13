@@ -411,6 +411,29 @@ function main() {
   const canonical = JSON.stringify(rows.map((r) => [r.period, r.date, r.red, r.blue]));
   const fingerprint = crypto.createHash("sha256").update(canonical).digest("hex");
 
+  // 多源印证情况（由 scripts/merge-sources.js 产出）。
+  // 这份数据决定了页面上"多少期经过交叉核对"的表述——不允许把单源数据说成已核对。
+  const corrPath = path.join(ROOT, "data", "source_corroboration.json");
+  let corroboration = null;
+  if (fs.existsSync(corrPath)) {
+    try {
+      corroboration = JSON.parse(fs.readFileSync(corrPath, "utf-8"));
+      console.log(
+        `  [info] 多源印证：共 ${corroboration.total_periods} 期，` +
+          `两源以上印证 ${corroboration.corroborated_by_two_or_more} 期、` +
+          `单一来源 ${corroboration.corroborated_by_one} 期`
+      );
+    } catch (e) {
+      softNote(`多源印证记录解析失败：${e.message}`);
+    }
+  }
+  // 从清洗后的数据里统计每期带几个来源标记（prepare-data.js 会保留 corroborated_by）
+  const corrCounts = {};
+  rows.forEach((r) => {
+    const k = r.corroborated_by === undefined ? "未标记" : String(r.corroborated_by);
+    corrCounts[k] = (corrCounts[k] || 0) + 1;
+  });
+
   const sources = [...new Set(rows.map((r) => r.source))];
 
   // 数据源核实记录（人工核实 + 双源比对的凭据）如果在，就一并并入校验产出。
@@ -441,6 +464,9 @@ function main() {
       "不能证明它逐期都与官方一致。" +
       `当前声明的数据源为：${sources.join("、")}——请使用下方抽样核对表到官方渠道逐条核对。`,
     source_verification: sourceVerification,
+    // 多源印证：每期被几个独立数据源确认过
+    corroboration: corroboration,
+    corroboration_by_period: corrCounts,
     hard_checks: {
       passed: hard.length === 0,
       total: 3,

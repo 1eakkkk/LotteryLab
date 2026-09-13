@@ -1,4 +1,4 @@
-const fs = require("fs");
+﻿const fs = require("fs");
 const path = require("path");
 const { lineChart, histogram } = require("./svg-charts");
 
@@ -319,6 +319,10 @@ function buildDataVerification(verification) {
   const ann = peer.announcement_internal_check;
   const repo = sv.repo_check;
   const ps = sv.primary_source;
+  const ss = sv.secondary_source;
+  const mg = sv.merge;
+  const hv = sv.historical_segment_validation;
+  const corr = v.corroboration;
 
   const limitations = sv.known_limitations.map((x) => `<li>${x}</li>`).join("\n");
   const corrections = sv.corrections
@@ -336,17 +340,54 @@ function buildDataVerification(verification) {
   <h2>数据来源核实记录</h2>
   <p>本站的每一个数字都建立在"这份历史开奖数据是对的"这个前提上，所以这一节把"数据从哪来、核实到什么程度"摊开讲。<strong>这一段记录的是已经做过的事，不是"我们相信它没问题"</strong>——包括本站一度写错、这次被纠正的那条（见本节最后一张表）。</p>
   <div class="notice">
-    <p><strong>先说本站<em>不能</em>证明什么</strong>：自动校验只能证明这份数据<strong>内部自洽</strong>（格式、范围、顺序、奖级规则、概率总和都对得上），<strong>不能证明它逐期都与官方一致</strong>——没有任何自动化手段能替代人工核对。所以本节同时给出抽样核对表，任何人都能拿它去官方渠道逐条核对。</p>
+    <p><strong>先说本站<em>不能</em>证明什么</strong>：自动校验只能证明这份数据<strong>内部自洽</strong>，<strong>不能证明它逐期都与官方一致</strong>——没有任何自动化手段能替代人工核对。所以本节同时给出抽样核对表，任何人都能拿它去官方渠道逐条核对。</p>
   </div>
+
+  <h3>两个数据源，逐期交叉核对</h3>
+  <p>本站现在接入<strong>两个相互独立的数据源</strong>，逐期逐号比对（期号、红球集合、蓝球、开奖日期四项全等）：</p>
+  <table>
+    <thead><tr><th>来源</th><th>覆盖</th><th>期数</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>${ps.name}</code></td><td>${ps.range}</td><td class="mono">${ps.periods}</td><td>${ps.description}；${ps.update_mode}</td></tr>
+      <tr><td><code>${ss.name}</code></td><td>${ss.range}</td><td class="mono">${ss.periods}</td><td>${ss.description}；其自带 metadata 声明数据来源为 ${ss.self_declared_source}</td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th>核对项</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr><td>两源重叠区间</td><td><strong>${mg.overlap_periods} 期</strong>，逐期逐号比对，<strong>${mg.overlap_mismatches} 处不符</strong></td></tr>
+      <tr><td>合并后总覆盖</td><td><strong>${mg.merged_total_periods} 期</strong>（${mg.merged_range}）</td></tr>
+      <tr><td>被两个来源共同印证</td><td class="mono">${mg.corroborated_by_two_or_more} 期</td></tr>
+      <tr><td>只有单一来源背书</td><td class="mono">${mg.corroborated_by_one} 期（${Object.entries(mg.single_source_breakdown).map(([k, n]) => k + " " + n + " 期").join("、")}）</td></tr>
+      <tr><td>冲突处理原则</td><td>${mg.method}</td></tr>
+    </tbody>
+  </table>
+
+  <div class="notice notice-strong">
+    <p><strong>必须说清楚的一件事：${mg.merged_total_periods} 期里只有 ${mg.corroborated_by_two_or_more} 期经过两个源交叉印证。</strong>其余 ${mg.corroborated_by_one} 期只有单一来源背书——它们通过了下面那些内部自洽校验，但<strong>没有第二个来源逐期印证</strong>。本站不会把单源数据说成"已交叉核对"。</p>
+  </div>
+
+  <h3>历史段怎么验证的（重叠区间不够长，所以另做了独立校验）</h3>
+  <p>两源重叠只有 ${mg.overlap_periods} 期，据此无法推断 2003 年的数据也对。所以对历史段（${ss.periods} 期）另做了一组<strong>不依赖任何外部源</strong>的校验：</p>
+  <table>
+    <thead><tr><th>校验</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr><td>形状与范围（红球 6 个互异 1~33、蓝球 1~16、期号唯一递增）</td><td>${hv.shape_anomalies} 处异常</td></tr>
+      <tr><td>日期是否随期号递增</td><td>${hv.non_monotonic_dates} 处非递增</td></tr>
+      <tr><td><strong>开奖日校验</strong>：双色球固定在周二/周四/周日开奖</td><td class="mono">${hv.weekday_check.on_schedule} / ${hv.total_periods} 落在计划日（${((hv.weekday_check.on_schedule / hv.total_periods) * 100).toFixed(2)}%）</td></tr>
+      <tr><td>首期日期与日程一致性</td><td>${hv.first_period_consistency}</td></tr>
+    </tbody>
+  </table>
+  <p class="dim">"开奖日校验"是这里最有力的一条：它不依赖任何外部数据，只依赖"双色球每周二/四/日开奖"这个公开规则。${hv.weekday_check.interpretation}${hv.weekday_check.off_schedule > 0 ? `（例外期号：${hv.weekday_check.off_schedule_periods.join("、")}）` : ""}</p>
+
+  <h3>最新一期：三个来源一致</h3>
   <table>
     <thead><tr><th>项目</th><th>内容</th></tr></thead>
     <tbody>
-      <tr><td>主数据源</td><td><code>${ps.name}</code>（${ps.description}，${ps.language} 项目，${ps.update_mode}）；数据文件 <code>${ps.data_file}</code>，字段 <code>${ps.fields}</code></td></tr>
-      <tr><td>仓库状态</td><td>核实方式：${repo.method}；返回 <strong>HTTP ${repo.http_status}</strong>，<code>archived = ${repo.archived}</code>、<code>private = ${repo.private}</code>；最近一次数据更新提交为 ${repo.last_data_commit_at}（"${repo.last_data_commit_message}"）；核实时间 ${repo.checked_at}</td></tr>
-      <tr><td>逐期交叉核对</td><td>把本地数据与上游 <code>${ps.data_file}</code> <strong>逐期逐号比对</strong>（期号、红球集合、蓝球、开奖日期四项全等）：${cc.matched_periods} 期全部一致，<strong>${cc.mismatches} 处不符</strong>，本地多出而上游查不到的期数 ${cc.local_only_periods} 期；接收新增 ${cc.new_periods_accepted} 期。脚本：<code>${cc.script}</code>，核对时间 ${cc.checked_at}</td></tr>
-      <tr><td>新增期双源核对</td><td>最新一期（${peer.period}，${peer.date}，红 ${peer.red} / 蓝 ${peer.blue}）在写入前用<strong>第二个独立来源</strong>复核：${peer.peer_source_name}（${peer.peer_source_published} 发布），原文摘录"${peer.peer_source_quoted}"。比对结果：<strong>${peer.result}</strong></td></tr>
+      <tr><td>仓库状态</td><td>核实方式：${repo.method}；${ps.name} 返回 <strong>HTTP ${repo.gudaoxuri.http_status}</strong>、未归档；最近一次数据更新提交 ${repo.gudaoxuri.last_data_commit_at}</td></tr>
+      <tr><td>新增期三源核对</td><td>最新一期（${peer.period}，${peer.date}，红 ${peer.red} / 蓝 ${peer.blue}）：两个数据仓库 + ${peer.peer_source_name}（${peer.peer_source_published} 发布），<strong>${peer.result}</strong>。公告原文摘录"${peer.peer_source_quoted}"</td></tr>
       <tr><td>公告内部一致性</td><td>${ann.note}该公告给出全国销售总额 ${ann.total_sales_yuan.toLocaleString("en-US")} 元、合 ${ann.total_bets.toLocaleString("en-US")} 注，六等奖中奖 ${ann.sixth_prize_wins.toLocaleString("en-US")} 注，占比 ${ann.sixth_prize_share_percent}%；而按奖级规则"仅中蓝球"的理论值为 ${ann.theoretical_blue_only_percent}%。${ann.conclusion}</td></tr>
-      <tr><td>抓取与核对脚本</td><td><code>scripts/fetch-data.js</code>：带 3 次重试；两个来源不一致时<strong>直接报警停线，不挑一个继续跑</strong>；写入前自动备份上一版数据</td></tr>
+      <tr><td>抓取与合并脚本</td><td><code>scripts/fetch-data.js</code>（单源抓取 + 交叉核对）、<code>scripts/merge-sources.js</code>（多源合并：多入口轮询、不一致即停线、写入前自动备份）</td></tr>
       <tr><td>仍未做到的</td><td><ul style="margin:0;padding-left:18px">${limitations}</ul></td></tr>
     </tbody>
   </table>
@@ -629,7 +670,7 @@ function buildEvidenceExplainer(power, leaderboard) {
 // 另外用最近一期真实开奖号码做一个"填入"按钮：这让用户能立刻看到
 // "一组真实开出的号码，放回历史里表现如何"——这比抽象说明有说服力得多。
 // ===========================================================================
-function buildComparisonSection(numberTools, history, baseline) {
+function buildComparisonSection(numberTools, history, baseline, clientHistory) {
   const blueOptions = (() => {
     const arr = [];
     for (let i = 1; i <= 16; i++) {
@@ -640,6 +681,10 @@ function buildComparisonSection(numberTools, history, baseline) {
   })();
 
   const latest = history[history.length - 1];
+  // 浏览器端只内嵌最近一部分历史（见 buildLabData 的 CLIENT_HISTORY_PERIODS 说明），
+  // 所以这一节必须如实写出"对照跑在多少期上"，不能笼统说"全部历史"。
+  const clientPeriods = clientHistory ? clientHistory.count : history.length;
+  const clientFrom = clientHistory ? clientHistory.from : history[0].period;
   const maxOmission = numberTools
     ? numberTools.omission.red.reduce((a, b) => (b.current > a.current ? b : a), numberTools.omission.red[0])
     : null;
@@ -649,9 +694,10 @@ function buildComparisonSection(numberTools, history, baseline) {
   <p>这里是<strong>整页唯一需要你输入的地方</strong>。输入你自己的 6 个红球（可以填 7~10 个做复式）和 1 个蓝球，它会同时给出两份结果：</p>
   <ul>
     <li><b>形态诊断</b>——这组号码的奇偶比、大小比、三区分布、连号、和值，以及<strong>有多少组号码和它"长得一样"</strong>；</li>
-    <li><b>历史对照</b>——把它放到<strong>全部 ${history.length} 期真实开奖</strong>上逐期对照：平均命中几个红球、蓝球命中率、逐期命中分布、各奖级中出过几次。</li>
+    <li><b>历史对照</b>——把它放到<strong>最近 ${clientPeriods} 期真实开奖（第 ${clientFrom} 期起）</strong>上逐期对照：平均命中几个红球、蓝球命中率、逐期命中分布、各奖级中出过几次。</li>
   </ul>
   <p>它回答的是一个很自然的问题：<b>"我平时选的这组号码，在这批数据里会是什么样？"</b>——而不是"我该怎么选"。这两件事的区别，就是本页和选号网站的区别。输入只在本机浏览器里计算，不提交、不上传。</p>
+  <p class="dim">说明：为了让页面保持"单个文件、双击即可打开"，浏览器端只内嵌最近 ${clientPeriods} 期数据（数据集总共有 ${history.length} 期）。页面上的其它统计量（数字体检、遗漏分布、观测组、功效分析）都是构建期用<strong>全部 ${history.length} 期</strong>算好写死的，不受这个限制影响。</p>
 
   <div class="nh-panel">
     <label class="nh-label" for="dz-input">红球号码（6 个为单式；7~10 个按复式处理）</label>
@@ -680,10 +726,31 @@ function buildComparisonSection(numberTools, history, baseline) {
 }
 
 // ---- V1 新增：我的策略权重滑块，需要给浏览器端嵌入一份精简历史数据 ----
+// V4.5 优化：数据从 252 期涨到 3502 期后，原来把 history 整个 JSON 内嵌进页面
+// （每期一个 {period, red:[...], blue} 对象）会让 HTML 多出 344 KB。
+// 改成紧凑字符串编码：每期一行 "期号|红球|蓝球"，浏览器端读的时候再切分。
+// 效果：同样的数据体积降到大约 1/4，而"自包含、双击就能打开"这个项目底线不变。
+//
+// 另外只内嵌最近 CLIENT_HISTORY_PERIODS 期，而不是全部 3502 期：
+//   · 页面上的所有统计量（数字体检/遗漏/形态/观测组/功效分析）**都是构建期算好的**，
+//     本来就不需要浏览器端有完整历史；
+//   • 需要浏览器端逐期算的只有"我的策略"滑块（在开发集上跑）和"对照"（用户号码跑一遍），
+//     两者用最近几百期就足够说明问题；
+//   · 全量 3502 期对浏览器端是浪费——用户不会为了看滑块而等一个 1 MB 的页面。
+const CLIENT_HISTORY_PERIODS = 600;
+
 function buildLabData(history, split_boundaries, monte_carlo, min_train_size, report_number_tools, next_period) {
-  const compactHistory = history.map((d) => ({ period: d.period, red: d.red, blue: d.blue }));
+  const recent = history.slice(-CLIENT_HISTORY_PERIODS);
+  // 紧凑编码："25005|10 16 19 27 28 30|09"，用 \n 连接
+  const compactEncoded = recent
+    .map((d) => `${d.period}|${d.red.join(" ")}|${d.blue}`)
+    .join("\n");
   return {
-    history: compactHistory,
+    historyCompact: compactEncoded,
+    historyCompactFormat: "period|red(空格分隔)|blue，每期一行",
+    historyPeriods: recent.length,
+    historyRange: { from: recent[0].period, to: recent[recent.length - 1].period },
+    historyTotalAvailable: history.length,
     minTrainSize: min_train_size,
     // V4 第 1~3 层：把构建期算好的统计量交给浏览器端（只读，不重算）
     numberTools: report_number_tools,
@@ -788,7 +855,16 @@ function main() {
   // 「无证据」是什么：功效分析面板，紧跟排行榜（读者第一次遇到证据等级的地方）
   const evidenceExplainer = buildEvidenceExplainer(report.evidence_power_analysis, leaderboard);
   // 对照台：用户自己的号码 vs 全部历史
-  const comparisonSection = buildComparisonSection(report.number_tools, history, report.number_space_baseline);
+  const comparisonSection = buildComparisonSection(
+    report.number_tools,
+    history,
+    report.number_space_baseline,
+    {
+      count: labData.historyPeriods,
+      from: labData.historyRange.from,
+      to: labData.historyRange.to,
+    }
+  );
 
   const html = `<!doctype html>
 <html lang="zh-CN">
