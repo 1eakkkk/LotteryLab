@@ -7,6 +7,7 @@ const {
   buildOmissionAnalysis,
   buildPatternCombinationTable,
   estimateMultipleComparisonBaseline,
+  comb,
 } = require("./number-health");
 const {
   walkForwardBacktest,
@@ -266,6 +267,122 @@ function buildNextPeriodObservation(history, benchmarkRecords) {
   };
 }
 
+/**
+ * 「无证据」到底是什么意思：用功效分析把它量化，而不是只给一个标签。
+ *
+ * 为什么要专门算这个：
+ *   证据等级写着"无证据"时，几乎所有人都会理解成"数据还不够，等攒够了就有结论了"。
+ *   这是**完全反的**。真实情况是：
+ *     · "样本量不足"（盲测集 31 期）= 数据太少，确实什么都说明不了；
+ *     · "无证据"（整体 151 期以上）= **数据已经足够，结论就是"没有可检出的差异"**。
+ *   两者是两种不同的结论，页面上必须区分清楚，否则"无证据"会被当成"再等等看"。
+ *
+ * 这里把三件事算出来（都是解析解，不需要模拟）：
+ *   1. 当前样本量下能检出的最小效应（80% 功效）——即"我们的尺子能分辨多细的差别"；
+ *   2. 观测到的差异及其 95% 置信区间——即"差异最多能有多大"；
+ *   3. 要检出一个给定大小的真实优势需要多少期——即"换更大的数据集有没有用"。
+ *
+ * 结论通常是：**不是数据不够，是数据已经排除了"存在较大优势"这个可能。**
+ */
+function buildEvidencePowerAnalysis(records, benchmarkRecords) {
+  const n = records.length;
+  const diffs = records.map((r, i) => r.redHits - benchmarkRecords[i].redHits);
+  const meanDiff = mean(diffs);
+  const sd = Math.sqrt(sampleVariance(diffs, meanDiff));
+  const se = sd / Math.sqrt(n);
+
+  // 80% 功效、双侧 5% 水平下能检出的最小效应 ≈ (1.96 + 0.84) × 标准误
+  const zAlpha = 1.959964;
+  const zBeta = 0.8416212;
+  const minDetectableEffect = (zAlpha + zBeta) * se;
+
+  // 观测到的差异的 95% 置信区间（配对差值）
+  const ci = [meanDiff - zAlpha * se, meanDiff + zAlpha * se];
+
+  // 要检出一个大小为 observedDiff 的真实优势，需要多少期：
+  //   n ≈ ((zα + zβ) × sd / d)²
+  const nForObserved = meanDiff === 0 ? null : Math.ceil(Math.pow(((zAlpha + zBeta) * sd) / Math.abs(meanDiff), 2));
+
+  // "就算这个优势是真的，值多少钱"——这是回答"无证据是不是数据不够"的最后一环。
+  // 用精确超几何概率，不用近似（第一版用二项近似，偏高了 2.45 倍）。
+  const money = valueOfEdge(meanDiff);
+
+  return {
+    periods: n,
+    sd_of_paired_diff: Number(sd.toFixed(4)),
+    standard_error: Number(se.toFixed(4)),
+    min_detectable_effect: Number(minDetectableEffect.toFixed(4)),
+    observed_diff: Number(meanDiff.toFixed(4)),
+    observed_diff_ci_95: [Number(ci[0].toFixed(4)), Number(ci[1].toFixed(4))],
+    periods_needed_for_observed: nForObserved,
+    money_value_check: {
+      ...money,
+      note:
+        "把观测到的优势（每期多命中 " + Math.abs(meanDiff).toFixed(4) + " 个红球）换算成钱：" +
+        "命中 ≥4 红（四等奖及以上的必要条件）的概率从 " + (money.p_ge4_red_baseline * 100).toFixed(4) +
+        "% 升到 " + (money.p_ge4_red_with_effect * 100).toFixed(4) + "%，按四等奖 200 元计，" +
+        "每注期望回报只增加约 " + money.estimated_yuan_per_bet.toFixed(4) + " 元——而每注成本是 2 元，" +
+        "单注期望回报本身只有 0.74~0.99 元。这点优势改变不了任何结论。",
+    },
+    // 一句话结论（数据驱动，不是写死的）
+    interpretation:
+      `本段共 ${n} 期，配对差值的标准误是 ${se.toFixed(4)}，` +
+      `因此在 80% 功效下能检出的最小真实优势约是 ±${minDetectableEffect.toFixed(4)}（每期多命中几个红球）。` +
+      `实测差异为 ${meanDiff >= 0 ? "+" : ""}${meanDiff.toFixed(4)}，其 95% 置信区间是 ` +
+      `[${ci[0].toFixed(4)}, ${ci[1].toFixed(4)}]。` +
+      `也就是说：这不是"数据不够"，而是数据已经足够说明——真实优势即使存在，也小于约 ${ci[1].toFixed(2)} 个红球/期。`,
+  };
+}
+
+/**
+ * 精确计算"命中 ≥k 个红球"的概率（超几何分布）。
+ *
+ * 为什么必须用精确值而不是近似：
+ *   第一版这里用的是二项近似 Binomial(6, E/6)，结果 P(≥4红) 算成 1.1985%，
+ *   而精确值是 **0.4901%——近似偏高了 2.45 倍**。
+ *   这个数字是要拿去乘奖金金额的，偏差 2.45 倍意味着把"优势值多少钱"
+ *   夸大了同样的倍数。凡是能精确算的东西，就不要用近似——
+ *   尤其当这个近似会朝"让结论更好看"的方向偏的时候。
+ */
+function probAtLeastKRed(k, meanHits) {
+  const T = comb(33, 6);
+  // 用超几何算出基准分布；meanHits 只用于按尺度平移（见下方说明）
+  const exact = (kk) => (comb(6, kk) * comb(27, 6 - kk)) / T;
+  const baselineMean = 6 * (6 / 33); // 1.0909
+  // 尺度因子：平均命中数按比例放大/缩小
+  const scale = meanHits / baselineMean;
+  let p = 0;
+  for (let kk = k; kk <= 6; kk++) {
+    p += Math.min(1, exact(kk) * scale);
+  }
+  return p;
+}
+
+/**
+ * 把"每期多命中若干红球"这种抽象优势，换算成"每注期望回报多几块钱"。
+ *
+ * 为什么需要这一步：说"优势统计上不显著"，读者还能抱着"再攒点数据说不定就有了"的念头；
+ * 但说"就算这个优势是真的，每注也只多值一毛几分钱"，这个念头才真正被关掉。
+ * 所以这一小节是回答"无证据是不是数据不够"的最后一环。
+ *
+ * 口径说明（保守）：以"命中 ≥4 红"（四等奖及以上的必要条件）为锚，
+ * 用精确超几何概率 × 尺度因子得到有优势时的概率，差额乘四等奖 200 元。
+ * 只算到四等奖是刻意的保守做法——把更高奖级也算进来只会让数字略大，
+ * 而这一段的目的是给出数量级，宁可低估也不要夸大。
+ */
+function valueOfEdge(edgeInHits) {
+  const baselineMean = 6 * (6 / 33);
+  const pGe4Baseline = probAtLeastKRed(4, baselineMean);
+  const pGe4Improved = probAtLeastKRed(4, baselineMean + Math.abs(edgeInHits));
+  const marginal = pGe4Improved - pGe4Baseline;
+  return {
+    p_ge4_red_baseline: Number(pGe4Baseline.toFixed(6)),
+    p_ge4_red_with_effect: Number(pGe4Improved.toFixed(6)),
+    marginal_probability: Number(marginal.toFixed(6)),
+    estimated_yuan_per_bet: Number((marginal * 200).toFixed(4)),
+  };
+}
+
 function main() {
   const history = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "ssq.json"), "utf-8"));
 
@@ -501,6 +618,9 @@ function main() {
     },
     // V4 第 4 层：下一期观测（三组参数化规则 + 一组随机对照）
     next_period_observation: buildNextPeriodObservation(history, benchmarkRandomRecords),
+    // 「无证据」到底是什么意思：把证据等级背后的"测量精度"量化出来，
+    // 避免读者把"无证据"误读成"数据还不够，再等等"
+    evidence_power_analysis: buildEvidencePowerAnalysis(hotRecords, benchmarkRandomRecords),
   };
 
   fs.writeFileSync(path.join(DATA_DIR, "leaderboard.json"), JSON.stringify(leaderboard, null, 2));

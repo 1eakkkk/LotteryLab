@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-13T02:43:35.308Z",
+  "generated_at": "2026-09-13T02:48:27.336Z",
   "dataset_snapshot": "2026-09-12",
   "data_source": "gudaoxuri/lottery_history (GitHub)",
   "data_range": {
@@ -15016,7 +15016,7 @@
     "disclaimer": "一/二等奖按历史近似平均值估算，非官方精算数据，仅用于示意长期负期望现象。"
   },
   "data_verification": {
-    "verified_at": "2026-09-13T02:43:31.251Z",
+    "verified_at": "2026-09-13T02:48:23.612Z",
     "data_file": "data/ssq.json",
     "data_fingerprint_sha256": "bcf2b4804e10934ded9bf35e68c3cf69fa5c60dd1649dce58b423dc4afa48fe4",
     "data_range": {
@@ -17969,5 +17969,25 @@
         }
       }
     ]
+  },
+  "evidence_power_analysis": {
+    "periods": 152,
+    "sd_of_paired_diff": 1.1359,
+    "standard_error": 0.0921,
+    "min_detectable_effect": 0.2581,
+    "observed_diff": 0.1447,
+    "observed_diff_ci_95": [
+      -0.0358,
+      0.3253
+    ],
+    "periods_needed_for_observed": 484,
+    "money_value_check": {
+      "p_ge4_red_baseline": 0.004901,
+      "p_ge4_red_with_effect": 0.005551,
+      "marginal_probability": 0.00065,
+      "estimated_yuan_per_bet": 0.13,
+      "note": "把观测到的优势（每期多命中 0.1447 个红球）换算成钱：命中 ≥4 红（四等奖及以上的必要条件）的概率从 0.4901% 升到 0.5551%，按四等奖 200 元计，每注期望回报只增加约 0.1300 元——而每注成本是 2 元，单注期望回报本身只有 0.74~0.99 元。这点优势改变不了任何结论。"
+    },
+    "interpretation": "本段共 152 期，配对差值的标准误是 0.0921，因此在 80% 功效下能检出的最小真实优势约是 ±0.2581（每期多命中几个红球）。实测差异为 +0.1447，其 95% 置信区间是 [-0.0358, 0.3253]。也就是说：这不是\"数据不够\"，而是数据已经足够说明——真实优势即使存在，也小于约 0.33 个红球/期。"
   }
 }

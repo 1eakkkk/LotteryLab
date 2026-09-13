@@ -560,6 +560,74 @@ function buildObservationSection(obs, verification, report_theoretical_expectati
   </div>`;
 }
 
+// ===========================================================================
+// 「无证据」到底是什么意思：功效分析面板
+// ---------------------------------------------------------------------------
+// 证据等级写着"无证据"时，几乎所有读者都会理解成"数据还不够，攒够了就有结论"。
+// 这是完全反的。这个面板用三个数字把这件事说清楚：
+//   ① 最小可检出效应 —— 我们现在这把尺子能分辨多细的差别
+//   ② 实测差异及其置信区间 —— 差异最多能有多大
+//   ③ 要把差异坐实需要多少期 —— 换更大的数据集有没有用
+// 最后再用"就算优势是真的，每注多值几毛钱"把它彻底关掉。
+// ===========================================================================
+function buildEvidenceExplainer(power, leaderboard) {
+  if (!power) return "";
+  const m = power.money_value_check;
+  const ci = power.observed_diff_ci_95;
+  const hot = leaderboard.find((r) => r.strategy_key === "hot");
+  const blindBlind = leaderboard.find((r) => r.strategy_key === "hot");
+
+  return `
+  <h2>「无证据」是什么意思：不是数据不够，是数据已经够说明"没有大优势"</h2>
+  <p>页面上的证据等级写着 <span class="ev ev-none">无证据</span> 时，很容易被读成"数据还太少，等攒够了再说"。<strong>这是完全反的</strong>，所以这一节用数字把它讲清楚。两种标签的含义截然不同：</p>
+  <table>
+    <thead><tr><th>证据等级</th><th>什么时候出现</th><th>它的真实含义</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ev ev-insufficient">样本量不足</span></td><td>该段期数少于 100 期（例如当前盲测集只有 ${blindBlind ? blindBlind.segments.blind.periods_tested : 31} 期）</td><td><strong>数据确实太少</strong>，什么结论都不能下——这是"再等等看"<strong>唯一</strong>成立的情况</td></tr>
+      <tr><td><span class="ev ev-none">无证据</span></td><td>期数足够（≥100 期），但置信区间覆盖了理论期望</td><td><strong>数据已经足够</strong>，结论就是"没有可检出的差异"。不是"还不知道"，而是"已经知道没有大的"</td></tr>
+    </tbody>
+  </table>
+
+  <p>下面是"已经知道没有大的"这句话的量化版本。以目前检验过的<b>热号策略</b>为例（它是三个策略里表现最好的一个）：</p>
+  <table>
+    <thead><tr><th>问题</th><th>答案</th><th>怎么理解</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>我们现在这把"尺子"能分辨多细的差别？</td>
+        <td class="mono">±${power.min_detectable_effect}</td>
+        <td>在 ${power.periods} 期、80% 功效下，任何<strong>每期多命中约 ${power.min_detectable_effect} 个红球以上</strong>的真实优势，都会被我们检出来。比这更小的优势则淹没在噪声里。</td>
+      </tr>
+      <tr>
+        <td>实测到的差异有多大？</td>
+        <td class="mono">+${power.observed_diff}</td>
+        <td>热号策略平均每期比随机基准多命中 ${power.observed_diff} 个红球——<strong>比我们这把尺子的分辨力还小</strong>，所以它落在"测不出来"的区间里。</td>
+      </tr>
+      <tr>
+        <td>这个差异最多能有多大？</td>
+        <td class="mono">[${ci[0].toFixed(4)}, +${ci[1].toFixed(4)}]</td>
+        <td>95% 置信区间<strong>跨过 0</strong>（含负值），意味着"热号其实略差于随机"也完全说得通。即使乐观取上界，真实优势也不会超过约 <strong>+${ci[1].toFixed(2)} 个红球/期</strong>。</td>
+      </tr>
+      <tr>
+        <td>那多攒点数据是不是就能确认了？</td>
+        <td class="mono">约需 ${power.periods_needed_for_observed} 期</td>
+        <td>要把它坐实到统计显著，需要约 <strong>${power.periods_needed_for_observed} 期</strong>（现在 ${power.periods} 期，约相当于再等 ${(power.periods_needed_for_observed / 150).toFixed(1)} 年）。</td>
+      </tr>
+      <tr>
+        <td><strong>就算把它坐实了，值多少钱？</strong></td>
+        <td class="mono">+${m.estimated_yuan_per_bet} 元 / 注</td>
+        <td>把这点优势换算成奖金：命中 ≥4 红（四等奖及以上的必要条件）的概率从 <span class="mono">${(m.p_ge4_red_baseline * 100).toFixed(4)}%</span> 升到 <span class="mono">${(m.p_ge4_red_with_effect * 100).toFixed(4)}%</span>，每注期望回报增加约 <strong>${m.estimated_yuan_per_bet} 元</strong>——而每注成本是 2 元，单注期望回报本身只有 0.74~0.99 元。</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="notice notice-strong">
+    <p><strong>所以"无证据"的正确读法是：数据已经足够，足以排除"存在较大优势"这个可能。</strong>剩下能被塞进这个区间的优势，小到连一毛三分钱都不值。继续攒数据当然可以，但它的意义是"把区间收得更窄"，不是"等一个好消息出现"。</p>
+    <p class="dim">顺便说明一个常见误解：<strong>如果哪天真的检出了显著优势，那才更需要警惕。</strong>因为在"每期独立等概率"这个前提下，长期的正确结果本来就是"没有差异"；一旦出现显著，优先怀疑的是数据、代码或统计口径出了问题，而不是"终于找到规律了"。这也是本站把"数据指纹 + 奖级全枚举自检 + 抽样核对表"放在同一页的原因。</p>
+  </div>
+
+  <p class="dim">以上数字全部是解析解（不依赖模拟）：标准误 = 配对差值标准差 ÷ √期数；最小可检出效应 = (1.96 + 0.84) × 标准误（80% 功效、双侧 5%）；所需期数 = ((1.96 + 0.84) × 标准差 ÷ 观测差异)²；金额换算用精确超几何概率（<b>不是</b>二项近似——第一版用近似时把 P(≥4红) 算高了 2.45 倍，已修正为精确值）。计算过程写在 <code>src/build.js</code> 的 <code>buildEvidencePowerAnalysis</code> 里。</p>`;
+}
+
 // ---- V1 新增：我的策略权重滑块，需要给浏览器端嵌入一份精简历史数据 ----
 function buildLabData(history, split_boundaries, monte_carlo, min_train_size, report_number_tools, next_period) {
   const compactHistory = history.map((d) => ({ period: d.period, red: d.red, blue: d.blue }));
@@ -666,6 +734,8 @@ function main() {
     verification,
     report.theoretical_expectation
   );
+  // 「无证据」是什么：功效分析面板，紧跟排行榜（读者第一次遇到证据等级的地方）
+  const evidenceExplainer = buildEvidenceExplainer(report.evidence_power_analysis, leaderboard);
 
   const html = `<!doctype html>
 <html lang="zh-CN">
@@ -1079,6 +1149,10 @@ function main() {
     ${buildVerdicts(leaderboard)}
     ${buildFdrNote(leaderboard)}
   </div>
+
+  <div class="divider"></div>
+
+  ${evidenceExplainer}
 
   <div class="divider"></div>
 
